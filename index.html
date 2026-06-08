@@ -172,28 +172,7 @@ section{position:relative;z-index:1;}
 .toggle-group button:last-child{border-right:none;}
 .toggle-group button small{display:block;font-size:10px;opacity:0.6;margin-top:2px;font-weight:400;}
 .toggle-group button.active{background:var(--gold);color:var(--black);font-weight:700;}
-.kfa-visual{margin-top:16px;}
-.kfa-visual-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:12px;}
-.kfa-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
-.kfa-item{background:var(--card);border:2px solid var(--border);border-radius:4px;padding:10px 6px;text-align:center;cursor:pointer;transition:all 0.2s;}
-.kfa-item:hover{border-color:var(--gold-dim);}
-.kfa-item.selected{border-color:var(--gold);background:rgba(201,168,76,0.08);}
-.kfa-body{width:100%;aspect-ratio:3/5;border-radius:4px;margin-bottom:6px;position:relative;overflow:hidden;}
-.kfa-label{font-size:11px;font-weight:700;color:var(--text);}
-.kfa-sublabel{font-size:10px;color:var(--muted);}
-.bf-m-5{background:linear-gradient(180deg,#c8a882 0%,#b8906a 40%,#a87858 100%);}
-.bf-m-10{background:linear-gradient(180deg,#caa888 0%,#ba9272 40%,#aa826c 100%);}
-.bf-m-15{background:linear-gradient(180deg,#d0b090 0%,#c09878 40%,#b08870 100%);}
-.bf-m-20{background:linear-gradient(180deg,#d8b898 0%,#c8a888 40%,#b89878 100%);}
-.bf-m-25{background:linear-gradient(180deg,#e0c0a0 0%,#d0b090 40%,#c0a080 100%);}
-.bf-f-15{background:linear-gradient(180deg,#d4a882 0%,#c49070 40%,#b48060 100%);}
-.bf-f-20{background:linear-gradient(180deg,#dab088 0%,#ca9878 40%,#ba8868 100%);}
-.bf-f-25{background:linear-gradient(180deg,#e0b890 0%,#d0a880 40%,#c09870 100%);}
-.bf-f-30{background:linear-gradient(180deg,#e8c098 0%,#d8b088 40%,#c8a078 100%);}
-.bf-f-35{background:linear-gradient(180deg,#f0c8a0 0%,#e0b890 40%,#d0a880 100%);}
-.muscle{position:absolute;inset:0;border-radius:4px;}
-.bf-m-5 .muscle,.bf-m-10 .muscle{background:repeating-linear-gradient(0deg,rgba(0,0,0,0.14) 0px,rgba(0,0,0,0.14) 2px,transparent 2px,transparent 8px);}
-.bf-m-15 .muscle{background:repeating-linear-gradient(0deg,rgba(0,0,0,0.07) 0px,rgba(0,0,0,0.07) 2px,transparent 2px,transparent 12px);}
+
 .step-item{display:flex;gap:16px;align-items:flex-start;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:3px;margin-bottom:8px;transition:border-color 0.2s;cursor:pointer;}
 .step-item.done{border-color:var(--gold-dim);background:rgba(201,168,76,0.04);}
 .step-check{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;margin-top:2px;}
@@ -238,9 +217,28 @@ section{position:relative;z-index:1;}
 .meal-stats{text-align:right;font-size:13px;color:var(--muted);}
 .meal-stats strong{color:var(--text);display:block;font-size:15px;}
 .meal-foods{padding:4px 0;}
-.meal-food{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;border-bottom:1px solid var(--border2);font-size:13px;}
+.shop-cat{margin-bottom:16px;background:var(--card);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+.shop-cat-head{padding:12px 20px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--text);background:rgba(255,255,255,0.03);}
+.shop-items{padding:4px 0;}
+.shop-item{display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid var(--border2);transition:background 0.15s;}
+.shop-item:last-child{border-bottom:none;}
+.shop-item:hover{background:rgba(255,255,255,0.02);}
+.shop-check{width:18px;height:18px;border:2px solid var(--border);border-radius:3px;flex-shrink:0;cursor:pointer;transition:all 0.2s;}
+.shop-check.checked{background:var(--gold);border-color:var(--gold);position:relative;}
+.shop-check.checked::after{content:'✓';position:absolute;top:-2px;left:2px;font-size:13px;color:var(--black);font-weight:700;}
+.shop-name{flex:1;font-size:14px;color:var(--text);}
+.shop-qty{font-size:13px;font-weight:700;color:var(--gold);min-width:60px;text-align:right;}
+.meal-food{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;border-bottom:1px solid var(--border2);font-size:13px;gap:8px;flex-wrap:wrap;}
 .meal-food:last-child{border-bottom:none;}
-.food-n{color:var(--text);}.food-m{color:var(--muted);font-size:12px;}
+.food-n{color:var(--text);flex-shrink:0;}
+.food-macros{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;}
+.macro-pill{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;letter-spacing:0.5px;}
+.macro-pill.p{background:rgba(224,92,92,0.15);color:#e05c5c;}
+.macro-pill.c{background:rgba(91,155,213,0.15);color:#5b9bd5;}
+.macro-pill.f{background:rgba(201,168,76,0.15);color:var(--gold);}
+.macro-pill.k{background:rgba(255,255,255,0.06);color:var(--muted);}
+.meal-total{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:rgba(201,168,76,0.05);border-top:1px solid var(--border);font-size:12px;color:var(--muted);}
+.meal-total strong{color:var(--text);}
 .disclaimer{margin-top:48px;padding:20px 24px;border:1px solid var(--border);border-radius:4px;background:rgba(255,255,255,0.01);font-size:12px;color:var(--muted);line-height:1.7;}
 .disclaimer strong{color:var(--gold);}
 
@@ -403,19 +401,16 @@ footer a{color:var(--gold);text-decoration:none;}
         </div>
         <div class="grid-2" style="margin-bottom:16px;">
           <div class="field"><label>Körpergrösse</label><input type="number" id="height" placeholder="178" min="140" max="220"><span class="field-unit">cm</span></div>
-          <div class="field"><label>Körperfett % (optional)</label><input type="number" id="bf" placeholder="15" min="3" max="50" step="0.1" oninput="highlightKFA(this.value)"><span class="field-unit">%</span></div>
+          <div class="field"><label>Körperfett % (optional)</label><input type="number" id="bf" placeholder="15" min="3" max="50" step="0.1"><span class="field-unit">%</span></div>
         </div>
         <div class="toggle-wrap">
           <span class="toggle-label">Geschlecht</span>
           <div class="toggle-group" id="genderToggle">
-            <button class="active" data-val="male" onclick="renderKFA('male')">♂ &nbsp;Mann</button>
-            <button data-val="female" onclick="renderKFA('female')">♀ &nbsp;Frau</button>
+            <button class="active" data-val="male">♂ &nbsp;Mann</button>
+            <button data-val="female">♀ &nbsp;Frau</button>
           </div>
         </div>
-        <div class="kfa-visual">
-          <div class="kfa-visual-title">Körperfett-Referenz – klicke um Wert zu übernehmen</div>
-          <div class="kfa-grid" id="kfaGrid"></div>
-        </div>
+
       </div>
       <div class="r-section">
         <div class="sec-head"><span class="sec-num">02</span><span class="sec-title">Aktivitätslevel</span><div class="sec-line"></div></div>
@@ -433,7 +428,8 @@ footer a{color:var(--gold);text-decoration:none;}
         <div class="sec-head"><span class="sec-num">03</span><span class="sec-title">Ziel &amp; Makros</span><div class="sec-line"></div></div>
         <div class="toggle-wrap"><span class="toggle-label">Kalorienziel</span>
           <div class="toggle-group" id="goalToggle">
-            <button data-val="-500">Aggressiver Cut<small>−500 kcal</small></button>
+            <button data-val="-1000">Aggressiver Cut<small>−1000 kcal</small></button>
+            <button data-val="-500">Normaler Cut<small>−500 kcal</small></button>
             <button data-val="-300">Moderater Cut<small>−300 kcal</small></button>
             <button class="active" data-val="0">Maintenance<small>±0 kcal</small></button>
             <button data-val="250">Lean Bulk<small>+250 kcal</small></button>
@@ -447,12 +443,24 @@ footer a{color:var(--gold);text-decoration:none;}
             <button data-val="2.8">High Protein<small>2.8 g/kg</small></button>
           </div>
         </div>
+        <div class="toggle-wrap"><span class="toggle-label">Ernährungsweise</span>
+          <div class="toggle-group" id="dietToggle">
+            <button class="active" data-val="meat">🥩 Fleisch</button>
+            <button data-val="vegetarian">🥦 Vegetarisch</button>
+            <button data-val="vegan">🌱 Vegan</button>
+          </div>
+        </div>
         <div class="toggle-wrap"><span class="toggle-label">Mahlzeiten pro Tag</span>
           <div class="toggle-group" id="mealsToggle">
-            <button data-val="3">3 Mahlzeiten</button>
-            <button class="active" data-val="4">4 Mahlzeiten</button>
-            <button data-val="5">5 Mahlzeiten</button>
+            <button data-val="3" onclick="hideFastenInfo()">3 Mahlzeiten</button>
+            <button class="active" data-val="4" onclick="hideFastenInfo()">4 Mahlzeiten</button>
+            <button data-val="5" onclick="hideFastenInfo()">5 Mahlzeiten</button>
+            <button data-val="fasten" onclick="showFastenInfo()" style="border-left:2px solid var(--gold-dim);">⚡ Protein<br>Fasten</button>
           </div>
+        </div>
+        <div id="fastenInfo" style="display:none;margin-top:8px;padding:16px 20px;background:rgba(201,168,76,0.07);border:1px solid var(--gold-dim);border-radius:4px;">
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px;">⚡ Protein Fasten</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.7;">Du hast keine Möglichkeit mehrmals am Tag zu essen oder keine Zeit/Lust die Mahlzeiten vorzubereiten? Versuch's mit <strong style="color:var(--text);">Protein Fasten</strong>. Du bekommst <strong style="color:var(--text);">1 vollwertige Hauptmahlzeit</strong> + <strong style="color:var(--text);">2 Protein-Shakes</strong> – einfach, schnell und trotzdem optimal für Muskelerhalt.</p>
         </div>
       </div>
       <button class="btn-calculate" onclick="calculate()">MEINEN PLAN BERECHNEN →</button>
@@ -475,6 +483,14 @@ footer a{color:var(--gold);text-decoration:none;}
         <div class="sec-head"><span class="sec-num">PLAN</span><span class="sec-title">Beispiel-Ernährungsplan</span><div class="sec-line"></div></div>
         <div id="mealPlan"></div>
         <div class="disclaimer"><strong>⚠ Hinweis:</strong> Schätzwerte auf Basis Mifflin-St Jeor / Katch-McArdle. Kein Ersatz für Fachberatung.</div>
+
+        <!-- EINKAUFSLISTE -->
+        <div id="shoppingSection" style="margin-top:32px;">
+          <div class="sec-head"><span class="sec-num">🛒</span><span class="sec-title">Einkaufsliste für 1 Woche</span><div class="sec-line"></div></div>
+          <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">Alle Lebensmittel für 7 Tage – basierend auf deinem Ernährungsplan.</p>
+          <div id="shoppingList"></div>
+          <button class="btn-calculate" style="margin-top:16px;font-size:20px;" onclick="printShoppingList()">🖨️ &nbsp;EINKAUFSLISTE DRUCKEN</button>
+        </div>
       </div>
     </div>
   </div>
@@ -539,15 +555,18 @@ footer a{color:var(--gold);text-decoration:none;}
 
 <!-- ══ LOGIN MODAL ══ -->
 <div class="modal-overlay" id="loginModal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('loginModal')">×</button>
-    <h3>ADMIN LOGIN</h3>
-    <p>Gib dein Admin-Passwort ein um den Bearbeitungsmodus zu aktivieren.</p>
+  <div class="modal" style="max-width:400px;">
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:4px;color:var(--gold);">MDG ELITE</div>
+      <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:4px;">Admin Only Login</div>
+    </div>
+    <label>Benutzername</label>
+    <input type="text" id="userInput" placeholder="Benutzername" onkeydown="if(event.key==='Enter')document.getElementById('pwInput').focus()" autocomplete="username">
     <label>Passwort</label>
-    <input type="password" id="pwInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkLogin()">
-    <div class="modal-error" id="pwError">Falsches Passwort. Bitte versuche es erneut.</div>
-    <button class="btn-primary" style="width:100%;padding:16px;font-size:18px;letter-spacing:3px;" onclick="checkLogin()">EINLOGGEN</button>
-    <p style="margin-top:12px;font-size:11px;color:var(--muted);text-align:center;">Tipp: Drücke Shift+Shift+A um den Login zu öffnen</p>
+    <input type="password" id="pwInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkLogin()" autocomplete="current-password">
+    <div class="modal-error" id="pwError">Falscher Benutzername oder Passwort.</div>
+    <button class="btn-primary" style="width:100%;padding:16px;font-size:18px;letter-spacing:3px;margin-top:4px;" onclick="checkLogin()">EINLOGGEN</button>
+    <p style="margin-top:12px;font-size:11px;color:var(--muted);text-align:center;opacity:0.5;">Shift+Shift+A zum Öffnen</p>
   </div>
 </div>
 
@@ -617,8 +636,9 @@ footer a{color:var(--gold);text-decoration:none;}
 <div class="toast" id="toast"></div>
 
 <script>
-// ══ ADMIN PASSWORD (change this!) ══
-let ADMIN_PW = 'MDGElite2027';
+// ══ ADMIN CREDENTIALS ══
+const ADMIN_USER = 'admin';
+let ADMIN_PW = 'Gabriel2010$Elia2015$SaraJane2004$';
 let isAdmin = false;
 
 // ══ KEYBOARD SHORTCUT: Shift+Shift+A ══
@@ -633,10 +653,12 @@ document.addEventListener('keydown', e => {
 });
 
 function checkLogin() {
-  const val = document.getElementById('pwInput').value;
-  if (val === ADMIN_PW) {
+  const user = document.getElementById('userInput').value.trim();
+  const pw   = document.getElementById('pwInput').value;
+  if (user === ADMIN_USER && pw === ADMIN_PW) {
     isAdmin = true;
     closeModal('loginModal');
+    document.getElementById('userInput').value = '';
     document.getElementById('pwInput').value = '';
     document.getElementById('pwError').style.display = 'none';
     activateAdminMode();
@@ -824,26 +846,10 @@ function saveStats() {
 function toggleStep(el) { el.classList.toggle('done'); }
 
 // ══ KFA VISUAL ══
-const kfaData = {
-  male:[{val:5,label:'~5%',cls:'bf-m-5',desc:'Wettkampf'},{val:10,label:'~10%',cls:'bf-m-10',desc:'sehr lean'},{val:15,label:'~15%',cls:'bf-m-15',desc:'athletisch'},{val:20,label:'~20%',cls:'bf-m-20',desc:'fit'},{val:25,label:'~25%',cls:'bf-m-25',desc:'normal'}],
-  female:[{val:15,label:'~15%',cls:'bf-f-15',desc:'Wettkampf'},{val:20,label:'~20%',cls:'bf-f-20',desc:'sehr lean'},{val:25,label:'~25%',cls:'bf-f-25',desc:'athletisch'},{val:30,label:'~30%',cls:'bf-f-30',desc:'fit'},{val:35,label:'~35%',cls:'bf-f-35',desc:'normal'}]
-};
-let kfaGender='male';
-function renderKFA(g) {
-  kfaGender=g;
-  document.getElementById('kfaGrid').innerHTML = kfaData[g].map(i=>`
-    <div class="kfa-item" data-val="${i.val}" onclick="selectKFA(${i.val})">
-      <div class="kfa-body ${i.cls}"><div class="muscle"></div></div>
-      <div class="kfa-label">${i.label}</div><div class="kfa-sublabel">${i.desc}</div>
-    </div>`).join('');
-  highlightKFA(document.getElementById('bf').value);
-}
-function selectKFA(v) { document.getElementById('bf').value=v; highlightKFA(v); showToast(`KFA ${v}% übernommen`); }
-function highlightKFA(v) { document.querySelectorAll('.kfa-item').forEach(i=>i.classList.toggle('selected',parseInt(i.dataset.val)===parseFloat(v))); }
-renderKFA('male');
+
 
 // ══ TOGGLES ══
-['genderToggle','goalToggle','proteinToggle','mealsToggle'].forEach(id=>{
+['genderToggle','goalToggle','proteinToggle','dietToggle','mealsToggle'].forEach(id=>{
   document.getElementById(id).querySelectorAll('button').forEach(btn=>{
     btn.addEventListener('click',()=>{
       document.getElementById(id).querySelectorAll('button').forEach(b=>b.classList.remove('active'));
@@ -852,6 +858,9 @@ renderKFA('male');
   });
 });
 function getVal(id){return(document.querySelector(`#${id} button.active`)||{}).dataset?.val;}
+
+function showFastenInfo() { document.getElementById('fastenInfo').style.display='block'; }
+function hideFastenInfo() { document.getElementById('fastenInfo').style.display='none'; }
 
 // ══ CALCULATE ══
 function calculate(){
@@ -863,7 +872,7 @@ function calculate(){
   const gender=getVal('genderToggle');
   const goalDelta=parseFloat(getVal('goalToggle'));
   const protMult=parseFloat(getVal('proteinToggle'));
-  const meals=parseInt(getVal('mealsToggle'));
+  const mealsRaw=getVal('mealsToggle');
   if(!age||!weight||!height){showToast('⚠ Alter, Gewicht und Grösse eingeben');return;}
   let bmr,formula;
   if(!isNaN(bf)&&bf>0&&bf<50){bmr=370+21.6*weight*(1-bf/100);formula='Katch-McArdle';}
@@ -873,7 +882,7 @@ function calculate(){
   const carbsG=Math.max(0,Math.round((target-protG*4-fatG*9)/4));
   const wk=goalDelta*7,wkg=(wk/7700).toFixed(2);
   const wt=wk===0?'Gewicht stabil':wk<0?`Fettabbau ~${Math.abs(wkg)} kg/Woche`:`Gewichtszunahme ~${wkg} kg/Woche`;
-  const gl={'-500':'Aggressiver Cut · −500 kcal','-300':'Moderater Cut · −300 kcal','0':'Maintenance','250':'Lean Bulk · +250 kcal','500':'Bulk · +500 kcal'};
+  const gl={'-1000':'Aggressiver Cut · −1000 kcal','-500':'Normaler Cut · −500 kcal','-300':'Moderater Cut · −300 kcal','0':'Maintenance','250':'Lean Bulk · +250 kcal','500':'Bulk · +500 kcal'};
   document.getElementById('kcalDisplay').textContent=target.toLocaleString('de-CH');
   document.getElementById('goalBadge').textContent=gl[String(goalDelta)]||'';
   document.getElementById('formulaUsed').textContent=formula;
@@ -887,17 +896,392 @@ function calculate(){
   document.getElementById('proteinKcal').textContent=(protG*4).toLocaleString('de-CH')+' kcal';
   document.getElementById('carbsKcal').textContent=(carbsG*4).toLocaleString('de-CH')+' kcal';
   document.getElementById('fatKcal').textContent=(fatG*9).toLocaleString('de-CH')+' kcal';
-  generateMealPlan(target,meals);
+  const diet = getVal('dietToggle') || 'meat';
+  const mealsVal = getVal('mealsToggle');
+  const isFasten = mealsVal === 'fasten';
+  const mealsNum = isFasten ? 'fasten' : parseInt(mealsVal);
+  generateMealPlan(target, mealsNum, protG, carbsG, fatG, diet);
   const el=document.getElementById('results');
   el.classList.add('visible');
   setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),100);
 }
 
-function generateMealPlan(kcal,meals){
-  const p={3:[{name:'Frühstück',time:'07:00',r:.30,f:[{n:'Haferflocken + Magerquark',m:'→ Carbs + Protein'},{n:'Früchte nach Wahl',m:'→ Vitamine'},{n:'Whey optional',m:'→ Protein'}]},{name:'Mittagessen',time:'13:00',r:.40,f:[{n:'Hühnerbrust / Rind',m:'→ Protein'},{n:'Reis / Kartoffeln',m:'→ Carbs'},{n:'Gemüse',m:'→ Vitamine'},{n:'Olivenöl (1 EL)',m:'→ Fette'}]},{name:'Abendessen',time:'19:00',r:.30,f:[{n:'Lachs / Eier',m:'→ Protein + Omega-3'},{n:'Süsskartoffeln',m:'→ Carbs'},{n:'Avocado',m:'→ Fette'}]}],
-  4:[{name:'Frühstück',time:'07:00',r:.25,f:[{n:'Haferflocken',m:'→ Carbs'},{n:'Magerquark 0.2%',m:'→ Protein'},{n:'Blaubeeren',m:'→ Antioxidantien'}]},{name:'Mittagessen',time:'12:30',r:.30,f:[{n:'Hühnerbrust / Rind',m:'→ Protein'},{n:'Reis / Kartoffeln',m:'→ Carbs'},{n:'Gemüse',m:'→ Vitamine'}]},{name:'Post-Workout',time:'16:00',r:.20,f:[{n:'Whey Isolat',m:'→ Protein'},{n:'Banane',m:'→ Glykogen'},{n:'Reiswaffeln',m:'→ Carbs'}]},{name:'Abendessen',time:'19:30',r:.25,f:[{n:'Lachs / Crevetten',m:'→ Protein + Omega-3'},{n:'Süsskartoffeln',m:'→ Carbs'},{n:'Avocado + Salat',m:'→ Fette'}]}],
-  5:[{name:'Frühstück',time:'07:00',r:.22,f:[{n:'Haferflocken + Chia',m:'→ Carbs + Omega-3'},{n:'Magerquark',m:'→ Protein'},{n:'Früchte',m:'→ Mikronährstoffe'}]},{name:'Zwischenmahlzeit',time:'10:30',r:.13,f:[{n:'Griechischer Joghurt',m:'→ Protein'},{n:'Mandeln (20g)',m:'→ Fette'}]},{name:'Mittagessen',time:'13:00',r:.28,f:[{n:'Hühnerbrust / Rind',m:'→ Protein'},{n:'Reis / Pasta',m:'→ Carbs'},{n:'Gemüse',m:'→ Vitamine'}]},{name:'Post-Workout',time:'16:30',r:.17,f:[{n:'Whey Isolat',m:'→ Protein'},{n:'Banane',m:'→ Glykogen'}]},{name:'Abendessen',time:'19:30',r:.20,f:[{n:'Lachs / Eier',m:'→ Protein + Fette'},{n:'Süsskartoffeln',m:'→ Carbs'}]}]};
-  document.getElementById('mealPlan').innerHTML=p[meals].map(m=>`<div class="meal-card"><div class="meal-head"><div><div class="meal-name">${m.name}</div><div class="meal-time">⏱ ${m.time}</div></div><div class="meal-stats"><strong>~${Math.round(kcal*m.r).toLocaleString('de-CH')} kcal</strong>${Math.round(m.r*100)}%</div></div><div class="meal-foods">${m.f.map(f=>`<div class="meal-food"><span class="food-n">${f.n}</span><span class="food-m">${f.m}</span></div>`).join('')}</div></div>`).join('');
+function generateMealPlan(kcal, meals, proteinG, carbsG, fatG, diet) {
+  const scale = kcal / 2000;
+
+  // ── Protein Fasten Mode ──
+  if (meals === 'fasten') {
+    generateFastenPlan(kcal, proteinG, carbsG, fatG, diet);
+    return;
+  }
+
+  // Food database per 100g: {p, c, f, kcal}
+  const db = {
+    // Fleisch & Fisch
+    huhn:           {name:'Hühnerbrust',          p:31,  c:0,   f:3.6, kcal:165},
+    rind:           {name:'Rindssteak (mager)',    p:28,  c:0,   f:5,   kcal:158},
+    lachs:          {name:'Lachs',                p:25,  c:0,   f:13,  kcal:208},
+    thunfisch:      {name:'Thunfisch (Dose)',      p:25,  c:0,   f:1,   kcal:103},
+    // Vegetarisch (enthalten Eier/Milch)
+    eier:           {name:'Eier (2 Stk. ~120g)',  p:13,  c:0.7, f:10,  kcal:143},
+    magerquark:     {name:'Magerquark 0.2%',       p:12,  c:4,   f:0.2, kcal:66},
+    joghurt:        {name:'Griech. Joghurt 0%',   p:10,  c:4,   f:0.4, kcal:59},
+    huettenkase:    {name:'Hüttenkäse',            p:11,  c:3,   f:4,   kcal:90},
+    whey:           {name:'Whey Isolat',           p:85,  c:4,   f:2,   kcal:370},
+    // Vegan Protein
+    tofu:           {name:'Tofu (fest)',           p:17,  c:2,   f:9,   kcal:144},
+    tempeh:         {name:'Tempeh',               p:19,  c:9,   f:11,  kcal:193},
+    linsen:         {name:'Rote Linsen (gek.)',   p:9,   c:20,  f:0.4, kcal:116},
+    kichererbsen:   {name:'Kichererbsen (gek.)',  p:9,   c:27,  f:2.6, kcal:164},
+    edamame:        {name:'Edamame',              p:11,  c:10,  f:5,   kcal:121},
+    vegwhey:        {name:'Vegan Protein Pulver', p:80,  c:5,   f:3,   kcal:366},
+    seitan:         {name:'Seitan',               p:25,  c:4,   f:2,   kcal:140},
+    // Carbs
+    haferflocken:   {name:'Haferflocken',         p:13,  c:58,  f:7,   kcal:370},
+    reis:           {name:'Weisser Reis (gek.)',  p:2.7, c:28,  f:0.3, kcal:130},
+    suesskartoffel: {name:'Süsskartoffeln',       p:1.6, c:20,  f:0.1, kcal:86},
+    kartoffeln:     {name:'Kartoffeln (gek.)',    p:2,   c:17,  f:0.1, kcal:77},
+    quinoa:         {name:'Quinoa (gek.)',        p:4,   c:21,  f:2,   kcal:120},
+    banane:         {name:'Banane',               p:1.1, c:23,  f:0.3, kcal:89},
+    reiswaffeln:    {name:'Reiswaffeln',          p:3,   c:82,  f:1,   kcal:387},
+    chia:           {name:'Chia Seeds',           p:17,  c:42,  f:31,  kcal:486},
+    // Fette & Gemüse
+    avocado:        {name:'Avocado (½)',          p:1,   c:2,   f:12,  kcal:120},
+    olivenoel:      {name:'Olivenöl',             p:0,   c:0,   f:100, kcal:884},
+    mandeln:        {name:'Mandeln',              p:21,  c:6,   f:50,  kcal:579},
+    brokkoli:       {name:'Brokkoli',             p:2.8, c:5,   f:0.4, kcal:34},
+    blaubeeren:     {name:'Blaubeeren',           p:0.7, c:12,  f:0.3, kcal:57},
+    cashews:        {name:'Cashews',              p:18,  c:30,  f:44,  kcal:553},
+    pflanzenmilch:  {name:'Hafer-/Mandelmilch',  p:1,   c:7,   f:2,   kcal:45},
+  };
+
+  function macro(key, grams) {
+    const f = db[key];
+    return {
+      name: f.name,
+      grams: Math.round(grams),
+      p: Math.round(f.p * grams / 100),
+      c: Math.round(f.c * grams / 100),
+      fat: Math.round(f.f * grams / 100),
+      k: Math.round(f.kcal * grams / 100)
+    };
+  }
+
+  // Meal templates per diet type
+  const templates = {
+    meat: {
+      3: [
+        {name:'Frühstück',    time:'07:00', foods:[{k:'haferflocken',g:80*scale},{k:'magerquark',g:200*scale},{k:'blaubeeren',g:80*scale},{k:'whey',g:30*scale}]},
+        {name:'Mittagessen',  time:'13:00', foods:[{k:'huhn',g:200*scale},{k:'reis',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
+        {name:'Abendessen',   time:'19:00', foods:[{k:'lachs',g:180*scale},{k:'suesskartoffel',g:200*scale},{k:'avocado',g:60*scale}]},
+      ],
+      4: [
+        {name:'Frühstück',    time:'07:00', foods:[{k:'haferflocken',g:70*scale},{k:'magerquark',g:200*scale},{k:'blaubeeren',g:80*scale}]},
+        {name:'Mittagessen',  time:'12:30', foods:[{k:'huhn',g:200*scale},{k:'reis',g:140*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
+        {name:'Post-Workout', time:'16:00', foods:[{k:'whey',g:35*scale},{k:'banane',g:100*scale},{k:'reiswaffeln',g:30*scale}]},
+        {name:'Abendessen',   time:'19:30', foods:[{k:'lachs',g:180*scale},{k:'suesskartoffel',g:180*scale},{k:'avocado',g:60*scale}]},
+      ],
+      5: [
+        {name:'Frühstück',       time:'07:00', foods:[{k:'haferflocken',g:60*scale},{k:'magerquark',g:150*scale},{k:'chia',g:15},{k:'blaubeeren',g:80*scale}]},
+        {name:'Zwischenmahlzeit',time:'10:30', foods:[{k:'joghurt',g:200*scale},{k:'mandeln',g:20}]},
+        {name:'Mittagessen',     time:'13:00', foods:[{k:'rind',g:180*scale},{k:'kartoffeln',g:200*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
+        {name:'Post-Workout',    time:'16:30', foods:[{k:'whey',g:35*scale},{k:'banane',g:100*scale},{k:'reiswaffeln',g:25*scale}]},
+        {name:'Abendessen',      time:'19:30', foods:[{k:'lachs',g:160*scale},{k:'suesskartoffel',g:180*scale},{k:'avocado',g:50*scale}]},
+      ],
+    },
+    vegetarian: {
+      3: [
+        {name:'Frühstück',    time:'07:00', foods:[{k:'haferflocken',g:80*scale},{k:'magerquark',g:200*scale},{k:'blaubeeren',g:80*scale},{k:'whey',g:30*scale}]},
+        {name:'Mittagessen',  time:'13:00', foods:[{k:'eier',g:120*scale},{k:'quinoa',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
+        {name:'Abendessen',   time:'19:00', foods:[{k:'tofu',g:200*scale},{k:'suesskartoffel',g:200*scale},{k:'avocado',g:60*scale}]},
+      ],
+      4: [
+        {name:'Frühstück',    time:'07:00', foods:[{k:'haferflocken',g:70*scale},{k:'joghurt',g:200*scale},{k:'blaubeeren',g:80*scale}]},
+        {name:'Mittagessen',  time:'12:30', foods:[{k:'tempeh',g:180*scale},{k:'reis',g:140*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
+        {name:'Post-Workout', time:'16:00', foods:[{k:'whey',g:35*scale},{k:'banane',g:100*scale},{k:'reiswaffeln',g:30*scale}]},
+        {name:'Abendessen',   time:'19:30', foods:[{k:'eier',g:120*scale},{k:'quinoa',g:160*scale},{k:'avocado',g:60*scale}]},
+      ],
+      5: [
+        {name:'Frühstück',       time:'07:00', foods:[{k:'haferflocken',g:60*scale},{k:'magerquark',g:150*scale},{k:'chia',g:15},{k:'blaubeeren',g:80*scale}]},
+        {name:'Zwischenmahlzeit',time:'10:30', foods:[{k:'huettenkase',g:150*scale},{k:'mandeln',g:20}]},
+        {name:'Mittagessen',     time:'13:00', foods:[{k:'kichererbsen',g:200*scale},{k:'quinoa',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
+        {name:'Post-Workout',    time:'16:30', foods:[{k:'whey',g:35*scale},{k:'banane',g:100*scale},{k:'reiswaffeln',g:25*scale}]},
+        {name:'Abendessen',      time:'19:30', foods:[{k:'tofu',g:180*scale},{k:'suesskartoffel',g:180*scale},{k:'avocado',g:50*scale}]},
+      ],
+    },
+    vegan: {
+      3: [
+        {name:'Frühstück',    time:'07:00', foods:[{k:'haferflocken',g:80*scale},{k:'pflanzenmilch',g:250*scale},{k:'chia',g:15},{k:'blaubeeren',g:80*scale},{k:'vegwhey',g:30*scale}]},
+        {name:'Mittagessen',  time:'13:00', foods:[{k:'tempeh',g:200*scale},{k:'quinoa',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:12}]},
+        {name:'Abendessen',   time:'19:00', foods:[{k:'tofu',g:200*scale},{k:'suesskartoffel',g:200*scale},{k:'avocado',g:70*scale},{k:'cashews',g:20}]},
+      ],
+      4: [
+        {name:'Frühstück',    time:'07:00', foods:[{k:'haferflocken',g:70*scale},{k:'pflanzenmilch',g:200*scale},{k:'blaubeeren',g:80*scale},{k:'vegwhey',g:30*scale}]},
+        {name:'Mittagessen',  time:'12:30', foods:[{k:'seitan',g:180*scale},{k:'reis',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:12}]},
+        {name:'Post-Workout', time:'16:00', foods:[{k:'vegwhey',g:35*scale},{k:'banane',g:100*scale},{k:'reiswaffeln',g:30*scale}]},
+        {name:'Abendessen',   time:'19:30', foods:[{k:'tempeh',g:180*scale},{k:'suesskartoffel',g:180*scale},{k:'avocado',g:60*scale}]},
+      ],
+      5: [
+        {name:'Frühstück',       time:'07:00', foods:[{k:'haferflocken',g:60*scale},{k:'pflanzenmilch',g:200*scale},{k:'chia',g:15},{k:'blaubeeren',g:80*scale}]},
+        {name:'Zwischenmahlzeit',time:'10:30', foods:[{k:'edamame',g:150*scale},{k:'mandeln',g:20}]},
+        {name:'Mittagessen',     time:'13:00', foods:[{k:'linsen',g:200*scale},{k:'quinoa',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:12}]},
+        {name:'Post-Workout',    time:'16:30', foods:[{k:'vegwhey',g:35*scale},{k:'banane',g:100*scale},{k:'reiswaffeln',g:25*scale}]},
+        {name:'Abendessen',      time:'19:30', foods:[{k:'tofu',g:180*scale},{k:'suesskartoffel',g:180*scale},{k:'cashews',g:25}]},
+      ],
+    },
+  };
+
+  const mealList = templates[diet][meals];
+  const dietLabel = {meat:'🥩 Fleisch', vegetarian:'🥦 Vegetarisch', vegan:'🌱 Vegan'}[diet];
+
+  const html = mealList.map(meal => {
+    const items = meal.foods.map(f => macro(f.k, f.g));
+    const totP = items.reduce((a,i)=>a+i.p,0);
+    const totC = items.reduce((a,i)=>a+i.c,0);
+    const totF = items.reduce((a,i)=>a+i.fat,0);
+    const totK = items.reduce((a,i)=>a+i.k,0);
+
+    const foodRows = items.map(m => `
+      <div class="meal-food">
+        <span class="food-n">${m.name} <span style="color:var(--muted);font-size:12px;">${m.grams}g</span></span>
+        <span class="food-macros">
+          <span class="macro-pill p">${m.p}g P</span>
+          <span class="macro-pill c">${m.c}g C</span>
+          <span class="macro-pill f">${m.fat}g F</span>
+          <span class="macro-pill k">${m.k} kcal</span>
+        </span>
+      </div>`).join('');
+
+    return `<div class="meal-card">
+      <div class="meal-head">
+        <div><div class="meal-name">${meal.name}</div><div class="meal-time">⏱ ${meal.time} Uhr</div></div>
+        <div class="meal-stats">
+          <strong>~${totK} kcal</strong>
+          <span style="font-size:11px;color:var(--muted);">${totP}g P · ${totC}g C · ${totF}g F</span>
+        </div>
+      </div>
+      <div class="meal-foods">${foodRows}</div>
+      <div class="meal-total">
+        <span>${dietLabel}</span>
+        <span><strong>${totP}g</strong> P · <strong>${totC}g</strong> C · <strong>${totF}g</strong> F · <strong>${totK} kcal</strong></span>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('mealPlan').innerHTML = html;
+  generateShoppingList(mealList, db, scale);
+}
+
+// ══ PROTEIN FASTEN PLAN ══
+function generateFastenPlan(kcal, proteinG, carbsG, fatG, diet) {
+  // Shake protein = ~33% of daily protein each, remaining for main meal
+  const shakeProtein = Math.round(proteinG * 0.33);
+  const mainProtein  = proteinG - (shakeProtein * 2); // guaranteed ≥33% of daily
+  const shakeKcal    = Math.round(kcal * 0.20); // each shake ~20% of daily kcal
+  const mainKcal     = kcal - (shakeKcal * 2);  // main meal gets remaining ~60%
+
+  // Whey grams needed per shake (85g protein per 100g whey)
+  const wheyG  = Math.round(shakeProtein / 0.85);
+  const scale  = kcal / 2000;
+
+  // Main meal protein source based on diet
+  const mainProteinFood = {
+    meat: {key:'huhn', g: Math.round(mainProtein / 0.31)},
+    vegetarian: {key:'eier', g: Math.round(mainProtein / 0.13)},
+    vegan: {key:'tofu', g: Math.round(mainProtein / 0.17)},
+  }[diet];
+
+  const db = {
+    huhn:         {name:'Hühnerbrust',        p:31,  c:0,  f:3.6, kcal:165},
+    eier:         {name:'Eier',               p:13,  c:0.7,f:10,  kcal:143},
+    tofu:         {name:'Tofu (fest)',         p:17,  c:2,  f:9,   kcal:144},
+    whey:         {name:'Whey Isolat',         p:85,  c:4,  f:2,   kcal:370},
+    vegwhey:      {name:'Vegan Protein',       p:80,  c:5,  f:3,   kcal:366},
+    haferflocken: {name:'Haferflocken',        p:13,  c:58, f:7,   kcal:370},
+    reis:         {name:'Weisser Reis (gek.)', p:2.7, c:28, f:0.3, kcal:130},
+    suesskartoffel:{name:'Süsskartoffeln',     p:1.6, c:20, f:0.1, kcal:86},
+    brokkoli:     {name:'Brokkoli',            p:2.8, c:5,  f:0.4, kcal:34},
+    avocado:      {name:'Avocado (½)',         p:1,   c:2,  f:12,  kcal:120},
+    olivenoel:    {name:'Olivenöl',            p:0,   c:0,  f:100, kcal:884},
+    banane:       {name:'Banane',              p:1.1, c:23, f:0.3, kcal:89},
+    mandeln:      {name:'Mandeln',             p:21,  c:6,  f:50,  kcal:579},
+    pflanzenmilch:{name:'Pflanzenmilch',       p:1,   c:7,  f:2,   kcal:45},
+    magerquark:   {name:'Magerquark 0.2%',     p:12,  c:4,  f:0.2, kcal:66},
+  };
+
+  function m(key, grams) {
+    const f = db[key]; const g = Math.round(grams);
+    return { name:f.name, grams:g, p:Math.round(f.p*g/100), c:Math.round(f.c*g/100), fat:Math.round(f.f*g/100), k:Math.round(f.kcal*g/100) };
+  }
+
+  const proteinKey = diet === 'vegan' ? 'vegwhey' : 'whey';
+  const milkKey    = diet === 'vegan' ? 'pflanzenmilch' : 'magerquark';
+
+  // Build 3 meals: Shake 1, Hauptmahlzeit, Shake 2
+  const shake1Foods = [m(proteinKey, wheyG), m('banane', 80*scale), m('haferflocken', 40*scale)];
+  const shake2Foods = [m(proteinKey, wheyG), m('mandeln', 20), m(milkKey, 150*scale)];
+
+  const carbsG_main = Math.round(carbsG * 0.55);
+  const mainFoods = [
+    m(mainProteinFood.key, mainProteinFood.g),
+    m('reis', carbsG_main * 3.5),
+    m('brokkoli', 200*scale),
+    m('avocado', 60*scale),
+    m('olivenoel', 10),
+  ];
+
+  const mealList = [
+    { name:'Protein Shake 1', time:'08:00', tag:'🥤', foods: shake1Foods },
+    { name:'Hauptmahlzeit',   time:'13:00 oder 19:00', tag:'🍽️', foods: mainFoods, highlight: true },
+    { name:'Protein Shake 2', time:'16:00', tag:'🥤', foods: shake2Foods },
+  ];
+
+  const html = mealList.map(meal => {
+    const totP = meal.foods.reduce((a,i)=>a+i.p,0);
+    const totC = meal.foods.reduce((a,i)=>a+i.c,0);
+    const totF = meal.foods.reduce((a,i)=>a+i.fat,0);
+    const totK = meal.foods.reduce((a,i)=>a+i.k,0);
+    const border = meal.highlight ? `border-left:3px solid var(--gold);` : `border-left:3px solid var(--border2);`;
+
+    const foodRows = meal.foods.map(fd => `
+      <div class="meal-food">
+        <span class="food-n">${fd.name} <span style="color:var(--muted);font-size:12px;">${fd.grams}g</span></span>
+        <span class="food-macros">
+          <span class="macro-pill p">${fd.p}g P</span>
+          <span class="macro-pill c">${fd.c}g C</span>
+          <span class="macro-pill f">${fd.fat}g F</span>
+          <span class="macro-pill k">${fd.k} kcal</span>
+        </span>
+      </div>`).join('');
+
+    return `<div class="meal-card" style="${border}">
+      <div class="meal-head">
+        <div>
+          <div class="meal-name">${meal.tag} ${meal.name}</div>
+          <div class="meal-time">⏱ ${meal.time} Uhr</div>
+        </div>
+        <div class="meal-stats">
+          <strong>~${totK} kcal</strong>
+          <span style="font-size:11px;color:var(--muted);">${totP}g P · ${totC}g C · ${totF}g F</span>
+        </div>
+      </div>
+      <div class="meal-foods">${foodRows}</div>
+      <div class="meal-total">
+        <span>⚡ Protein Fasten</span>
+        <span><strong>${totP}g</strong> P · <strong>${totC}g</strong> C · <strong>${totF}g</strong> F · <strong>${totK} kcal</strong></span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Protein check badge
+  const mainProteinPct = Math.round((mainFoods.reduce((a,i)=>a+i.p,0) / proteinG) * 100);
+  const proteinBadge = `<div style="margin-bottom:16px;padding:12px 20px;background:rgba(224,92,92,0.1);border:1px solid rgba(224,92,92,0.3);border-radius:4px;font-size:13px;color:#e05c5c;">
+    💪 Hauptmahlzeit liefert <strong>${mainProteinPct}%</strong> deines Tagesproteinbedarfs (${proteinG}g) – Minimum 33% ✓
+  </div>`;
+
+  document.getElementById('mealPlan').innerHTML = proteinBadge + html;
+
+  // Pass to shopping list
+  generateShoppingList(mealList, db, scale);
+}
+
+// ══ SHOPPING LIST ══
+let lastMealPlanData = null;
+
+function generateShoppingList(mealList, db, scale) {
+  // Aggregate all foods × 7 days
+  const totals = {};
+  mealList.forEach(meal => {
+    meal.foods.forEach(f => {
+      const grams = Math.round(f.g * 7);
+      if (!totals[f.k]) totals[f.k] = { name: db[f.k].name, grams: 0 };
+      totals[f.k].grams += grams;
+    });
+  });
+
+  // Group by category
+  const categories = {
+    'Protein': ['huhn','rind','lachs','thunfisch','eier','tofu','tempeh','seitan','edamame','linsen','kichererbsen'],
+    'Milchprodukte & Protein': ['magerquark','joghurt','huettenkase','whey','vegwhey'],
+    'Kohlenhydrate': ['haferflocken','reis','suesskartoffel','kartoffeln','quinoa','reiswaffeln','chia','banane','pflanzenmilch'],
+    'Gemüse & Früchte': ['brokkoli','blaubeeren'],
+    'Fette & Nüsse': ['avocado','olivenoel','mandeln','cashews'],
+  };
+
+  const catColors = {
+    'Protein': '#e05c5c',
+    'Milchprodukte & Protein': '#5b9bd5',
+    'Kohlenhydrate': '#C9A84C',
+    'Gemüse & Früchte': '#5cb85c',
+    'Fette & Nüsse': '#c878e0',
+  };
+
+  let html = '';
+  Object.entries(categories).forEach(([cat, keys]) => {
+    const items = keys.filter(k => totals[k]);
+    if (!items.length) return;
+    html += `<div class="shop-cat">
+      <div class="shop-cat-head" style="border-left:3px solid ${catColors[cat]};">${cat}</div>
+      <div class="shop-items">`;
+    items.forEach(k => {
+      const item = totals[k];
+      const kg = item.grams >= 1000 ? (item.grams/1000).toFixed(1)+' kg' : item.grams+'g';
+      html += `<div class="shop-item">
+        <div class="shop-check" onclick="this.classList.toggle('checked')"></div>
+        <span class="shop-name">${item.name}</span>
+        <span class="shop-qty">${kg}</span>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+
+  document.getElementById('shoppingList').innerHTML = html;
+  lastMealPlanData = { mealList, totals, categories, catColors };
+}
+
+function printShoppingList() {
+  if (!lastMealPlanData) return;
+  const { totals, categories, catColors } = lastMealPlanData;
+
+  let rows = '';
+  Object.entries(categories).forEach(([cat, keys]) => {
+    const items = keys.filter(k => totals[k]);
+    if (!items.length) return;
+    rows += `<tr><td colspan="3" style="background:#f5f5f5;font-weight:700;padding:8px 12px;border-top:2px solid #ddd;">${cat}</td></tr>`;
+    items.forEach(k => {
+      const item = totals[k];
+      const kg = item.grams >= 1000 ? (item.grams/1000).toFixed(1)+' kg' : item.grams+'g';
+      rows += `<tr>
+        <td style="padding:7px 12px;border-bottom:1px solid #eee;width:28px;"><div style="width:16px;height:16px;border:2px solid #999;border-radius:3px;display:inline-block;"></div></td>
+        <td style="padding:7px 12px;border-bottom:1px solid #eee;">${item.name}</td>
+        <td style="padding:7px 12px;border-bottom:1px solid #eee;text-align:right;font-weight:600;">${kg}</td>
+      </tr>`;
+    });
+  });
+
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>MDG Elite – Einkaufsliste</title>
+  <style>
+    body{font-family:Arial,sans-serif;max-width:600px;margin:40px auto;color:#111;}
+    h1{font-size:28px;letter-spacing:4px;color:#C9A84C;margin-bottom:4px;}
+    .subtitle{font-size:13px;color:#888;margin-bottom:24px;}
+    table{width:100%;border-collapse:collapse;}
+    @media print{
+      body{margin:20px;}
+      button{display:none!important;}
+      .no-print{display:none!important;}
+    }
+  </style>
+  </head><body>
+  <h1>MDG ELITE</h1>
+  <div class="subtitle">Einkaufsliste für 7 Tage · Erstellt am ${new Date().toLocaleDateString('de-CH')}</div>
+  <button onclick="window.print()" class="no-print" style="margin-bottom:20px;padding:10px 24px;background:#C9A84C;color:#000;border:none;font-weight:700;font-size:14px;cursor:pointer;border-radius:4px;">🖨️ Drucken</button>
+  <table>${rows}</table>
+  <p style="margin-top:24px;font-size:11px;color:#aaa;">mdgelite.com · Alle Mengen für 7 Tage berechnet</p>
+  </body></html>`);
+  win.document.close();
+  setTimeout(() => win.print(), 500);
 }
 
 // ══ CONTACT ══
