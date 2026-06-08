@@ -359,6 +359,7 @@ footer a{color:var(--gold);text-decoration:none;}
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -767,7 +768,7 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
       <p><strong style="color:var(--text);">Verantwortlich:</strong> MDG Elite / Marco Di Giovanni, Schweiz, E-Mail: <a href="mailto:mdgelite87@gmail.com" style="color:var(--gold);">mdgelite87@gmail.com</a></p>
       <p style="margin-top:16px;"><strong style="color:var(--text);">Kontaktformular:</strong> Wenn du das Kontaktformular nutzt, werden Name, E-Mail-Adresse, Betreff und Nachricht an den Websitebetreiber übermittelt. Der Versand erfolgt über EmailJS, sobald die EmailJS-Konfiguration in der Datei hinterlegt ist.</p>
       <p style="margin-top:16px;"><strong style="color:var(--text);">Nährwertsuche:</strong> Der Nährwertrechner fragt Produktdaten bei OpenFoodFacts ab. Dabei wird der eingegebene Suchbegriff an OpenFoodFacts übermittelt.</p>
-      <p style="margin-top:16px;"><strong style="color:var(--text);">Lokale Speicherung:</strong> Admin-Inhalte, hochgeladene Bilder und Einstellungen können im Browser per localStorage gespeichert werden. Diese Daten bleiben lokal im jeweiligen Browser und werden nicht automatisch an einen Server übertragen.</p>
+      <p style="margin-top:16px;"><strong style="color:var(--text);">Online-Speicherung:</strong> Admin-Inhalte und Bild-URLs werden zentral in Supabase gespeichert, damit Besucher dieselben Inhalte sehen. Bilddateien werden über Cloudinary gespeichert. Ein lokales Browser-Backup kann zusätzlich verwendet werden.</p>
       <p style="margin-top:16px;"><strong style="color:var(--text);">Externe Inhalte:</strong> Die Seite kann externe Dienste wie Google Fonts, YouTube, EmailJS, OpenFoodFacts und externe Bildquellen laden. Dabei können technische Daten wie IP-Adresse und Browserinformationen an diese Anbieter übertragen werden.</p>
       <p style="margin-top:16px;font-size:12px;">Hinweis: Dies ist eine technische Basisversion. Vor produktiver Veröffentlichung sollte die Datenschutzerklärung rechtlich geprüft und an Hosting, Tracking, Cookies und Geschäftsmodell angepasst werden.</p>
     </div>
@@ -905,6 +906,102 @@ async function uploadToCloudinary(file) {
   return data.secure_url;
 }
 
+// ══ SUPABASE KONFIGURATION ══
+// Supabase speichert die finalen Cloudinary-URLs und editierbaren Texte zentral,
+// damit Besucher dieselben Inhalte sehen wie der Admin.
+const SUPABASE_URL = 'https://ehbmwonazgrxnmjgnrzw.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_L_hCAeF17iTDZWkgxLtPfg_PhPEdLy2';
+const supabaseClient = (window.supabase && SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+  : null;
+
+let siteState = { content:{}, images:{}, gallery:[] };
+let supabaseLoaded = false;
+
+function collectEditableContent(){
+  const content = {};
+  document.querySelectorAll('[data-editable][id]').forEach(el => { content[el.id] = el.innerHTML; });
+  return content;
+}
+
+function applyEditableContent(content){
+  Object.entries(content || {}).forEach(([id, html]) => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  });
+}
+
+function getGallerySources(){
+  return Array.from(document.querySelectorAll('#galleryGrid .gallery-item img')).map(img => img.src);
+}
+
+function loadLocalBackup(){
+  try {
+    const saved = localStorage.getItem('mdgelite_content');
+    if (saved) siteState.content = JSON.parse(saved) || {};
+    siteState.images.hero = localStorage.getItem('mdgelite_hero_image') || siteState.images.hero;
+    siteState.images.aboutBefore = localStorage.getItem('mdgelite_about_before') || siteState.images.aboutBefore;
+    siteState.images.aboutAfter = localStorage.getItem('mdgelite_about_after') || siteState.images.aboutAfter;
+    siteState.gallery = JSON.parse(localStorage.getItem('mdgelite_gallery_images') || '[]');
+  } catch(e) {}
+}
+
+function saveLocalBackup(){
+  try {
+    localStorage.setItem('mdgelite_content', JSON.stringify(siteState.content || {}));
+    if (siteState.images?.hero) localStorage.setItem('mdgelite_hero_image', siteState.images.hero);
+    if (siteState.images?.aboutBefore) localStorage.setItem('mdgelite_about_before', siteState.images.aboutBefore);
+    if (siteState.images?.aboutAfter) localStorage.setItem('mdgelite_about_after', siteState.images.aboutAfter);
+    localStorage.setItem('mdgelite_gallery_images', JSON.stringify(siteState.gallery || []));
+  } catch(e) {}
+}
+
+async function loadSiteState(){
+  if (!supabaseClient) { loadLocalBackup(); return; }
+  try {
+    const { data, error } = await supabaseClient
+      .from('site_content')
+      .select('value')
+      .eq('id','main')
+      .maybeSingle();
+    if (error) throw error;
+    if (data && data.value) {
+      siteState = Object.assign({content:{}, images:{}, gallery:[]}, data.value);
+      supabaseLoaded = true;
+      saveLocalBackup();
+    } else {
+      loadLocalBackup();
+    }
+  } catch(e) {
+    console.warn('Supabase konnte nicht geladen werden, lokales Backup wird verwendet:', e);
+    loadLocalBackup();
+  }
+}
+
+async function saveSiteState(showMessage=true){
+  siteState.content = collectEditableContent();
+  siteState.gallery = getGallerySources();
+  saveLocalBackup();
+
+  if (!supabaseClient) {
+    if (showMessage) showToast('⚠ Supabase ist nicht konfiguriert – nur lokal gespeichert');
+    return false;
+  }
+
+  try {
+    const payload = { id:'main', value: siteState };
+    const { error } = await supabaseClient.from('site_content').upsert(payload, { onConflict:'id' });
+    if (error) throw error;
+    supabaseLoaded = true;
+    if (showMessage) showToast('✓ Online gespeichert – für alle Besucher sichtbar');
+    return true;
+  } catch(e) {
+    console.warn('Supabase speichern fehlgeschlagen:', e);
+    if (showMessage) showToast('⚠ Supabase speichern fehlgeschlagen – lokal gesichert');
+    return false;
+  }
+}
+
 // ══ ADMIN CREDENTIALS ══
 const ADMIN_USER = 'admin';
 let ADMIN_PW = 'Gabriel2010$Elia2015$SaraJane2004$';
@@ -968,46 +1065,26 @@ function adminLogout() {
 
 function adminOnly(fn) { if (isAdmin) fn(); else showToast('⚠ Nur im Admin-Modus verfügbar'); }
 
-function saveAll() {
-  const data = {};
-  document.querySelectorAll('[data-editable][id]').forEach(el => { data[el.id] = el.innerHTML; });
-  try {
-    localStorage.setItem('mdgelite_content', JSON.stringify(data));
-    saveGalleryToStorage();
-  } catch(e) {
-    showToast('⚠ Speicherlimit erreicht – bitte kleinere Bilder verwenden');
-    return;
-  }
-  showToast('✓ Änderungen gespeichert');
+async function saveAll() {
+  await saveSiteState(true);
 }
 
-function loadSaved() {
+async function loadSaved() {
+  await loadSiteState();
+  applyEditableContent(siteState.content || {});
+
   try {
-    const saved = localStorage.getItem('mdgelite_content');
-    if (saved) {
-      const data = JSON.parse(saved);
-      Object.keys(data).forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = data[id];
-      });
-    }
     const pw = localStorage.getItem('mdgelite_pw');
     if (pw) ADMIN_PW = pw;
-
-    const heroImg = localStorage.getItem('mdgelite_hero_image');
-    if (heroImg) renderHeroImg(heroImg);
-
-    const aboutBefore = localStorage.getItem('mdgelite_about_before');
-    if (aboutBefore) renderAboutImg('before', aboutBefore);
-    const aboutAfter = localStorage.getItem('mdgelite_about_after');
-    if (aboutAfter) renderAboutImg('after', aboutAfter);
-
-    const gallery = JSON.parse(localStorage.getItem('mdgelite_gallery_images') || '[]');
-    if (gallery.length) {
-      gallery.forEach(src => addGalleryItem(src, false));
-      checkGalleryEmpty();
-    }
   } catch(e) {}
+
+  if (siteState.images?.hero) renderHeroImg(siteState.images.hero);
+  if (siteState.images?.aboutBefore) renderAboutImg('before', siteState.images.aboutBefore);
+  if (siteState.images?.aboutAfter) renderAboutImg('after', siteState.images.aboutAfter);
+
+  document.querySelectorAll('#galleryGrid .gallery-item').forEach(el => el.remove());
+  (siteState.gallery || []).forEach(src => addGalleryItem(src, false));
+  checkGalleryEmpty();
 }
 
 function changePassword() {
@@ -1074,19 +1151,17 @@ async function setHeroImg(e) {
   if (!isAdmin) return;
   const file = e.target.files[0]; if (!file) return;
   try {
-    if (cloudinaryReady()) {
-      showToast('Profilfoto wird hochgeladen...');
-      const url = await uploadToCloudinary(file);
-      renderHeroImg(url);
-      localStorage.setItem('mdgelite_hero_image', url);
-      showToast('✓ Profilfoto online – für alle sichtbar');
-    } else {
-      const dataUrl = await resizeImageToDataURL(file, 1200, 0.84);
-      renderHeroImg(dataUrl);
-      localStorage.setItem('mdgelite_hero_image', dataUrl);
-      showToast('✓ Profilfoto lokal gespeichert (nur dieser Browser)');
-    }
+    showToast(cloudinaryReady() ? 'Profilfoto wird hochgeladen...' : 'Profilfoto wird vorbereitet...');
+    const url = cloudinaryReady()
+      ? await uploadToCloudinary(file)
+      : await resizeImageToDataURL(file, 1200, 0.84);
+    renderHeroImg(url);
+    siteState.images = siteState.images || {};
+    siteState.images.hero = url;
+    await saveSiteState(false);
+    showToast(cloudinaryReady() ? '✓ Profilfoto online gespeichert' : '✓ Profilfoto lokal gespeichert');
   } catch(err) {
+    console.warn(err);
     showToast('⚠ Bild konnte nicht gespeichert werden');
   }
   e.target.value = '';
@@ -1104,21 +1179,19 @@ function renderAboutImg(type, src) {
 async function setAboutImg(e, type) {
   if (!isAdmin) return;
   const file = e.target.files[0]; if (!file) return;
-  const key = type === 'before' ? 'mdgelite_about_before' : 'mdgelite_about_after';
   try {
-    if (cloudinaryReady()) {
-      showToast('Foto wird hochgeladen...');
-      const url = await uploadToCloudinary(file);
-      renderAboutImg(type, url);
-      localStorage.setItem(key, url);
-      showToast('✓ Foto online – für alle sichtbar');
-    } else {
-      const dataUrl = await resizeImageToDataURL(file, 1600, 0.84);
-      renderAboutImg(type, dataUrl);
-      localStorage.setItem(key, dataUrl);
-      showToast('✓ Foto lokal gespeichert (nur dieser Browser)');
-    }
+    showToast(cloudinaryReady() ? 'Foto wird hochgeladen...' : 'Foto wird vorbereitet...');
+    const url = cloudinaryReady()
+      ? await uploadToCloudinary(file)
+      : await resizeImageToDataURL(file, 1600, 0.84);
+    renderAboutImg(type, url);
+    siteState.images = siteState.images || {};
+    if (type === 'before') siteState.images.aboutBefore = url;
+    else siteState.images.aboutAfter = url;
+    await saveSiteState(false);
+    showToast(cloudinaryReady() ? '✓ Foto online gespeichert' : '✓ Foto lokal gespeichert');
   } catch(err) {
+    console.warn(err);
     showToast('⚠ Bild konnte nicht gespeichert werden');
   }
   e.target.value = '';
@@ -1189,32 +1262,27 @@ async function addGalleryImages(e) {
   const files = Array.from(e.target.files);
   let added = 0;
   const useCloud = cloudinaryReady();
-  showToast(useCloud ? 'Bilder werden hochgeladen...' : 'Bilder werden gespeichert...');
+  showToast(useCloud ? 'Bilder werden hochgeladen...' : 'Bilder werden vorbereitet...');
   for (const file of files) {
     try {
-      if (useCloud) {
-        // Echtes Hosting: für alle Besucher sichtbar
-        const url = await uploadToCloudinary(file);
-        addGalleryItem(url, false);
-      } else {
-        // Fallback: nur lokal im eigenen Browser sichtbar
-        const dataUrl = await resizeImageToDataURL(file, 1600, 0.82);
-        addGalleryItem(dataUrl, false);
-      }
+      const url = useCloud
+        ? await uploadToCloudinary(file)
+        : await resizeImageToDataURL(file, 1600, 0.82);
+      addGalleryItem(url, false);
       added++;
-    } catch(err) {}
+    } catch(err) { console.warn(err); }
   }
-  saveGalleryToStorage();
+  await saveGalleryToStorage();
   checkGalleryEmpty();
   showToast(useCloud
-    ? `✓ ${added} Bild(er) online – für alle sichtbar`
-    : `✓ ${added} Bild(er) lokal gespeichert (nur dieser Browser)`);
+    ? `✓ ${added} Bild(er) online gespeichert`
+    : `✓ ${added} Bild(er) lokal gespeichert`);
   e.target.value = '';
 }
 
-function saveGalleryToStorage() {
-  const imgs = Array.from(document.querySelectorAll('#galleryGrid .gallery-item img')).map(img => img.src);
-  try { localStorage.setItem('mdgelite_gallery_images', JSON.stringify(imgs)); } catch(e) {}
+async function saveGalleryToStorage() {
+  siteState.gallery = getGallerySources();
+  await saveSiteState(false);
 }
 
 function checkGalleryEmpty() {
