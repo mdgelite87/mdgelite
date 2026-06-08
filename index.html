@@ -1209,6 +1209,7 @@ const FOOD_DB = {
   lachs:{name:'Lachs',p:25,c:0,f:13,kcal:208,cat:'Protein'},
   thunfisch:{name:'Thunfisch in Wasser',p:25,c:0,f:1,kcal:103,cat:'Protein'},
   eier:{name:'Eier',p:13,c:0.7,f:10,kcal:143,cat:'Protein'},
+  eiklar:{name:'Eiklar',p:11,c:0.7,f:0.2,kcal:52,cat:'Protein'},
   magerquark:{name:'Magerquark 0.2%',p:12,c:4,f:0.2,kcal:66,cat:'Milchprodukte & Protein'},
   skyr:{name:'Skyr / High Protein Joghurt',p:11,c:4,f:0.2,kcal:64,cat:'Milchprodukte & Protein'},
   whey:{name:'Whey Isolat',p:85,c:4,f:2,kcal:370,cat:'Milchprodukte & Protein'},
@@ -1254,14 +1255,11 @@ function calculate(){
   const target=Math.max(900, Math.round(tdee+goalDelta));
   const protG=Math.round(weight*protMult);
 
-  let fatMult = goalDelta < 0 ? 0.75 : goalDelta === 0 ? 0.9 : 1.0;
-  let fatG=Math.round(weight*fatMult);
-  let carbsG=Math.round((target-protG*4-fatG*9)/4);
-
-  if (carbsG < 30) {
-    fatG = Math.max(Math.round(weight*0.55), Math.floor((target - protG*4 - 120) / 9));
-    carbsG = Math.max(0, Math.round((target-protG*4-fatG*9)/4));
-  }
+  // Protein und Fett bleiben fix. Nur Kohlenhydrate werden an das Kalorienziel angepasst.
+  // Bei sehr niedrigem Kalorienziel werden Protein/Fett NICHT reduziert.
+  const fatMult = goalDelta < 0 ? 0.75 : goalDelta === 0 ? 0.9 : 1.0;
+  const fatG=Math.round(weight*fatMult);
+  const carbsG=Math.max(0, Math.round((target-protG*4-fatG*9)/4));
 
   const wk=goalDelta*7,wkg=(wk/7700).toFixed(2);
   const wt=wk===0?'Gewicht stabil':wk<0?`Fettabbau ~${Math.abs(wkg)} kg/Woche`:`Gewichtszunahme ~${wkg} kg/Woche`;
@@ -1291,160 +1289,162 @@ function calculate(){
   setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),100);
 }
 
+
+function round1(n){return Math.round((Number(n)||0)*10)/10;}
+function macroKcal(p,c,f){return Math.round((Number(p)||0)*4 + (Number(c)||0)*4 + (Number(f)||0)*9);}
+
 function gramsFor(key, grams){
   const f=FOOD_DB[key]; const g=Math.max(0, Math.round(grams));
-  return {k:key,name:f.name,grams:g,p:round1(f.p*g/100),c:round1(f.c*g/100),fat:round1(f.f*g/100),cal:Math.round(f.kcal*g/100)};
+  const p=round1(f.p*g/100), c=round1(f.c*g/100), fat=round1(f.f*g/100);
+  // Für den Ernährungsplan werden Kalorien aus Makros berechnet, damit Ziel-kcal und Makros zusammenpassen.
+  return {k:key,name:f.name,grams:g,p,c,fat,cal:macroKcal(p,c,fat)};
 }
-function round1(n){return Math.round(n*10)/10;}
 function sumFoods(foods){
   return foods.reduce((a,i)=>({p:a.p+i.p,c:a.c+i.c,fat:a.fat+i.fat,cal:a.cal+i.cal}),{p:0,c:0,fat:0,cal:0});
 }
 function mealLabel(diet){
   return diet==='vegan'?'Vegan':diet==='vegetarian'?'Vegetarisch':'Fleisch/Fisch';
 }
-
-
-function clampGrams(g, min=0, max=999){
+function clampGrams(g, min=0, max=1200){
   if (!isFinite(g)) return 0;
   return Math.max(min, Math.min(max, Math.round(g)));
 }
-
+function consolidateFoods(foods){
+  const map = new Map();
+  foods.forEach(f => {
+    if (!f || !f.k || !f.grams) return;
+    map.set(f.k, (map.get(f.k) || 0) + f.grams);
+  });
+  return [...map.entries()].map(([k,g]) => gramsFor(k,g)).filter(f => f.grams > 0);
+}
 function addFood(foods, key, grams){
   const g = clampGrams(grams);
   if (g <= 0 || !FOOD_DB[key]) return;
-  foods.push(gramsFor(key, g));
+  const existing = foods.find(f => f.k === key);
+  if (existing) {
+    const rebuilt = gramsFor(key, existing.grams + g);
+    Object.assign(existing, rebuilt);
+  } else {
+    foods.push(gramsFor(key, g));
+  }
 }
 
-function fillMacroGaps(foods, target, context, diet){
-  let cur = sumFoods(foods);
-  const proteinFallback = diet === 'vegan' ? 'vegwhey' : 'whey';
-
-  // Snacks and breakfast may use protein powder; lunch/dinner should stay as real meals.
-  if ((context === 'breakfast' || context === 'snack' || context === 'fasten_shake') && target.p - cur.p > 4) {
-    addFood(foods, proteinFallback, (target.p - cur.p) / FOOD_DB[proteinFallback].p * 100);
-  }
-
-  cur = sumFoods(foods);
-  if (target.c - cur.c > 5) {
-    const carbKey = context === 'breakfast' || context === 'snack' || context === 'fasten_shake' ? 'banane' : 'kartoffeln';
-    addFood(foods, carbKey, (target.c - cur.c) / FOOD_DB[carbKey].c * 100);
-  }
-
-  cur = sumFoods(foods);
-  if (target.fat - cur.fat > 2) {
-    const fatKey = context === 'lunch' || context === 'dinner' || context === 'fasten_main' ? 'olivenoel' : 'mandeln';
-    addFood(foods, fatKey, (target.fat - cur.fat) / FOOD_DB[fatKey].f * 100);
-  }
-
-  return foods.filter(f => f.grams > 0);
-}
-
-
-function normalizeFoodsToCalories(foods, targetKcal) {
-  // Wichtig: Jede Option pro Mahlzeit wird auf dasselbe kcal-Ziel normiert.
-  // Dadurch bleibt der Tagesplan unabhängig von der Auswahl beim Kalorienziel.
-  if (!targetKcal || targetKcal <= 0 || !foods.length) return foods;
-  let cur = sumFoods(foods);
-  if (!cur.cal) return foods;
-
-  let factor = targetKcal / cur.cal;
-  let normalized = foods.map(f => gramsFor(f.k, Math.max(1, f.grams * factor)));
-
-  // Kleine Rundungsdifferenzen über das kaloriendichteste passende Lebensmittel korrigieren.
-  // Bei grossen Abweichungen erneut proportional skalieren.
-  for (let tries = 0; tries < 4; tries++) {
-    cur = sumFoods(normalized);
-    let diff = Math.round(targetKcal - cur.cal);
-    if (Math.abs(diff) <= 3) break;
-    if (Math.abs(diff) > 35) {
-      factor = targetKcal / cur.cal;
-      normalized = normalized.map(f => gramsFor(f.k, Math.max(1, f.grams * factor)));
-      continue;
+function solve3(A, b){
+  const m = A.map((row,i)=>[...row, b[i]]);
+  for(let col=0; col<3; col++){
+    let pivot=col;
+    for(let r=col+1; r<3; r++) if(Math.abs(m[r][col])>Math.abs(m[pivot][col])) pivot=r;
+    if(Math.abs(m[pivot][col]) < 1e-9) return null;
+    [m[col],m[pivot]]=[m[pivot],m[col]];
+    const div=m[col][col];
+    for(let c=col; c<4; c++) m[col][c]/=div;
+    for(let r=0; r<3; r++){
+      if(r===col) continue;
+      const factor=m[r][col];
+      for(let c=col; c<4; c++) m[r][c]-=factor*m[col][c];
     }
-    const adjustFood = normalized.find(f => ['olivenoel','mandeln','erdnussbutter','avocado'].includes(f.k))
-                    || normalized.find(f => ['reis','kartoffeln','haferflocken','vollkornbrot','quinoa','banane'].includes(f.k))
-                    || normalized[normalized.length - 1];
-    const kcalPerGram = FOOD_DB[adjustFood.k].kcal / 100;
-    const gramChange = Math.round(diff / kcalPerGram);
-    adjustFood.grams = Math.max(1, adjustFood.grams + gramChange);
-    const rebuilt = gramsFor(adjustFood.k, adjustFood.grams);
-    Object.assign(adjustFood, rebuilt);
   }
-  return normalized.filter(f => f.grams > 0);
+  return [m[0][3],m[1][3],m[2][3]];
+}
+
+function constructMacroMeal(keys, extras, targetP, targetC, targetF){
+  // Erst optionale typische Extras hinzufügen, dann die 3 Hauptzutaten exakt auf P/C/F lösen.
+  let foods = [];
+  (extras || []).forEach(([k,g]) => addFood(foods,k,g));
+  let cur = sumFoods(foods);
+  let remP = Math.max(0, targetP - cur.p);
+  let remC = Math.max(0, targetC - cur.c);
+  let remF = Math.max(0, targetF - cur.fat);
+  const [pKey,cKey,fKey] = keys;
+  const cols = [pKey,cKey,fKey].map(k => [FOOD_DB[k].p/100, FOOD_DB[k].c/100, FOOD_DB[k].f/100]);
+  const A = [ [cols[0][0],cols[1][0],cols[2][0]], [cols[0][1],cols[1][1],cols[2][1]], [cols[0][2],cols[1][2],cols[2][2]] ];
+  let sol = solve3(A, [remP,remC,remF]);
+
+  // Wenn typische Extras (Beeren/Gemüse) bei sehr niedrigen KH zu viel werden, ohne Extras neu lösen.
+  if(sol && sol.some(x => !isFinite(x) || x < -1) && foods.length) {
+    foods = [];
+    cur = sumFoods(foods);
+    remP = Math.max(0, targetP - cur.p);
+    remC = Math.max(0, targetC - cur.c);
+    remF = Math.max(0, targetF - cur.fat);
+    sol = solve3(A, [remP,remC,remF]);
+  }
+
+  if(!sol || sol.some(x => !isFinite(x) || x < -1)) {
+    // Fallback: Protein und Fett bleiben maßgeblich, Kohlenhydrate füllen den Rest.
+    sol = [0,0,0];
+    sol[0] = remP / (FOOD_DB[pKey].p/100 || 1);
+    let afterP = {p: remP, c: FOOD_DB[pKey].c*sol[0]/100, fat: FOOD_DB[pKey].f*sol[0]/100};
+    sol[2] = Math.max(0, (remF - afterP.fat) / (FOOD_DB[fKey].f/100 || 1));
+    let afterF = {c: afterP.c + FOOD_DB[fKey].c*sol[2]/100};
+    sol[1] = Math.max(0, (remC - afterF.c) / (FOOD_DB[cKey].c/100 || 1));
+  }
+  sol = sol.map(x => clampGrams(x, 0));
+  addFood(foods, pKey, sol[0]);
+  addFood(foods, cKey, sol[1]);
+  addFood(foods, fKey, sol[2]);
+
+  // Nach Rundung: Protein/Fett feinjustieren, Kohlenhydrate zuletzt anpassen.
+  foods = consolidateFoods(foods);
+  for(let i=0;i<3;i++){
+    let t=sumFoods(foods);
+    if (Math.abs(targetP - t.p) > 1.2) addFood(foods, pKey, (targetP - t.p)/(FOOD_DB[pKey].p/100 || 1));
+    t=sumFoods(foods);
+    if (Math.abs(targetF - t.fat) > 0.8) addFood(foods, fKey, (targetF - t.fat)/(FOOD_DB[fKey].f/100 || 1));
+    t=sumFoods(foods);
+    if (Math.abs(targetC - t.c) > 1.5) addFood(foods, cKey, (targetC - t.c)/(FOOD_DB[cKey].c/100 || 1));
+    foods = consolidateFoods(foods);
+  }
+  return foods;
 }
 
 function buildMealVariant(mealType, variant, targetP, targetC, targetF, diet, targetKcal){
-  const target = {p:targetP, c:targetC, fat:targetF};
-  const foods = [];
+  // Keine pauschale kcal-Skalierung: Protein und Fett bleiben auf Ziel, nur KH tragen Kalorienanpassungen.
+  targetP = Number(targetP)||0; targetC = Math.max(0, Number(targetC)||0); targetF = Number(targetF)||0;
 
   if (mealType === 'breakfast') {
+    const lowCarb = targetC < 18;
     if (variant === 0) {
-      // Frühstück 1: Bowl / Porridge – kein Reis, kein Gemüse-Mix.
-      const dairy = diet === 'vegan' ? 'vegwhey' : 'magerquark';
-      addFood(foods, dairy, targetP / FOOD_DB[dairy].p * 100 * 0.70);
-      addFood(foods, 'haferflocken', Math.max(30, targetC / FOOD_DB.haferflocken.c * 100 * 0.70));
-      addFood(foods, 'beeren', 120);
-      addFood(foods, 'mandeln', Math.max(8, targetF / FOOD_DB.mandeln.f * 100 * 0.65));
-    } else {
-      // Frühstück 2: herzhaft, aber weiterhin frühstückstypisch.
-      if (diet === 'vegan') {
-        addFood(foods, 'tofu', targetP / FOOD_DB.tofu.p * 100 * 0.75);
-      } else {
-        addFood(foods, 'eier', Math.max(120, targetP / FOOD_DB.eier.p * 100 * 0.55));
-        const extra = diet === 'meat' ? 'thunfisch' : 'skyr';
-        addFood(foods, extra, Math.max(60, targetP / FOOD_DB[extra].p * 100 * 0.25));
+      if (lowCarb) {
+        const protein = diet === 'vegan' ? 'vegwhey' : 'whey';
+        return constructMacroMeal([protein,'haferflocken','mandeln'], [], targetP,targetC,targetF);
       }
-      addFood(foods, 'vollkornbrot', Math.max(45, targetC / FOOD_DB.vollkornbrot.c * 100 * 0.75));
-      addFood(foods, 'avocado', Math.max(30, targetF / FOOD_DB.avocado.f * 100 * 0.55));
-      addFood(foods, 'spinat', 80);
+      const dairy = diet === 'vegan' ? 'vegwhey' : 'magerquark';
+      return constructMacroMeal([dairy,'haferflocken','mandeln'], [['beeren',60]], targetP,targetC,targetF);
     }
-    return normalizeFoodsToCalories(fillMacroGaps(foods, target, 'breakfast', diet), targetKcal);
+    if (lowCarb) {
+      const protein = diet === 'vegan' ? 'vegwhey' : 'whey';
+      return constructMacroMeal([protein,'vollkornbrot','avocado'], [], targetP,targetC,targetF);
+    }
+    if (diet === 'vegan') return constructMacroMeal(['tofu','vollkornbrot','avocado'], [['spinat',40]], targetP,targetC,targetF);
+    return constructMacroMeal(['eier','vollkornbrot','avocado'], [['spinat',40]], targetP,targetC,targetF);
   }
 
   if (mealType === 'snack') {
+    const lowCarb = targetC < 12;
     if (variant === 0) {
-      const base = diet === 'vegan' ? 'vegwhey' : 'skyr';
-      addFood(foods, base, targetP / FOOD_DB[base].p * 100 * 0.80);
-      addFood(foods, 'banane', Math.max(80, targetC / FOOD_DB.banane.c * 100 * 0.55));
-      addFood(foods, 'mandeln', Math.max(10, targetF / FOOD_DB.mandeln.f * 100 * 0.70));
-    } else {
-      const protein = diet === 'vegan' ? 'tofu' : 'magerquark';
-      addFood(foods, protein, targetP / FOOD_DB[protein].p * 100 * 0.75);
-      addFood(foods, 'haferflocken', Math.max(25, targetC / FOOD_DB.haferflocken.c * 100 * 0.55));
-      addFood(foods, 'beeren', 100);
-      addFood(foods, 'erdnussbutter', Math.max(8, targetF / FOOD_DB.erdnussbutter.f * 100 * 0.55));
+      const base = diet === 'vegan' ? 'vegwhey' : (lowCarb ? 'whey' : 'skyr');
+      return constructMacroMeal([base, lowCarb ? 'haferflocken' : 'banane','mandeln'], [], targetP,targetC,targetF);
     }
-    return normalizeFoodsToCalories(fillMacroGaps(foods, target, 'snack', diet), targetKcal);
+    const protein = diet === 'vegan' ? 'vegwhey' : (lowCarb ? 'whey' : 'magerquark');
+    return constructMacroMeal([protein,'haferflocken','erdnussbutter'], lowCarb ? [] : [['beeren',40]], targetP,targetC,targetF);
   }
 
-  // Lunch / dinner: echte Mahlzeiten, kein Whey als Abendessen.
   const isDinner = mealType === 'dinner';
-  const pool = diet === 'vegan'
-    ? (variant === 0 ? ['tofu','kartoffeln','gemuese','olivenoel'] : ['tempeh','quinoa','spinat','avocado'])
-    : diet === 'vegetarian'
-      ? (variant === 0 ? ['eier','kartoffeln','brokkoli','olivenoel'] : ['magerquark','quinoa','spinat','avocado'])
-      : (variant === 0
-        ? (isDinner ? ['lachs','kartoffeln','brokkoli','olivenoel'] : ['huhn','reis','brokkoli','olivenoel'])
-        : (isDinner ? ['rind','quinoa','spinat','avocado'] : ['thunfisch','kartoffeln','gemuese','olivenoel']));
-
-  const [pKey,cKey,vKey,fKey] = pool;
-  addFood(foods, vKey, isDinner ? 180 : 160);
-  let cur = sumFoods(foods);
-  addFood(foods, pKey, Math.max(80, (targetP - cur.p) / FOOD_DB[pKey].p * 100));
-  cur = sumFoods(foods);
-  addFood(foods, cKey, Math.max(80, (targetC - cur.c) / FOOD_DB[cKey].c * 100));
-  cur = sumFoods(foods);
-  addFood(foods, fKey, Math.max(fKey === 'olivenoel' ? 5 : 30, (targetF - cur.fat) / FOOD_DB[fKey].f * 100));
-
-  // Close remaining gaps with food-appropriate ingredients only.
-  cur = sumFoods(foods);
-  if (target.p - cur.p > 5) addFood(foods, pKey, (target.p - cur.p) / FOOD_DB[pKey].p * 100);
-  cur = sumFoods(foods);
-  if (target.c - cur.c > 6) addFood(foods, cKey, (target.c - cur.c) / FOOD_DB[cKey].c * 100);
-  cur = sumFoods(foods);
-  if (target.fat - cur.fat > 2) addFood(foods, fKey, (target.fat - cur.fat) / FOOD_DB[fKey].f * 100);
-
-  return normalizeFoodsToCalories(foods.filter(f => f.grams > 0), targetKcal);
+  let keys, extras;
+  if (diet === 'vegan') {
+    keys = variant === 0 ? ['tofu','kartoffeln','olivenoel'] : ['tempeh','quinoa','avocado'];
+    extras = variant === 0 ? [['gemuese',80]] : [['spinat',70]];
+  } else if (diet === 'vegetarian') {
+    keys = variant === 0 ? ['eier','kartoffeln','olivenoel'] : ['magerquark','quinoa','avocado'];
+    extras = variant === 0 ? [['brokkoli',80]] : [['spinat',70]];
+  } else {
+    keys = variant === 0
+      ? (isDinner ? ['lachs','kartoffeln','olivenoel'] : ['huhn','reis','olivenoel'])
+      : (isDinner ? ['rind','quinoa','avocado'] : ['thunfisch','kartoffeln','olivenoel']);
+    extras = variant === 0 ? [['brokkoli',80]] : [['gemuese',80]];
+  }
+  return constructMacroMeal(keys, extras, targetP,targetC,targetF);
 }
 
 function mealDistribution(meals){
@@ -1505,20 +1505,29 @@ function generateMealPlan(kcal, meals, proteinG, carbsG, fatG, diet) {
 }
 
 function generateFastenPlan(kcal, proteinG, carbsG, fatG, diet) {
-  // Protein-Fasten: Nur EINE echte Mahlzeit enthält Lebensmittel.
-  // Die Fastenphasen werden als Hinweis angezeigt und enthalten bewusst keine Lebensmittel,
-  // damit Einkaufsliste und Makros nur aus der Hauptmahlzeit entstehen.
+  // Protein-Fasten: 2 Mahlzeiten werden durch Whey-Shakes ersetzt.
+  // Jeder Shake liefert ca. 33% des Tagesproteins. Die feste Mahlzeit liefert den Rest plus die angepassten KH/Fette.
+  const powder = diet === 'vegan' ? 'vegwhey' : 'whey';
+  const shakeTargetP = proteinG * 0.33;
+  const shakeFoodsA = [gramsFor(powder, shakeTargetP / (FOOD_DB[powder].p/100))];
+  const shakeFoodsB = [gramsFor(powder, shakeTargetP / (FOOD_DB[powder].p/100))];
+  const shakeTotals = sumFoods([...shakeFoodsA, ...shakeFoodsB]);
+
+  const mainP = Math.max(0, proteinG - shakeTotals.p);
+  const mainF = Math.max(0, fatG - shakeTotals.fat);
+  const mainC = Math.max(0, carbsG - shakeTotals.c);
+  const mainKcal = Math.max(0, kcal - shakeTotals.cal);
   const mainType = 'dinner';
   const templates = [
-    {name:'Fastenphase morgens',time:'08:00',tag:'⚡',type:'fasten',targetKcal:0,fastenNote:'Keine Lebensmittel – Wasser, ungesüsster Tee oder schwarzer Kaffee.',alts:[
-      {label:'Fasten',foods:[]}
+    {name:'Protein Shake 1',time:'08:00',tag:'🥤',type:'fasten_shake',targetKcal:sumFoods(shakeFoodsA).cal,alts:[
+      {label:'Whey Shake',foods:shakeFoodsA}
     ]},
-    {name:'Hauptmahlzeit',time:'13:00 oder 19:00',tag:'🍽️',type:mainType,highlight:true,targetKcal:kcal,alts:[
-      {label:'Option A',foods:buildMealVariant(mainType,0,proteinG,carbsG,fatG,diet,kcal)},
-      {label:'Option B',foods:buildMealVariant(mainType,1,proteinG,carbsG,fatG,diet,kcal)}
+    {name:'Hauptmahlzeit',time:'13:00 oder 19:00',tag:'🍽️',type:mainType,highlight:true,targetKcal:mainKcal,alts:[
+      {label:'Option A',foods:buildMealVariant(mainType,0,mainP,mainC,mainF,diet,mainKcal)},
+      {label:'Option B',foods:buildMealVariant(mainType,1,mainP,mainC,mainF,diet,mainKcal)}
     ]},
-    {name:'Fastenphase später',time:'16:00',tag:'⚡',type:'fasten',targetKcal:0,fastenNote:'Keine Lebensmittel – Fasten bleibt Fasten. Bei echtem Protein-Shake bitte 3/4/5 Mahlzeiten wählen.',alts:[
-      {label:'Fasten',foods:[]}
+    {name:'Protein Shake 2',time:'16:00',tag:'🥤',type:'fasten_shake',targetKcal:sumFoods(shakeFoodsB).cal,alts:[
+      {label:'Whey Shake',foods:shakeFoodsB}
     ]}
   ];
   window._mealTemplates = templates;
@@ -1556,7 +1565,7 @@ function renderMealPlan(templates, diet, targets, isFasten=false){
   const summary = `<div style="margin-bottom:16px;padding:12px 20px;background:rgba(201,168,76,0.08);border:1px solid var(--gold-dim);border-radius:4px;font-size:13px;color:var(--text);line-height:1.6;">
     Ziel: <strong>${targets.proteinG}g P</strong> · <strong>${targets.carbsG}g C</strong> · <strong>${targets.fatG}g F</strong> · <strong>${targets.kcal} kcal</strong><br>
     Aktuelle Auswahl: <strong>${Math.round(totals.p)}g P</strong> · <strong>${Math.round(totals.c)}g C</strong> · <strong>${Math.round(totals.fat)}g F</strong> · <strong>${Math.round(totals.cal)} kcal</strong> <span style="color:var(--muted);">(${Math.round(totals.cal-targets.kcal)} kcal Abweichung)</span><br>
-    <span style="color:var(--muted);font-size:12px;">Jede Mahlzeit hat zwei sinnvolle Optionen. Die Einkaufsliste passt sich deiner Auswahl automatisch an.</span>
+    <span style="color:var(--muted);font-size:12px;">${isFasten?'Protein-Fasten: 2 Shakes liefern je ca. 33% Protein, die Hauptmahlzeit deckt den Rest ab.':'Jede Mahlzeit hat zwei sinnvolle Optionen. Die Einkaufsliste passt sich deiner Auswahl automatisch an.'}</span>
   </div>`;
 
   const html = mealList.map((meal, idx)=>{
@@ -1783,7 +1792,12 @@ const LOCAL_FOOD_DB = [
   {name:'Pizza Salami', aliases:'salami pizza pepperoni', kcal:285,p:12,c:31,f:13, source:'Standarddatenbank'},
   {name:'Pizza Prosciutto', aliases:'schinken pizza ham jambon', kcal:270,p:13,c:32,f:10, source:'Standarddatenbank'},
   {name:'Pizza Tonno', aliases:'thunfisch pizza tuna thon', kcal:245,p:14,c:30,f:8, source:'Standarddatenbank'},
-  {name:'Pizzateig', aliases:'pizza teig dough pâte', kcal:270,p:8,c:54,f:3, source:'Standarddatenbank'}];
+  {name:'Pizzateig', aliases:'pizza teig dough pâte', kcal:270,p:8,c:54,f:3, source:'Standarddatenbank'},
+  {name:'Döner Kebab', aliases:'doner kebab dürüm durum', kcal:240,p:13,c:25,f:10, source:'Standarddatenbank'},
+  {name:'Burger Classic', aliases:'hamburger cheeseburger fast food', kcal:260,p:13,c:27,f:12, source:'Standarddatenbank'},
+  {name:'Pommes Frites', aliases:'french fries frites', kcal:312,p:3.4,c:41,f:15, source:'Standarddatenbank'},
+  {name:'Lasagne', aliases:'lasagna', kcal:165,p:9,c:14,f:8, source:'Standarddatenbank'},
+  {name:'Spaghetti Bolognese', aliases:'pasta bolognese spaghetti', kcal:155,p:7,c:22,f:4.5, source:'Standarddatenbank'}];
 
 const QUERY_SYNONYMS = {
   'hähnchen':'chicken poulet', 'haehnchen':'chicken poulet', 'hühnerbrust':'chicken breast poulet', 'huehnerbrust':'chicken breast poulet',
@@ -1796,7 +1810,7 @@ const QUERY_SYNONYMS = {
   'nudeln':'pasta pâtes', 'ei':'egg oeuf', 'eier':'eggs oeufs', 'lachs':'salmon saumon',
   'thunfisch':'tuna thon', 'garnelen':'shrimp crevettes', 'mandeln':'almonds amandes',
   'olivenöl':'olive oil huile olive', 'olivenoel':'olive oil huile olive',
-  'pizza':'pizza margherita salami prosciutto tonno pizzateig'
+  'pizza':'pizza margherita salami prosciutto tonno pizzateig', 'döner':'doner kebab dürüm durum', 'doener':'doner kebab dürüm durum', 'burger':'hamburger cheeseburger', 'pommes':'french fries frites'
 };
 
 function normText(str) {
@@ -1859,6 +1873,9 @@ function normalizeOFFProduct(p, query='') {
     source: 'OpenFoodFacts'
   };
   item.score = relevanceScore(item, query);
+  const qParts = normText(query).split(/\s+/).filter(x => x.length >= 2);
+  const hay = normText((item.name || '') + ' ' + (item.brand || ''));
+  item.directMatch = !qParts.length || qParts.some(part => hay.includes(part));
   return item;
 }
 
@@ -1915,7 +1932,7 @@ async function fetchOFF(term, originalQuery, countryPriority=true) {
   const data = await res.json();
   return (data.products || [])
     .map(p => normalizeOFFProduct(p, originalQuery))
-    .filter(f => f.name && (f.kcal || f.p || f.c || f.f) && f.score >= 25);
+    .filter(f => f.name && f.directMatch && (f.kcal || f.p || f.c || f.f) && f.score >= 70);
 }
 
 async function searchOpenFoodFacts(query, local=[]) {
@@ -1939,7 +1956,7 @@ async function searchOpenFoodFacts(query, local=[]) {
 
     const cleaned = merged
       .map(x => ({...x, score: x.score || relevanceScore(x, query)}))
-      .filter(x => x.score >= 20)
+      .filter(x => x.source === 'Standarddatenbank' || x.score >= 70)
       .sort((a,b) => (b.score - a.score) || ((b.source==='Standarddatenbank') - (a.source==='Standarddatenbank')))
       .slice(0, 24);
 
