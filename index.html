@@ -140,6 +140,9 @@ section{position:relative;z-index:1;}
 .admin-mode .gallery-delete{display:flex;}
 .gallery-add{aspect-ratio:1;background:var(--card2);border:2px dashed var(--border);border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;color:var(--muted);font-size:12px;letter-spacing:1px;transition:all 0.2s;}
 .gallery-add:hover{border-color:var(--admin);color:var(--admin);background:var(--admin-dim);}
+/* Admin-only gallery upload: hidden for normal visitors */
+.gallery-add.admin-only{display:none!important;}
+.admin-mode .gallery-add.admin-only{display:flex!important;}
 #galleryInput{display:none;}
 .lightbox{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.95);align-items:center;justify-content:center;}
 .lightbox.open{display:flex;}
@@ -498,7 +501,7 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
       <p data-editable>Transformation, Wettkampf-Prep und hinter den Kulissen</p>
     </div>
     <div class="gallery-grid" id="galleryGrid">
-      <div class="gallery-add admin-only" onclick="document.getElementById('galleryInput').click()">
+      <div class="gallery-add admin-only" onclick="adminOnly(()=>document.getElementById('galleryInput').click())">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         <span>Bilder hinzufügen</span>
       </div>
