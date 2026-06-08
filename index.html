@@ -742,10 +742,10 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
   <div class="content-wrap">
     <div class="page-header">
       <div class="eyebrow">Rechtliches</div>
-      <h2>IMPRESSUM</h2>
-      <p>Angaben gemäss Schweizer Recht</p>
+      <h2 id="impressumTitle" data-editable>IMPRESSUM</h2>
+      <p id="impressumSubtitle" data-editable>Angaben gemäss Schweizer Recht</p>
     </div>
-    <div class="kontakt-wrap" style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:28px;line-height:1.8;color:var(--muted);font-size:14px;">
+    <div id="impressumContent" data-editable class="kontakt-wrap" style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:28px;line-height:1.8;color:var(--muted);font-size:14px;min-height:360px;">
       <p><strong style="color:var(--text);">MDG Elite / Marco Di Giovanni</strong></p>
       <p>Schweiz</p>
       <p>E-Mail: <a href="mailto:mdgelite87@gmail.com" style="color:var(--gold);">mdgelite87@gmail.com</a></p>
@@ -760,10 +760,10 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
   <div class="content-wrap">
     <div class="page-header">
       <div class="eyebrow">Rechtliches</div>
-      <h2>DATENSCHUTZ</h2>
-      <p>Informationen zur Datenbearbeitung</p>
+      <h2 id="datenschutzTitle" data-editable>DATENSCHUTZ</h2>
+      <p id="datenschutzSubtitle" data-editable>Informationen zur Datenbearbeitung</p>
     </div>
-    <div class="kontakt-wrap" style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:28px;line-height:1.8;color:var(--muted);font-size:14px;">
+    <div id="datenschutzContent" data-editable class="kontakt-wrap" style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:28px;line-height:1.8;color:var(--muted);font-size:14px;min-height:520px;">
       <p><strong style="color:var(--text);">Verantwortlich:</strong> MDG Elite / Marco Di Giovanni, Schweiz, E-Mail: <a href="mailto:mdgelite87@gmail.com" style="color:var(--gold);">mdgelite87@gmail.com</a></p>
       <p style="margin-top:16px;"><strong style="color:var(--text);">Kontaktformular:</strong> Wenn du das Kontaktformular nutzt, werden Name, E-Mail-Adresse, Betreff und Nachricht an den Websitebetreiber übermittelt. Der Versand erfolgt über EmailJS, sobald die EmailJS-Konfiguration in der Datei hinterlegt ist.</p>
       <p style="margin-top:16px;"><strong style="color:var(--text);">Nährwertsuche:</strong> Der Nährwertrechner fragt Produktdaten bei OpenFoodFacts ab. Dabei wird der eingegebene Suchbegriff an OpenFoodFacts übermittelt.</p>
@@ -791,7 +791,7 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
   <button class="admin-btn" onclick="openPasswordModal()">🔑 Passwort ändern</button>
   <button class="admin-btn gold" onclick="saveAll()">💾 Speichern</button>
   <button class="admin-btn" onclick="adminLogout()">Logout</button>
-  <span class="admin-hint">Alle Texte direkt anklicken &amp; bearbeiten</span>
+  <span class="admin-hint">Alle Texte direkt anklicken &amp; bearbeiten · Impressum/Datenschutz sind ebenfalls editierbar</span>
 </div>
 
 <!-- ══ LOGIN MODAL ══ -->
@@ -1348,103 +1348,118 @@ function solve3(A, b){
 }
 
 function constructMacroMeal(keys, extras, targetP, targetC, targetF){
-  // Erst optionale typische Extras hinzufügen, dann die 3 Hauptzutaten exakt auf P/C/F lösen.
-  let foods = [];
-  (extras || []).forEach(([k,g]) => addFood(foods,k,g));
-  let cur = sumFoods(foods);
-  let remP = Math.max(0, targetP - cur.p);
-  let remC = Math.max(0, targetC - cur.c);
-  let remF = Math.max(0, targetF - cur.fat);
+  // Robuste Makro-Logik: Protein und Fett werden priorisiert, Kohlenhydrate füllen nur den Rest.
+  // Es werden keine Optionen mehr zugelassen, die Fett/Kalorien sprengen.
+  targetP = Math.max(0, Number(targetP)||0);
+  targetC = Math.max(0, Number(targetC)||0);
+  targetF = Math.max(0, Number(targetF)||0);
+
+  let fixed = [];
+  (extras || []).forEach(([k,g]) => addFood(fixed,k,g));
+
   const [pKey,cKey,fKey] = keys;
-  const cols = [pKey,cKey,fKey].map(k => [FOOD_DB[k].p/100, FOOD_DB[k].c/100, FOOD_DB[k].f/100]);
-  const A = [ [cols[0][0],cols[1][0],cols[2][0]], [cols[0][1],cols[1][1],cols[2][1]], [cols[0][2],cols[1][2],cols[2][2]] ];
-  let sol = solve3(A, [remP,remC,remF]);
+  const pFood = FOOD_DB[pKey], cFood = FOOD_DB[cKey], fFood = FOOD_DB[fKey];
+  if (!pFood || !cFood || !fFood) return fixed;
 
-  // Wenn typische Extras (Beeren/Gemüse) bei sehr niedrigen KH zu viel werden, ohne Extras neu lösen.
-  if(sol && sol.some(x => !isFinite(x) || x < -1) && foods.length) {
-    foods = [];
-    cur = sumFoods(foods);
-    remP = Math.max(0, targetP - cur.p);
-    remC = Math.max(0, targetC - cur.c);
-    remF = Math.max(0, targetF - cur.fat);
-    sol = solve3(A, [remP,remC,remF]);
+  function macrosForCombo(pg, cg, fg){
+    const foods = [];
+    fixed.forEach(x => addFood(foods, x.k, x.grams));
+    addFood(foods, pKey, pg);
+    addFood(foods, cKey, cg);
+    addFood(foods, fKey, fg);
+    return consolidateFoods(foods);
   }
 
-  if(!sol || sol.some(x => !isFinite(x) || x < -1)) {
-    // Fallback: Protein und Fett bleiben maßgeblich, Kohlenhydrate füllen den Rest.
-    sol = [0,0,0];
-    sol[0] = remP / (FOOD_DB[pKey].p/100 || 1);
-    let afterP = {p: remP, c: FOOD_DB[pKey].c*sol[0]/100, fat: FOOD_DB[pKey].f*sol[0]/100};
-    sol[2] = Math.max(0, (remF - afterP.fat) / (FOOD_DB[fKey].f/100 || 1));
-    let afterF = {c: afterP.c + FOOD_DB[fKey].c*sol[2]/100};
-    sol[1] = Math.max(0, (remC - afterF.c) / (FOOD_DB[cKey].c/100 || 1));
-  }
-  sol = sol.map(x => clampGrams(x, 0));
-  addFood(foods, pKey, sol[0]);
-  addFood(foods, cKey, sol[1]);
-  addFood(foods, fKey, sol[2]);
+  // Suche über Protein- und Fettmenge. Kohlenhydrate werden daraus berechnet.
+  // Damit können KH flexibel angepasst werden, ohne Protein/Fett zu zerstören.
+  let best = null;
+  const maxProteinG = Math.min(1200, Math.max(120, Math.ceil(targetP / Math.max(0.01, pFood.p/100) * 1.45)));
+  const maxFatG = fKey === 'olivenoel'
+    ? Math.min(120, Math.max(30, Math.ceil(targetF * 1.4)))
+    : Math.min(400, Math.max(80, Math.ceil(targetF / Math.max(0.01, fFood.f/100) * 1.4)));
 
-  // Nach Rundung: Protein/Fett feinjustieren, Kohlenhydrate zuletzt anpassen.
-  foods = consolidateFoods(foods);
-  for(let i=0;i<3;i++){
-    let t=sumFoods(foods);
-    if (Math.abs(targetP - t.p) > 1.2) addFood(foods, pKey, (targetP - t.p)/(FOOD_DB[pKey].p/100 || 1));
-    t=sumFoods(foods);
-    if (Math.abs(targetF - t.fat) > 0.8) addFood(foods, fKey, (targetF - t.fat)/(FOOD_DB[fKey].f/100 || 1));
-    t=sumFoods(foods);
-    if (Math.abs(targetC - t.c) > 1.5) addFood(foods, cKey, (targetC - t.c)/(FOOD_DB[cKey].c/100 || 1));
-    foods = consolidateFoods(foods);
+  const cPerG = cFood.c/100 || 0.0001;
+
+  // 2-stufig: erst grob, dann fein um den besten Bereich.
+  const candidates = [];
+  for (let pg=0; pg<=maxProteinG; pg+=5) {
+    for (let fg=0; fg<=maxFatG; fg+=2) {
+      const pFrom = pFood.p*pg/100 + fFood.p*fg/100;
+      const cFrom = pFood.c*pg/100 + fFood.c*fg/100;
+      const fFrom = pFood.f*pg/100 + fFood.f*fg/100;
+      const fixedM = sumFoods(fixed);
+      const needC = targetC - fixedM.c - cFrom;
+      const cg = Math.max(0, Math.round(needC / cPerG));
+      const foods = macrosForCombo(pg,cg,fg);
+      const t = sumFoods(foods);
+      const overFat = Math.max(0, t.fat - targetF);
+      const overProtein = Math.max(0, t.p - targetP);
+      const score = Math.pow(t.p-targetP,2)*18 + Math.pow(t.fat-targetF,2)*35 + Math.pow(t.c-targetC,2)*5 + overFat*900 + overProtein*80 + Math.abs(t.cal - macroKcal(targetP,targetC,targetF))*2;
+      candidates.push({pg,fg,score});
+      if(!best || score < best.score) best = {pg,cg,fg,foods,t,score};
+    }
   }
-  return foods;
+
+  const pg0 = best ? best.pg : 0, fg0 = best ? best.fg : 0;
+  for (let pg=Math.max(0, pg0-10); pg<=Math.min(maxProteinG, pg0+10); pg++) {
+    for (let fg=Math.max(0, fg0-6); fg<=Math.min(maxFatG, fg0+6); fg++) {
+      const pFrom = pFood.p*pg/100 + fFood.p*fg/100;
+      const cFrom = pFood.c*pg/100 + fFood.c*fg/100;
+      const fixedM = sumFoods(fixed);
+      const needC = targetC - fixedM.c - cFrom;
+      const cg = Math.max(0, Math.round(needC / cPerG));
+      const foods = macrosForCombo(pg,cg,fg);
+      const t = sumFoods(foods);
+      const overFat = Math.max(0, t.fat - targetF);
+      const overProtein = Math.max(0, t.p - targetP);
+      const score = Math.pow(t.p-targetP,2)*18 + Math.pow(t.fat-targetF,2)*35 + Math.pow(t.c-targetC,2)*5 + overFat*900 + overProtein*80 + Math.abs(t.cal - macroKcal(targetP,targetC,targetF))*2;
+      if(!best || score < best.score) best = {pg,cg,fg,foods,t,score};
+    }
+  }
+
+  // Bei extrem niedrigen Fettzielen: kein fettes Lebensmittel erzwingen, sondern Fett aus Protein-/Carbquellen akzeptieren.
+  if (best && best.t.fat > targetF + 2 && fKey !== 'olivenoel') {
+    return constructMacroMeal([pKey,cKey,'olivenoel'], extras, targetP,targetC,targetF);
+  }
+
+  return best ? best.foods : consolidateFoods(fixed);
 }
 
 function buildMealVariant(mealType, variant, targetP, targetC, targetF, diet, targetKcal){
-  // Keine pauschale kcal-Skalierung: Protein und Fett bleiben auf Ziel, nur KH tragen Kalorienanpassungen.
+  // Lebensmittel-Auswahl nach Alltagssinn + Makrotauglichkeit.
+  // Fettige Proteinquellen wie Eier/Lachs werden nur begrenzt verwendet, damit Fett nicht explodiert.
   targetP = Number(targetP)||0; targetC = Math.max(0, Number(targetC)||0); targetF = Number(targetF)||0;
 
+  const leanPowder = diet === 'vegan' ? 'vegwhey' : 'whey';
+  const leanDairy = diet === 'vegan' ? 'vegwhey' : 'magerquark';
+  const leanDairy2 = diet === 'vegan' ? 'vegwhey' : 'skyr';
+  const leanMain = diet === 'vegan' ? 'seitan' : (diet === 'vegetarian' ? 'eiklar' : 'huhn');
+  const leanMain2 = diet === 'vegan' ? 'tofu' : (diet === 'vegetarian' ? 'magerquark' : 'thunfisch');
+
   if (mealType === 'breakfast') {
-    const lowCarb = targetC < 18;
-    if (variant === 0) {
-      if (lowCarb) {
-        const protein = diet === 'vegan' ? 'vegwhey' : 'whey';
-        return constructMacroMeal([protein,'haferflocken','mandeln'], [], targetP,targetC,targetF);
-      }
-      const dairy = diet === 'vegan' ? 'vegwhey' : 'magerquark';
-      return constructMacroMeal([dairy,'haferflocken','mandeln'], [['beeren',60]], targetP,targetC,targetF);
-    }
-    if (lowCarb) {
-      const protein = diet === 'vegan' ? 'vegwhey' : 'whey';
-      return constructMacroMeal([protein,'vollkornbrot','avocado'], [], targetP,targetC,targetF);
-    }
-    if (diet === 'vegan') return constructMacroMeal(['tofu','vollkornbrot','avocado'], [['spinat',40]], targetP,targetC,targetF);
-    return constructMacroMeal(['eier','vollkornbrot','avocado'], [['spinat',40]], targetP,targetC,targetF);
+    if (variant === 0) return constructMacroMeal([leanDairy,'haferflocken','mandeln'], targetC > 20 ? [['beeren',50]] : [], targetP,targetC,targetF);
+    // Eier nur mit Eiklar-Logik, damit nicht 40g Fett entstehen.
+    return constructMacroMeal([diet === 'vegan' ? 'tofu' : 'eiklar','vollkornbrot','olivenoel'], targetC > 15 ? [['spinat',30]] : [], targetP,targetC,targetF);
   }
 
   if (mealType === 'snack') {
-    const lowCarb = targetC < 12;
-    if (variant === 0) {
-      const base = diet === 'vegan' ? 'vegwhey' : (lowCarb ? 'whey' : 'skyr');
-      return constructMacroMeal([base, lowCarb ? 'haferflocken' : 'banane','mandeln'], [], targetP,targetC,targetF);
-    }
-    const protein = diet === 'vegan' ? 'vegwhey' : (lowCarb ? 'whey' : 'magerquark');
-    return constructMacroMeal([protein,'haferflocken','erdnussbutter'], lowCarb ? [] : [['beeren',40]], targetP,targetC,targetF);
+    if (variant === 0) return constructMacroMeal([leanPowder, targetC > 18 ? 'banane' : 'haferflocken','mandeln'], [], targetP,targetC,targetF);
+    return constructMacroMeal([leanDairy2,'haferflocken','erdnussbutter'], targetC > 18 ? [['beeren',40]] : [], targetP,targetC,targetF);
   }
 
   const isDinner = mealType === 'dinner';
-  let keys, extras;
   if (diet === 'vegan') {
-    keys = variant === 0 ? ['tofu','kartoffeln','olivenoel'] : ['tempeh','quinoa','avocado'];
-    extras = variant === 0 ? [['gemuese',80]] : [['spinat',70]];
-  } else if (diet === 'vegetarian') {
-    keys = variant === 0 ? ['eier','kartoffeln','olivenoel'] : ['magerquark','quinoa','avocado'];
-    extras = variant === 0 ? [['brokkoli',80]] : [['spinat',70]];
-  } else {
-    keys = variant === 0
-      ? (isDinner ? ['lachs','kartoffeln','olivenoel'] : ['huhn','reis','olivenoel'])
-      : (isDinner ? ['rind','quinoa','avocado'] : ['thunfisch','kartoffeln','olivenoel']);
-    extras = variant === 0 ? [['brokkoli',80]] : [['gemuese',80]];
+    if (variant === 0) return constructMacroMeal(['seitan', isDinner?'kartoffeln':'reis','olivenoel'], [['gemuese',80]], targetP,targetC,targetF);
+    return constructMacroMeal(['tofu', isDinner?'quinoa':'kartoffeln','olivenoel'], [['spinat',60]], targetP,targetC,targetF);
   }
-  return constructMacroMeal(keys, extras, targetP,targetC,targetF);
+  if (diet === 'vegetarian') {
+    if (variant === 0) return constructMacroMeal(['eiklar', isDinner?'kartoffeln':'reis','olivenoel'], [['brokkoli',80]], targetP,targetC,targetF);
+    return constructMacroMeal(['magerquark', isDinner?'quinoa':'kartoffeln','avocado'], [['spinat',60]], targetP,targetC,targetF);
+  }
+
+  // Fleisch/Fisch: magere Proteinquellen als Standard. Lachs/Eier vermeiden wir hier bewusst, da sie das Fettziel oft sprengen.
+  if (variant === 0) return constructMacroMeal(['huhn', isDinner?'kartoffeln':'reis','olivenoel'], [['brokkoli',80]], targetP,targetC,targetF);
+  return constructMacroMeal(['thunfisch', isDinner?'quinoa':'kartoffeln','olivenoel'], [['gemuese',80]], targetP,targetC,targetF);
 }
 
 function mealDistribution(meals){
