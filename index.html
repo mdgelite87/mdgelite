@@ -210,6 +210,25 @@ section{position:relative;z-index:1;}
 .nw-result-item:hover{border-color:var(--gold-dim);background:rgba(201,168,76,0.05);}
 .nw-result-name{font-size:14px;font-weight:500;}
 .nw-result-kcal{font-size:13px;color:var(--gold);font-weight:600;}
+
+/* ── ÜBER MICH ── */
+.about-wrap{max-width:980px;margin:0 auto;}
+.about-photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;}
+@media(max-width:680px){.about-photo-grid{grid-template-columns:1fr;}}
+.about-photo-card{background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;position:relative;}
+.about-photo-head{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;background:var(--card2);border-bottom:1px solid var(--border2);}
+.about-photo-title{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:3px;color:var(--gold);}
+.about-photo-hint{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.about-photo-box{aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#101010,#191919);cursor:pointer;position:relative;overflow:hidden;}
+.about-photo-box img{width:100%;height:100%;object-fit:cover;display:block;}
+.about-photo-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);font-size:13px;text-align:center;padding:24px;}
+.admin-mode .about-photo-box:hover .about-photo-placeholder,.admin-mode .about-photo-box:hover img{filter:brightness(0.8);}
+.about-text-card{background:var(--card);border:1px solid var(--gold-dim);border-radius:6px;padding:30px;}
+.about-text-card h3{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:#fff;margin-bottom:16px;}
+.about-text{min-height:900px;font-size:16px;line-height:1.85;color:var(--muted);white-space:pre-wrap;}
+.admin-mode .about-text{background:rgba(255,107,53,0.03);padding:16px;border-radius:4px;}
+#aboutBeforeInput,#aboutAfterInput{display:none;}
+
 /* Cheat meals */
 .cheat-filter-btn{padding:8px 16px;background:var(--card);border:1px solid var(--border);color:var(--muted);font-size:12px;letter-spacing:1px;cursor:pointer;border-radius:20px;transition:all 0.2s;font-family:'DM Sans',sans-serif;font-weight:500;}
 .cheat-filter-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
@@ -347,11 +366,11 @@ footer a{color:var(--gold);text-decoration:none;}
   <div class="nav-logo" onclick="showSection('home')">MDG<span> ELITE</span></div>
   <div class="nav-links">
     <a href="#" class="active" onclick="showSection('home');return false;">Home</a>
+    <a href="#" onclick="showSection('uebermich');return false;">Über mich</a>
     <a href="#" onclick="showSection('videos');return false;">Videos</a>
     <a href="#" onclick="showSection('bilder');return false;">Bilder</a>
     <a href="#" onclick="showSection('rechner');return false;">Rechner</a>
     <a href="#" onclick="showSection('naehrwert');return false;">Nährwerte</a>
-    <a href="#" onclick="showSection('cheatmeals');return false;">Cheat Meals</a>
     <a href="#" onclick="showSection('kontakt');return false;">Kontakt</a>
     <div class="admin-badge" id="adminBadge" onclick="adminLogout()">
       <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
@@ -363,11 +382,11 @@ footer a{color:var(--gold);text-decoration:none;}
 
 <div class="mobile-menu" id="mobileMenu">
   <a href="#" onclick="showSection('home');toggleMobileMenu();return false;">Home</a>
+  <a href="#" onclick="showSection('uebermich');toggleMobileMenu();return false;">Über mich</a>
   <a href="#" onclick="showSection('videos');toggleMobileMenu();return false;">Videos</a>
   <a href="#" onclick="showSection('bilder');toggleMobileMenu();return false;">Bilder</a>
   <a href="#" onclick="showSection('rechner');toggleMobileMenu();return false;">Rechner</a>
   <a href="#" onclick="showSection('naehrwert');toggleMobileMenu();return false;">Nährwerte</a>
-  <a href="#" onclick="showSection('cheatmeals');toggleMobileMenu();return false;">Cheat Meals</a>
   <a href="#" onclick="showSection('kontakt');toggleMobileMenu();return false;">Kontakt</a>
 </div>
 
@@ -394,6 +413,50 @@ footer a{color:var(--gold);text-decoration:none;}
       <div class="stat"><div class="stat-val" id="stat1" data-editable>-22kg</div><div class="stat-label" id="stat1l" data-editable>Transformation</div></div>
       <div class="stat"><div class="stat-val" id="stat2" data-editable>8.4%</div><div class="stat-label" id="stat2l" data-editable>Körperfett</div></div>
       <div class="stat"><div class="stat-val" id="stat3" data-editable>2027</div><div class="stat-label" id="stat3l" data-editable>IFBB Debut</div></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ ÜBER MICH ══ -->
+<section id="sec-uebermich" class="page-section">
+  <div class="content-wrap">
+    <div class="page-header">
+      <div class="eyebrow">Meine Transformation</div>
+      <h2 data-editable id="aboutTitle">ÜBER MICH</h2>
+      <p data-editable id="aboutSubtitle">Vorher, Nachher und meine Geschichte</p>
+    </div>
+    <div class="about-wrap">
+      <div class="about-photo-grid">
+        <div class="about-photo-card">
+          <div class="about-photo-head"><div class="about-photo-title">Vorher</div><div class="about-photo-hint">Admin Upload</div></div>
+          <div class="about-photo-box" id="aboutBeforeBox" onclick="adminOnly(()=>document.getElementById('aboutBeforeInput').click())">
+            <div class="about-photo-placeholder">
+              <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              <span>Vorher-Foto hochladen<br><small>nur im Admin-Modus</small></span>
+            </div>
+          </div>
+          <input type="file" id="aboutBeforeInput" accept="image/*" onchange="setAboutImg(event,'before')">
+        </div>
+        <div class="about-photo-card">
+          <div class="about-photo-head"><div class="about-photo-title">Nachher</div><div class="about-photo-hint">Admin Upload</div></div>
+          <div class="about-photo-box" id="aboutAfterBox" onclick="adminOnly(()=>document.getElementById('aboutAfterInput').click())">
+            <div class="about-photo-placeholder">
+              <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              <span>Nachher-Foto hochladen<br><small>nur im Admin-Modus</small></span>
+            </div>
+          </div>
+          <input type="file" id="aboutAfterInput" accept="image/*" onchange="setAboutImg(event,'after')">
+        </div>
+      </div>
+      <div class="about-text-card">
+        <h3 data-editable id="aboutStoryHeadline">Meine Geschichte</h3>
+        <div class="about-text" id="aboutStoryText" data-editable>
+Hier kannst du im Admin-Modus deinen persönlichen Text einfügen. Der Bereich ist bewusst großzügig vorbereitet und bietet ungefähr Platz für eine A4-lange Geschichte: dein Startpunkt, deine Transformation, deine Motivation, Rückschläge, Learnings und dein Ziel.
+
+Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte und speichere anschließend über die Admin-Leiste.
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -635,27 +698,6 @@ footer a{color:var(--gold);text-decoration:none;}
   </div>
 </section>
 
-<!-- ══ CHEAT MEALS ══ -->
-<section id="sec-cheatmeals" class="page-section">
-  <div class="content-wrap">
-    <div class="page-header">
-      <div class="eyebrow">Sei ehrlich zu dir</div>
-      <h2>CHEAT MEALS</h2>
-      <p>Was steckt wirklich drin? Kalorien & Makros deiner Lieblingsmomente</p>
-    </div>
-    <div style="margin-bottom:24px;display:flex;gap:8px;flex-wrap:wrap;" id="cheatFilter">
-      <button class="cheat-filter-btn active" onclick="filterCheat('alle',this)">Alle</button>
-      <button class="cheat-filter-btn" onclick="filterCheat('fast-food',this)">🍔 Fast Food</button>
-      <button class="cheat-filter-btn" onclick="filterCheat('pizza',this)">🍕 Pizza</button>
-      <button class="cheat-filter-btn" onclick="filterCheat('suess',this)">🍫 Süsses</button>
-      <button class="cheat-filter-btn" onclick="filterCheat('snacks',this)">🥨 Snacks</button>
-      <button class="cheat-filter-btn" onclick="filterCheat('getraenke',this)">🥤 Getränke</button>
-      <button class="cheat-filter-btn" onclick="filterCheat('eis',this)">🍦 Eis</button>
-    </div>
-    <div class="cheat-grid" id="cheatGrid"></div>
-  </div>
-</section>
-
 <!-- ══ KONTAKT ══ -->
 <section id="sec-kontakt" class="page-section">
   <div class="content-wrap">
@@ -742,6 +784,7 @@ footer a{color:var(--gold);text-decoration:none;}
 <div class="admin-bar" id="adminBar">
   <span class="admin-bar-title">⚡ ADMIN</span>
   <button class="admin-btn" onclick="showSection('home')">🏠 Home</button>
+  <button class="admin-btn" onclick="showSection('uebermich')">👤 Über mich</button>
   <button class="admin-btn" onclick="showSection('videos')">🎬 Videos</button>
   <button class="admin-btn" onclick="showSection('bilder')">🖼 Bilder</button>
   <button class="admin-btn" onclick="openStatsModal()">📊 Stats</button>
@@ -926,6 +969,11 @@ function loadSaved() {
     const heroImg = localStorage.getItem('mdgelite_hero_image');
     if (heroImg) renderHeroImg(heroImg);
 
+    const aboutBefore = localStorage.getItem('mdgelite_about_before');
+    if (aboutBefore) renderAboutImg('before', aboutBefore);
+    const aboutAfter = localStorage.getItem('mdgelite_about_after');
+    if (aboutAfter) renderAboutImg('after', aboutAfter);
+
     const gallery = JSON.parse(localStorage.getItem('mdgelite_gallery_images') || '[]');
     if (gallery.length) {
       gallery.forEach(src => addGalleryItem(src, false));
@@ -960,10 +1008,9 @@ function showSection(id) {
   if (!sec) return;
   sec.classList.add('active');
   document.querySelectorAll('.nav-links a').forEach((a,i) => {
-    a.classList.toggle('active', ['home','videos','bilder','rechner','naehrwert','cheatmeals','kontakt'][i] === id);
+    a.classList.toggle('active', ['home','uebermich','videos','bilder','rechner','naehrwert','kontakt'][i] === id);
   });
   window.scrollTo({top:0,behavior:'smooth'});
-  if (id === 'cheatmeals' && !window._cheatBuilt) buildCheatGrid();
 }
 
 function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
@@ -1003,6 +1050,29 @@ async function setHeroImg(e) {
     renderHeroImg(dataUrl);
     localStorage.setItem('mdgelite_hero_image', dataUrl);
     showToast('✓ Profilfoto gespeichert');
+  } catch(err) {
+    showToast('⚠ Bild konnte nicht gespeichert werden');
+  }
+  e.target.value = '';
+}
+
+
+function renderAboutImg(type, src) {
+  const box = document.getElementById(type === 'before' ? 'aboutBeforeBox' : 'aboutAfterBox');
+  if (!box) return;
+  const inputId = type === 'before' ? 'aboutBeforeInput' : 'aboutAfterInput';
+  const alt = type === 'before' ? 'Vorher Foto' : 'Nachher Foto';
+  box.innerHTML = `<img src="${src}" alt="${alt}" onclick="adminOnly(()=>document.getElementById('${inputId}').click())">`;
+}
+
+async function setAboutImg(e, type) {
+  if (!isAdmin) return;
+  const file = e.target.files[0]; if (!file) return;
+  try {
+    const dataUrl = await resizeImageToDataURL(file, 1600, 0.84);
+    renderAboutImg(type, dataUrl);
+    localStorage.setItem(type === 'before' ? 'mdgelite_about_before' : 'mdgelite_about_after', dataUrl);
+    showToast('✓ Über-mich-Foto gespeichert');
   } catch(err) {
     showToast('⚠ Bild konnte nicht gespeichert werden');
   }
@@ -1435,35 +1505,20 @@ function generateMealPlan(kcal, meals, proteinG, carbsG, fatG, diet) {
 }
 
 function generateFastenPlan(kcal, proteinG, carbsG, fatG, diet) {
-  const proteinKey = diet === 'vegan' ? 'vegwhey' : 'whey';
+  // Protein-Fasten: Nur EINE echte Mahlzeit enthält Lebensmittel.
+  // Die Fastenphasen werden als Hinweis angezeigt und enthalten bewusst keine Lebensmittel,
+  // damit Einkaufsliste und Makros nur aus der Hauptmahlzeit entstehen.
   const mainType = 'dinner';
-  const shakeTarget1 = {p:proteinG*.28, c:carbsG*.18, fat:fatG*.12};
-  const shakeTarget2 = {p:proteinG*.28, c:carbsG*.14, fat:fatG*.10};
-  const mainTarget = {p:proteinG - shakeTarget1.p - shakeTarget2.p, c:carbsG - shakeTarget1.c - shakeTarget2.c, fat:fatG - shakeTarget1.fat - shakeTarget2.fat};
-  const shakeKcal1 = Math.round(kcal * 0.24);
-  const shakeKcal2 = Math.round(kcal * 0.22);
-  const mainKcal = kcal - shakeKcal1 - shakeKcal2;
-
-  function shakeVariant(target, variant, targetKcal){
-    const foods=[];
-    addFood(foods, proteinKey, target.p / FOOD_DB[proteinKey].p * 100);
-    addFood(foods, variant === 0 ? 'banane' : 'beeren', target.c / FOOD_DB[variant === 0 ? 'banane' : 'beeren'].c * 100 * .75);
-    addFood(foods, variant === 0 ? 'mandeln' : 'erdnussbutter', target.fat / FOOD_DB[variant === 0 ? 'mandeln' : 'erdnussbutter'].f * 100 * .80);
-    return normalizeFoodsToCalories(fillMacroGaps(foods, target, 'fasten_shake', diet), targetKcal);
-  }
-
   const templates = [
-    {name:'Protein Shake 1',time:'08:00',tag:'🥤',type:'snack',targetKcal:shakeKcal1,alts:[
-      {label:'Banane',foods:shakeVariant(shakeTarget1,0,shakeKcal1)},
-      {label:'Beeren',foods:shakeVariant(shakeTarget1,1,shakeKcal1)}
+    {name:'Fastenphase morgens',time:'08:00',tag:'⚡',type:'fasten',targetKcal:0,fastenNote:'Keine Lebensmittel – Wasser, ungesüsster Tee oder schwarzer Kaffee.',alts:[
+      {label:'Fasten',foods:[]}
     ]},
-    {name:'Hauptmahlzeit',time:'13:00 oder 19:00',tag:'🍽️',type:mainType,highlight:true,targetKcal:mainKcal,alts:[
-      {label:'Option A',foods:buildMealVariant(mainType,0,mainTarget.p,mainTarget.c,mainTarget.fat,diet,mainKcal)},
-      {label:'Option B',foods:buildMealVariant(mainType,1,mainTarget.p,mainTarget.c,mainTarget.fat,diet,mainKcal)}
+    {name:'Hauptmahlzeit',time:'13:00 oder 19:00',tag:'🍽️',type:mainType,highlight:true,targetKcal:kcal,alts:[
+      {label:'Option A',foods:buildMealVariant(mainType,0,proteinG,carbsG,fatG,diet,kcal)},
+      {label:'Option B',foods:buildMealVariant(mainType,1,proteinG,carbsG,fatG,diet,kcal)}
     ]},
-    {name:'Protein Shake 2',time:'16:00',tag:'🥤',type:'snack',targetKcal:shakeKcal2,alts:[
-      {label:'Banane',foods:shakeVariant(shakeTarget2,0,shakeKcal2)},
-      {label:'Beeren',foods:shakeVariant(shakeTarget2,1,shakeKcal2)}
+    {name:'Fastenphase später',time:'16:00',tag:'⚡',type:'fasten',targetKcal:0,fastenNote:'Keine Lebensmittel – Fasten bleibt Fasten. Bei echtem Protein-Shake bitte 3/4/5 Mahlzeiten wählen.',alts:[
+      {label:'Fasten',foods:[]}
     ]}
   ];
   window._mealTemplates = templates;
@@ -1472,7 +1527,6 @@ function generateFastenPlan(kcal, proteinG, carbsG, fatG, diet) {
   window._currentTargets = {kcal, proteinG, carbsG, fatG};
   renderMealPlan(templates, diet, window._currentTargets, true);
 }
-
 function getActiveMealList(){
   if (!window._mealTemplates) return [];
   return window._mealTemplates.map((meal, i) => ({
@@ -1481,6 +1535,7 @@ function getActiveMealList(){
     tag: meal.tag,
     type: meal.type,
     highlight: meal.highlight,
+    fastenNote: meal.fastenNote,
     foods: meal.alts[window._mealAltIdx[i] || 0].foods
   }));
 }
@@ -1507,8 +1562,8 @@ function renderMealPlan(templates, diet, targets, isFasten=false){
   const html = mealList.map((meal, idx)=>{
     const t=sumFoods(meal.foods);
     const border = meal.highlight ? `border-left:3px solid var(--gold);` : `border-left:3px solid var(--border2);`;
-    const altBtns = (templates[idx].alts || []).map((alt, ai)=>`<button class="alt-btn ${window._mealAltIdx[idx]===ai?'active':''}" onclick="setMealAlt(${idx},${ai})">${escapeHtml(alt.label)}</button>`).join('');
-    const rows = meal.foods.map(fd=>`
+    const altBtns = (templates[idx].alts || []).length > 1 ? (templates[idx].alts || []).map((alt, ai)=>`<button class="alt-btn ${window._mealAltIdx[idx]===ai?'active':''}" onclick="setMealAlt(${idx},${ai})">${escapeHtml(alt.label)}</button>`).join('') : '';
+    const rows = meal.foods.length ? meal.foods.map(fd=>`
       <div class="meal-food">
         <span class="food-n">${fd.name} <span style="color:var(--muted);font-size:12px;">${fd.grams}g</span></span>
         <span class="food-macros">
@@ -1517,13 +1572,13 @@ function renderMealPlan(templates, diet, targets, isFasten=false){
           <span class="macro-pill f">${round1(fd.fat)}g F</span>
           <span class="macro-pill k">${fd.cal} kcal</span>
         </span>
-      </div>`).join('');
+      </div>`).join('') : `<div class="meal-food"><span class="food-n">${escapeHtml(meal.fastenNote || 'Keine Lebensmittel in dieser Phase.')}</span><span class="food-macros"><span class="macro-pill k">0 kcal</span></span></div>`;
     return `<div class="meal-card" style="${border}">
       <div class="meal-head">
         <div><div class="meal-name">${meal.tag} ${meal.name}</div><div class="meal-time">⏱ ${meal.time} Uhr</div></div>
         <div class="meal-stats"><strong>~${Math.round(t.cal)} kcal</strong><span style="font-size:11px;color:var(--muted);">${Math.round(t.p)}g P · ${Math.round(t.c)}g C · ${Math.round(t.fat)}g F</span></div>
       </div>
-      <div style="display:flex;gap:6px;padding:10px 20px;border-bottom:1px solid var(--border2);">${altBtns}</div>
+      ${altBtns ? `<div style="display:flex;gap:6px;padding:10px 20px;border-bottom:1px solid var(--border2);">${altBtns}</div>` : ''}
       <div class="meal-foods">${rows}</div>
       <div class="meal-total"><span>${isFasten?'⚡ Protein Fasten':mealLabel(diet)}</span><span><strong>${Math.round(t.p)}g</strong> P · <strong>${Math.round(t.c)}g</strong> C · <strong>${Math.round(t.fat)}g</strong> F · <strong>${Math.round(t.cal)} kcal</strong></span></div>
     </div>`;
@@ -1723,7 +1778,12 @@ const LOCAL_FOOD_DB = [
   {name:'Mandelmilch ungesüsst', aliases:'almond milk lait amande', kcal:24,p:0.5,c:3,f:1.2, source:'Standarddatenbank'},
   {name:'Hafermilch', aliases:'oat milk lait avoine', kcal:45,p:1,c:9,f:1.5, source:'Standarddatenbank'},
   {name:'Isoclear Protein Drink', aliases:'clear whey protein drink esn', kcal:340,p:80,c:2,f:1, source:'Standarddatenbank'}
-];
+,
+  {name:'Pizza Margherita', aliases:'pizza margarita margherita', kcal:255,p:10,c:33,f:9, source:'Standarddatenbank'},
+  {name:'Pizza Salami', aliases:'salami pizza pepperoni', kcal:285,p:12,c:31,f:13, source:'Standarddatenbank'},
+  {name:'Pizza Prosciutto', aliases:'schinken pizza ham jambon', kcal:270,p:13,c:32,f:10, source:'Standarddatenbank'},
+  {name:'Pizza Tonno', aliases:'thunfisch pizza tuna thon', kcal:245,p:14,c:30,f:8, source:'Standarddatenbank'},
+  {name:'Pizzateig', aliases:'pizza teig dough pâte', kcal:270,p:8,c:54,f:3, source:'Standarddatenbank'}];
 
 const QUERY_SYNONYMS = {
   'hähnchen':'chicken poulet', 'haehnchen':'chicken poulet', 'hühnerbrust':'chicken breast poulet', 'huehnerbrust':'chicken breast poulet',
@@ -1735,7 +1795,8 @@ const QUERY_SYNONYMS = {
   'banane':'banana banane', 'brot':'bread pain', 'vollkornbrot':'whole grain bread pain complet',
   'nudeln':'pasta pâtes', 'ei':'egg oeuf', 'eier':'eggs oeufs', 'lachs':'salmon saumon',
   'thunfisch':'tuna thon', 'garnelen':'shrimp crevettes', 'mandeln':'almonds amandes',
-  'olivenöl':'olive oil huile olive', 'olivenoel':'olive oil huile olive'
+  'olivenöl':'olive oil huile olive', 'olivenoel':'olive oil huile olive',
+  'pizza':'pizza margherita salami prosciutto tonno pizzateig'
 };
 
 function normText(str) {
@@ -1760,11 +1821,34 @@ function localMatches(query) {
     .slice(0, 12);
 }
 
-function normalizeOFFProduct(p) {
+function relevanceScore(item, query) {
+  const q = normText(query).trim();
+  const name = normText(item.name);
+  const brand = normText(item.brand || '');
+  const hay = `${name} ${brand} ${normText(item.aliases || '')}`;
+  if (!q || !name) return 0;
+  let score = 0;
+  if (name === q) score += 140;
+  if (name.startsWith(q)) score += 100;
+  if (name.includes(q)) score += 80;
+  if (brand.includes(q)) score += 35;
+  const parts = q.split(/\\s+/).filter(Boolean);
+  parts.forEach(part => {
+    if (part.length < 2) return;
+    if (name.split(/[^a-z0-9]+/).includes(part)) score += 45;
+    else if (name.includes(part)) score += 25;
+    else if (hay.includes(part)) score += 12;
+  });
+  // Strong penalty for clearly unrelated products.
+  if (parts.length && !parts.some(part => hay.includes(part))) score -= 100;
+  return score;
+}
+
+function normalizeOFFProduct(p, query='') {
   const n = p.nutriments || {};
   const kcal = Number(n['energy-kcal_100g'] ?? (n['energy-kj_100g'] ? n['energy-kj_100g'] / 4.184 : 0));
   const name = p.product_name_de || p.product_name || p.generic_name_de || p.generic_name || 'Unbekanntes Produkt';
-  return {
+  const item = {
     name,
     brand: p.brands || '',
     image: p.image_front_small_url || p.image_small_url || '',
@@ -1774,6 +1858,8 @@ function normalizeOFFProduct(p) {
     f: round1(Number(n.fat_100g || 0)),
     source: 'OpenFoodFacts'
   };
+  item.score = relevanceScore(item, query);
+  return item;
 }
 
 function buildSearchTerms(query) {
@@ -1796,6 +1882,7 @@ function renderNWResults(items, statusText='') {
         <div style="min-width:0;">
           <div class="nw-result-name">${escapeHtml(f.name)}</div>
           <div class="nw-result-sub">${escapeHtml(f.brand || f.source || 'Standarddatenbank')}</div>
+          <div class="nw-result-sub">P ${round1(f.p || 0)}g · C ${round1(f.c || 0)}g · F ${round1(f.f || 0)}g</div>
         </div>
       </div>
       <span class="nw-result-kcal">${f.kcal || 0} kcal/100g</span>
@@ -1810,15 +1897,15 @@ function searchNutrition(query) {
     return;
   }
 
-  const local = localMatches(q);
-  renderNWResults(local, local.length ? 'Lokale Treffer – OpenFoodFacts wird zusätzlich abgefragt...' : 'Suche in OpenFoodFacts...');
+  const local = localMatches(q).map(x => ({...x, score: relevanceScore(x, q)})).filter(x => x.score > 0);
+  renderNWResults(local, local.length ? 'Lokale Treffer – OpenFoodFacts wird zusätzlich nach passenden Produkten durchsucht...' : 'Suche passende Produkte in OpenFoodFacts...');
   nwSearchTimer = setTimeout(() => searchOpenFoodFacts(q, local), 450);
 }
 
-async function fetchOFF(term, countryPriority=true) {
+async function fetchOFF(term, originalQuery, countryPriority=true) {
   const params = new URLSearchParams({
     search_terms: term,
-    page_size: '20',
+    page_size: '40',
     fields: 'product_name,product_name_de,generic_name,generic_name_de,brands,nutriments,image_front_small_url,image_small_url,countries_tags,lang'
   });
   if (countryPriority) params.set('countries_tags_en', 'Switzerland,Germany,Austria');
@@ -1826,7 +1913,9 @@ async function fetchOFF(term, countryPriority=true) {
   const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
   if (!res.ok) throw new Error('OpenFoodFacts API Fehler');
   const data = await res.json();
-  return (data.products || []).map(normalizeOFFProduct).filter(f => f.name && (f.kcal || f.p || f.c || f.f));
+  return (data.products || [])
+    .map(p => normalizeOFFProduct(p, originalQuery))
+    .filter(f => f.name && (f.kcal || f.p || f.c || f.f) && f.score >= 25);
 }
 
 async function searchOpenFoodFacts(query, local=[]) {
@@ -1837,34 +1926,37 @@ async function searchOpenFoodFacts(query, local=[]) {
     const terms = buildSearchTerms(query);
     for (const term of terms) {
       const batches = [];
-      try { batches.push(...await fetchOFF(term, true)); } catch(e) {}
-      if (merged.length < 8) {
-        try { batches.push(...await fetchOFF(term, false)); } catch(e) {}
+      try { batches.push(...await fetchOFF(term, query, true)); } catch(e) {}
+      if (merged.length < 10) {
+        try { batches.push(...await fetchOFF(term, query, false)); } catch(e) {}
       }
       batches.forEach(item => {
         const key = normText((item.brand || '') + ' ' + item.name);
         if (!seen.has(key)) { seen.add(key); merged.push(item); }
       });
-      if (merged.length >= 20) break;
+      if (merged.length >= 30) break;
     }
 
-    if (!merged.length) {
-      document.getElementById('nwResults').innerHTML = `<div class="nw-status">Keine Treffer gefunden. Versuch z.B. „Poulet“, „Chicken“, „Hähnchen“ oder eine Marke.</div>`;
+    const cleaned = merged
+      .map(x => ({...x, score: x.score || relevanceScore(x, query)}))
+      .filter(x => x.score >= 20)
+      .sort((a,b) => (b.score - a.score) || ((b.source==='Standarddatenbank') - (a.source==='Standarddatenbank')))
+      .slice(0, 24);
+
+    if (!cleaned.length) {
+      document.getElementById('nwResults').innerHTML = `<div class="nw-status">Keine passenden Treffer gefunden. Versuch z.B. „Pizza Margherita“, „Poulet“, „Chicken“, „Hähnchen“ oder eine Marke.</div>`;
       return;
     }
 
-    const offCount = merged.filter(x => x.source === 'OpenFoodFacts').length;
+    const offCount = cleaned.filter(x => x.source === 'OpenFoodFacts').length;
     const msg = offCount
-      ? `Lokale Standardwerte + ${offCount} OpenFoodFacts-Treffer, CH/DE/AT bevorzugt.`
-      : 'Nur lokale Standardwerte gefunden. OpenFoodFacts lieferte keine passenden Produktdaten.';
-    renderNWResults(merged.slice(0, 24), msg);
+      ? `Relevante lokale Treffer + ${offCount} passende OpenFoodFacts-Produkte, CH/DE/AT bevorzugt.`
+      : 'Lokale Standardwerte gefunden. OpenFoodFacts lieferte keine relevanten zusätzlichen Produkte.';
+    renderNWResults(cleaned, msg);
   } catch(err) {
     console.warn(err);
-    if (local.length) {
-      renderNWResults(local, 'OpenFoodFacts ist gerade nicht erreichbar – lokale Standardwerte werden angezeigt.');
-    } else {
-      document.getElementById('nwResults').innerHTML = `<div class="nw-status">OpenFoodFacts ist gerade nicht erreichbar. Versuche ein Standardlebensmittel wie Banane, Reis, Hähnchen, Quark oder Haferflocken.</div>`;
-    }
+    if (local.length) renderNWResults(local, 'OpenFoodFacts ist gerade nicht erreichbar – lokale Standardwerte werden angezeigt.');
+    else document.getElementById('nwResults').innerHTML = `<div class="nw-status">OpenFoodFacts ist gerade nicht erreichbar. Versuche ein Standardlebensmittel wie Banane, Reis, Hähnchen, Quark oder Haferflocken.</div>`;
   }
 }
 
@@ -1973,7 +2065,7 @@ function filterCheat(cat, btn) {
 
 // ══ INIT ══
 loadSaved();
-buildCheatFilters();
+if (document.getElementById('cheatFilter')) buildCheatFilters();
 </script>
 </body>
 </html>
