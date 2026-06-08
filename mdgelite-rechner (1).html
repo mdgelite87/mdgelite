@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MDG Elite – Fitness & Ernährung</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:#C9A84C; --gold-bright:#E8C96A; --gold-dim:#6b561f;
+  --black:#080808; --dark:#0f0f0f; --card:#141414; --card2:#1a1a1a;
+  --border:#252525; --border2:#1e1e1e; --text:#efefef; --muted:#666; --muted2:#444;
+  --admin:#ff6b35; --admin-dim:rgba(255,107,53,0.15);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--black);color:var(--text);overflow-x:hidden;}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 100% 50% at 50% 0%,rgba(201,168,76,0.06) 0%,transparent 55%);}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);background-size:48px 48px;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(8,8,8,0.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:64px;}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:4px;color:var(--gold);cursor:pointer;}
+.nav-logo span{color:#fff;}
+.nav-links{display:flex;gap:4px;align-items:center;}
+.nav-links a{padding:8px 14px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-decoration:none;border-radius:2px;transition:all 0.2s;font-weight:500;}
+.nav-links a:hover,.nav-links a.active{color:var(--gold);background:rgba(201,168,76,0.08);}
+.admin-badge{display:none;padding:6px 12px;background:var(--admin-dim);border:1px solid var(--admin);border-radius:2px;color:var(--admin);font-size:10px;letter-spacing:2px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.admin-badge:hover{background:rgba(255,107,53,0.25);}
+.admin-badge.visible{display:flex;align-items:center;gap:6px;}
+.nav-burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;}
+.nav-burger span{width:22px;height:2px;background:var(--muted);border-radius:2px;}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;z-index:190;background:rgba(8,8,8,0.98);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px;}
+.mobile-menu a{padding:12px 16px;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;border-radius:2px;}
+.mobile-menu a:hover{color:var(--gold);background:rgba(201,168,76,0.08);}
+.mobile-menu.open{display:flex;}
+@media(max-width:768px){.nav-links{display:none;}.nav-burger{display:flex;}nav{padding:0 20px;}}
+
+/* ── ADMIN BAR ── */
+.admin-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:300;background:rgba(20,10,5,0.97);backdrop-filter:blur(16px);border-top:2px solid var(--admin);padding:12px 24px;gap:12px;align-items:center;flex-wrap:wrap;}
+.admin-bar.visible{display:flex;}
+.admin-bar-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;color:var(--admin);margin-right:8px;}
+.admin-btn{padding:8px 16px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all 0.2s;font-weight:500;}
+.admin-btn:hover{border-color:var(--admin);color:var(--admin);background:var(--admin-dim);}
+.admin-btn.primary{background:var(--admin);color:#fff;border-color:var(--admin);}
+.admin-btn.primary:hover{background:#ff8c5a;}
+.admin-btn.gold{background:var(--gold);color:var(--black);border-color:var(--gold);}
+.admin-hint{font-size:11px;color:var(--muted);margin-left:auto;letter-spacing:1px;}
+
+/* ── ADMIN EDITABLE ── */
+.admin-mode [data-editable]{outline:2px dashed rgba(255,107,53,0.4);outline-offset:3px;cursor:text;border-radius:2px;min-height:20px;transition:outline 0.2s;}
+.admin-mode [data-editable]:focus{outline:2px solid var(--admin);background:rgba(255,107,53,0.05);}
+.admin-mode [data-editable]:hover{outline-color:var(--admin);}
+.admin-mode .admin-only{display:flex!important;}
+.admin-only{display:none;}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:40px;max-width:460px;width:100%;position:relative;}
+.modal h3{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--text);margin-bottom:8px;}
+.modal p{font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.modal-close{position:absolute;top:16px;right:16px;background:transparent;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 8px;}
+.modal-close:hover{color:var(--text);}
+.modal input{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:3px;padding:14px 18px;font-family:'DM Sans',sans-serif;font-size:16px;color:var(--text);outline:none;margin-bottom:16px;transition:border-color 0.2s;}
+.modal input:focus{border-color:var(--gold-dim);}
+.modal-error{color:#e05c5c;font-size:13px;margin-bottom:12px;display:none;}
+.modal textarea{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:3px;padding:14px 18px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;margin-bottom:16px;resize:vertical;min-height:80px;transition:border-color 0.2s;}
+.modal textarea:focus{border-color:var(--gold-dim);}
+.modal label{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:8px;}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.modal-grid .form-group{display:flex;flex-direction:column;}
+
+/* ── SECTIONS ── */
+section{position:relative;z-index:1;}
+.page-section{display:none;}
+.page-section.active{display:block;}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 24px 80px;text-align:center;position:relative;overflow:hidden;}
+.hero-img-wrap{width:160px;height:160px;border-radius:50%;overflow:hidden;margin-bottom:32px;border:3px solid var(--gold-dim);position:relative;box-shadow:0 0 40px rgba(201,168,76,0.2);}
+.hero-img-wrap img{width:100%;height:100%;object-fit:cover;}
+.hero-img-placeholder{width:100%;height:100%;background:var(--card2);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);font-size:11px;letter-spacing:1px;text-align:center;gap:8px;}
+.admin-mode .hero-img-placeholder{cursor:pointer;}
+.admin-mode .hero-img-placeholder:hover{background:var(--card);}
+#heroImgInput{display:none;}
+.hero-eyebrow{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,12vw,110px);line-height:0.88;letter-spacing:3px;color:#fff;}
+.hero h1 em{font-style:normal;color:var(--gold);display:block;font-size:clamp(36px,8vw,72px);}
+.hero-welcome{max-width:620px;margin:28px auto 0;font-size:16px;line-height:1.8;color:var(--muted);font-weight:300;padding:20px 24px;background:var(--card);border:1px solid var(--border);border-radius:4px;}
+.hero-ctas{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap;justify-content:center;}
+.btn-primary{padding:14px 32px;background:var(--gold);color:var(--black);border:none;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;cursor:pointer;border-radius:2px;transition:all 0.2s;}
+.btn-primary:hover{background:var(--gold-bright);transform:translateY(-1px);box-shadow:0 8px 30px rgba(201,168,76,0.3);}
+.btn-outline{padding:14px 32px;background:transparent;color:var(--text);border:1px solid var(--border);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;cursor:pointer;border-radius:2px;transition:all 0.2s;}
+.btn-outline:hover{border-color:var(--gold-dim);color:var(--gold);}
+.hero-stats{display:flex;gap:48px;margin-top:48px;padding-top:32px;border-top:1px solid var(--border);}
+.stat{text-align:center;}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--gold);line-height:1;}
+.stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+@media(max-width:480px){.hero-stats{gap:20px;}.stat-val{font-size:28px;}}
+
+/* ── CONTENT ── */
+.content-wrap{max-width:1000px;margin:0 auto;padding:100px 24px 100px;}
+.page-header{text-align:center;margin-bottom:56px;padding-top:20px;}
+.page-header .eyebrow{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.page-header h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,8vw,72px);letter-spacing:3px;color:#fff;}
+.page-header p{font-size:15px;color:var(--muted);margin-top:12px;font-weight:300;}
+
+/* ── VIDEOS ── */
+.video-tabs{display:flex;background:var(--card);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:40px;flex-wrap:wrap;}
+.video-tab{flex:1;min-width:100px;padding:14px 8px;background:transparent;border:none;border-right:1px solid var(--border);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;font-weight:500;}
+.video-tab:last-child{border-right:none;}
+.video-tab.active{background:var(--gold);color:var(--black);font-weight:700;}
+.video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
+.video-card{background:var(--card);border:1px solid var(--border);border-radius:4px;overflow:hidden;transition:border-color 0.2s,transform 0.2s;}
+.video-card:hover{border-color:var(--gold-dim);transform:translateY(-2px);}
+.video-thumb{width:100%;aspect-ratio:16/9;background:var(--card2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;cursor:pointer;}
+.video-thumb iframe{width:100%;height:100%;border:none;pointer-events:none;}
+.video-thumb:hover iframe{pointer-events:auto;}
+.video-play-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.3);transition:opacity 0.2s;cursor:pointer;}
+.video-play-overlay:hover{opacity:0;}
+.video-play{width:52px;height:52px;background:rgba(201,168,76,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.video-info{padding:16px;}
+.video-cat{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:600;}
+.video-title{font-size:15px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:8px;}
+.video-meta{font-size:12px;color:var(--muted);}
+.admin-mode .video-card{position:relative;}
+.video-delete-btn{display:none;position:absolute;top:8px;right:8px;background:rgba(224,92,92,0.9);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px;align-items:center;justify-content:center;z-index:10;}
+.admin-mode .video-delete-btn{display:flex;}
+.add-video-card{background:var(--card2);border:2px dashed var(--border);border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;color:var(--muted);font-size:12px;letter-spacing:1px;min-height:200px;transition:all 0.2s;}
+.add-video-card:hover{border-color:var(--admin);color:var(--admin);background:var(--admin-dim);}
+
+/* ── GALLERY ── */
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+.gallery-item{aspect-ratio:1;background:var(--card);border:1px solid var(--border);border-radius:4px;overflow:hidden;cursor:pointer;position:relative;transition:border-color 0.2s;}
+.gallery-item:hover{border-color:var(--gold-dim);}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.3s;}
+.gallery-item:hover img{transform:scale(1.04);}
+.gallery-delete{display:none;position:absolute;top:8px;right:8px;background:rgba(224,92,92,0.9);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px;align-items:center;justify-content:center;z-index:10;}
+.admin-mode .gallery-delete{display:flex;}
+.gallery-add{aspect-ratio:1;background:var(--card2);border:2px dashed var(--border);border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;color:var(--muted);font-size:12px;letter-spacing:1px;transition:all 0.2s;}
+.gallery-add:hover{border-color:var(--admin);color:var(--admin);background:var(--admin-dim);}
+#galleryInput{display:none;}
+.lightbox{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.95);align-items:center;justify-content:center;}
+.lightbox.open{display:flex;}
+.lightbox img{max-width:90vw;max-height:90vh;object-fit:contain;border-radius:4px;}
+.lightbox-close{position:absolute;top:24px;right:24px;background:transparent;border:none;color:#fff;font-size:32px;cursor:pointer;opacity:0.6;}
+.lightbox-close:hover{opacity:1;}
+
+/* ── RECHNER ── */
+.rechner-wrap{max-width:820px;margin:0 auto;}
+.sec-head{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
+.sec-num{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:2px;color:var(--gold);background:rgba(201,168,76,0.08);border:1px solid var(--gold-dim);padding:4px 10px;border-radius:2px;}
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;}
+.sec-line{flex:1;height:1px;background:var(--border);}
+.r-section{margin-bottom:40px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:540px){.grid-2{grid-template-columns:1fr;}}
+.field{background:var(--card);border:1px solid var(--border);border-radius:3px;padding:16px 18px 12px;transition:border-color 0.2s,box-shadow 0.2s;position:relative;}
+.field:focus-within{border-color:var(--gold-dim);box-shadow:0 0 0 3px rgba(201,168,76,0.06);}
+.field label{display:block;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:600;}
+.field input,.field select{width:100%;background:transparent;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:24px;font-weight:600;color:var(--text);-moz-appearance:textfield;}
+.field input::placeholder{color:var(--muted2);font-weight:300;}
+.field input::-webkit-outer-spin-button,.field input::-webkit-inner-spin-button{-webkit-appearance:none;}
+.field select{font-size:14px;cursor:pointer;}
+.field select option{background:#1a1a1a;}
+.field-unit{position:absolute;right:18px;bottom:14px;font-size:11px;color:var(--muted);letter-spacing:1px;}
+.toggle-wrap{margin-bottom:12px;}
+.toggle-label{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:10px;display:block;}
+.toggle-group{display:flex;background:var(--card);border:1px solid var(--border);border-radius:3px;overflow:hidden;}
+.toggle-group button{flex:1;padding:13px 6px;background:transparent;border:none;border-right:1px solid var(--border);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.15s;line-height:1.3;text-align:center;}
+.toggle-group button:last-child{border-right:none;}
+.toggle-group button small{display:block;font-size:10px;opacity:0.6;margin-top:2px;font-weight:400;}
+.toggle-group button.active{background:var(--gold);color:var(--black);font-weight:700;}
+.kfa-visual{margin-top:16px;}
+.kfa-visual-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:12px;}
+.kfa-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.kfa-item{background:var(--card);border:2px solid var(--border);border-radius:4px;padding:10px 6px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.kfa-item:hover{border-color:var(--gold-dim);}
+.kfa-item.selected{border-color:var(--gold);background:rgba(201,168,76,0.08);}
+.kfa-body{width:100%;aspect-ratio:3/5;border-radius:4px;margin-bottom:6px;position:relative;overflow:hidden;}
+.kfa-label{font-size:11px;font-weight:700;color:var(--text);}
+.kfa-sublabel{font-size:10px;color:var(--muted);}
+.bf-m-5{background:linear-gradient(180deg,#c8a882 0%,#b8906a 40%,#a87858 100%);}
+.bf-m-10{background:linear-gradient(180deg,#caa888 0%,#ba9272 40%,#aa826c 100%);}
+.bf-m-15{background:linear-gradient(180deg,#d0b090 0%,#c09878 40%,#b08870 100%);}
+.bf-m-20{background:linear-gradient(180deg,#d8b898 0%,#c8a888 40%,#b89878 100%);}
+.bf-m-25{background:linear-gradient(180deg,#e0c0a0 0%,#d0b090 40%,#c0a080 100%);}
+.bf-f-15{background:linear-gradient(180deg,#d4a882 0%,#c49070 40%,#b48060 100%);}
+.bf-f-20{background:linear-gradient(180deg,#dab088 0%,#ca9878 40%,#ba8868 100%);}
+.bf-f-25{background:linear-gradient(180deg,#e0b890 0%,#d0a880 40%,#c09870 100%);}
+.bf-f-30{background:linear-gradient(180deg,#e8c098 0%,#d8b088 40%,#c8a078 100%);}
+.bf-f-35{background:linear-gradient(180deg,#f0c8a0 0%,#e0b890 40%,#d0a880 100%);}
+.muscle{position:absolute;inset:0;border-radius:4px;}
+.bf-m-5 .muscle,.bf-m-10 .muscle{background:repeating-linear-gradient(0deg,rgba(0,0,0,0.14) 0px,rgba(0,0,0,0.14) 2px,transparent 2px,transparent 8px);}
+.bf-m-15 .muscle{background:repeating-linear-gradient(0deg,rgba(0,0,0,0.07) 0px,rgba(0,0,0,0.07) 2px,transparent 2px,transparent 12px);}
+.step-item{display:flex;gap:16px;align-items:flex-start;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:3px;margin-bottom:8px;transition:border-color 0.2s;cursor:pointer;}
+.step-item.done{border-color:var(--gold-dim);background:rgba(201,168,76,0.04);}
+.step-check{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;margin-top:2px;}
+.step-item.done .step-check{background:var(--gold);border-color:var(--gold);}
+.step-title{font-size:14px;font-weight:600;margin-bottom:4px;}
+.step-desc{font-size:13px;color:var(--muted);line-height:1.5;}
+.step-item.done .step-title{text-decoration:line-through;opacity:0.6;}
+.btn-calculate{width:100%;padding:22px;background:var(--gold);color:var(--black);border:none;font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:5px;cursor:pointer;border-radius:3px;transition:all 0.2s;}
+.btn-calculate:hover{background:var(--gold-bright);box-shadow:0 12px 40px rgba(201,168,76,0.35);transform:translateY(-1px);}
+#results{display:none;}
+#results.visible{display:block;animation:fadeUp 0.5s ease forwards;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.results-divider{border:none;border-top:1px solid var(--border);margin:64px 0 56px;position:relative;}
+.results-divider::after{content:'DEINE ERGEBNISSE';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--black);padding:0 20px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:5px;color:var(--gold);}
+.result-hero{background:linear-gradient(135deg,var(--card) 0%,#1a1500 100%);border:1px solid var(--gold-dim);border-radius:4px;padding:48px 40px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden;}
+.result-hero::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(ellipse,rgba(201,168,76,0.15),transparent 70%);}
+.result-label{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;font-weight:600;}
+.result-kcal{font-family:'Bebas Neue',sans-serif;font-size:clamp(72px,15vw,110px);line-height:1;color:#fff;position:relative;z-index:1;}
+.result-unit{font-size:14px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-top:6px;font-weight:300;}
+.result-badge{display:inline-block;margin-top:16px;background:rgba(201,168,76,0.1);border:1px solid var(--gold-dim);color:var(--gold);font-size:11px;letter-spacing:2px;padding:6px 16px;border-radius:20px;font-weight:500;}
+.macro-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;}
+@media(max-width:480px){.macro-row{grid-template-columns:1fr;}}
+.macro-card{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:28px 20px 24px;text-align:center;position:relative;overflow:hidden;}
+.macro-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;}
+.macro-card.p::after{background:linear-gradient(90deg,transparent,#e05c5c,transparent);}
+.macro-card.c::after{background:linear-gradient(90deg,transparent,#5b9bd5,transparent);}
+.macro-card.f::after{background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.mc-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:14px;}
+.mc-val{font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:1;}
+.macro-card.p .mc-val{color:#e05c5c;}.macro-card.c .mc-val{color:#5b9bd5;}.macro-card.f .mc-val{color:var(--gold);}
+.mc-unit{font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:1px;}
+.mc-kcal{font-size:12px;color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px solid var(--border2);}
+.breakdown{background:var(--card);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:48px;}
+.bd-head{padding:14px 24px;background:rgba(201,168,76,0.05);border-bottom:1px solid var(--border);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:4px;color:var(--gold);}
+.bd-row{display:flex;justify-content:space-between;align-items:center;padding:13px 24px;border-bottom:1px solid var(--border2);font-size:14px;}
+.bd-row:last-child{border-bottom:none;}
+.bd-row .lbl{color:var(--muted);}.bd-row .val{font-weight:600;}
+.meal-card{background:var(--card);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px;}
+.meal-head{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--border2);background:var(--card2);}
+.meal-name{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;}
+.meal-time{font-size:11px;color:var(--gold);letter-spacing:1px;margin-top:2px;}
+.meal-stats{text-align:right;font-size:13px;color:var(--muted);}
+.meal-stats strong{color:var(--text);display:block;font-size:15px;}
+.meal-foods{padding:4px 0;}
+.meal-food{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;border-bottom:1px solid var(--border2);font-size:13px;}
+.meal-food:last-child{border-bottom:none;}
+.food-n{color:var(--text);}.food-m{color:var(--muted);font-size:12px;}
+.disclaimer{margin-top:48px;padding:20px 24px;border:1px solid var(--border);border-radius:4px;background:rgba(255,255,255,0.01);font-size:12px;color:var(--muted);line-height:1.7;}
+.disclaimer strong{color:var(--gold);}
+
+/* ── KONTAKT ── */
+.kontakt-wrap{max-width:600px;margin:0 auto;}
+.form-field{margin-bottom:16px;}
+.form-field label{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:8px;}
+.form-field input,.form-field textarea,.form-field select{width:100%;background:var(--card);border:1px solid var(--border);border-radius:3px;padding:14px 18px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none;transition:border-color 0.2s;}
+.form-field input:focus,.form-field textarea:focus,.form-field select:focus{border-color:var(--gold-dim);}
+.form-field textarea{resize:vertical;min-height:140px;}
+.form-field select option{background:var(--card2);}
+.btn-submit{width:100%;padding:18px;background:var(--gold);color:var(--black);border:none;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:4px;cursor:pointer;border-radius:3px;transition:all 0.2s;margin-top:8px;}
+.btn-submit:hover{background:var(--gold-bright);box-shadow:0 8px 30px rgba(201,168,76,0.3);}
+.form-success{display:none;text-align:center;padding:48px 24px;}
+.form-success .icon{font-size:48px;margin-bottom:16px;}
+.form-success h3{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:3px;color:var(--gold);margin-bottom:8px;}
+.form-success p{color:var(--muted);font-size:14px;}
+.social-links{display:flex;gap:12px;margin-top:40px;justify-content:center;flex-wrap:wrap;}
+.social-link{display:flex;align-items:center;gap:10px;padding:12px 20px;background:var(--card);border:1px solid var(--border);border-radius:3px;color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;transition:all 0.2s;}
+.social-link:hover{border-color:var(--gold-dim);color:var(--gold);}
+
+/* Admin editable stat styling */
+.admin-mode .stat-val{cursor:text;}
+.admin-mode .stat-label{cursor:text;}
+
+footer{border-top:1px solid var(--border2);padding:48px 24px 100px;text-align:center;position:relative;z-index:1;}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:6px;color:var(--gold);margin-bottom:12px;}
+footer p{font-size:12px;color:var(--muted);line-height:1.8;}
+footer a{color:var(--gold);text-decoration:none;}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--gold);color:var(--black);padding:12px 24px;border-radius:3px;font-size:13px;font-weight:600;letter-spacing:1px;opacity:0;pointer-events:none;transition:all 0.3s;z-index:999;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.admin-mode footer{padding-bottom:120px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="showSection('home')">MDG<span> ELITE</span></div>
+  <div class="nav-links">
+    <a href="#" class="active" onclick="showSection('home');return false;">Home</a>
+    <a href="#" onclick="showSection('videos');return false;">Videos</a>
+    <a href="#" onclick="showSection('bilder');return false;">Bilder</a>
+    <a href="#" onclick="showSection('rechner');return false;">Rechner</a>
+    <a href="#" onclick="showSection('kontakt');return false;">Kontakt</a>
+    <div class="admin-badge" id="adminBadge" onclick="adminLogout()">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      ADMIN &nbsp;·&nbsp; Logout
+    </div>
+  </div>
+  <div class="nav-burger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#" onclick="showSection('home');toggleMobileMenu();return false;">Home</a>
+  <a href="#" onclick="showSection('videos');toggleMobileMenu();return false;">Videos</a>
+  <a href="#" onclick="showSection('bilder');toggleMobileMenu();return false;">Bilder</a>
+  <a href="#" onclick="showSection('rechner');toggleMobileMenu();return false;">Rechner</a>
+  <a href="#" onclick="showSection('kontakt');toggleMobileMenu();return false;">Kontakt</a>
+</div>
+
+<!-- ══ HOME ══ -->
+<section id="sec-home" class="page-section active">
+  <div class="hero">
+    <div class="hero-img-wrap" id="heroImgWrap">
+      <div class="hero-img-placeholder" id="heroImgPlaceholder" onclick="adminOnly(()=>document.getElementById('heroImgInput').click())">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        <span style="font-size:11px;">Foto einfügen<br><span style="font-size:9px;opacity:0.5;">(nur Admin)</span></span>
+      </div>
+    </div>
+    <input type="file" id="heroImgInput" accept="image/*" onchange="setHeroImg(event)">
+    <div class="hero-eyebrow">Marco Di Giovanni</div>
+    <h1>MDG<em>ELITE</em></h1>
+    <div class="hero-welcome" id="heroWelcome" data-editable>
+      Willkommen auf meiner Website! Ich bin Marco – Fitness-Athlet, Content Creator und auf dem Weg zur IFBB-Bühne 2027. Hier findest du kostenlose Tools, ehrliche Einblicke in meine Prep und alles rund um Ernährung, Training und Lifestyle.
+    </div>
+    <div class="hero-ctas">
+      <button class="btn-primary" onclick="showSection('rechner')">RECHNER STARTEN</button>
+      <button class="btn-outline" onclick="showSection('videos')">VIDEOS ANSEHEN</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-val" id="stat1" data-editable>-22kg</div><div class="stat-label" id="stat1l" data-editable>Transformation</div></div>
+      <div class="stat"><div class="stat-val" id="stat2" data-editable>8.4%</div><div class="stat-label" id="stat2l" data-editable>Körperfett</div></div>
+      <div class="stat"><div class="stat-val" id="stat3" data-editable>2027</div><div class="stat-label" id="stat3l" data-editable>IFBB Debut</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ VIDEOS ══ -->
+<section id="sec-videos" class="page-section">
+  <div class="content-wrap">
+    <div class="page-header">
+      <div class="eyebrow">Content</div>
+      <h2 data-editable>VIDEOS</h2>
+      <p data-editable>Ehrliche Einblicke in Training, Ernährung und meinen Weg zur Bühne</p>
+    </div>
+    <div class="video-tabs">
+      <button class="video-tab active" data-cat="alle" onclick="filterVideos('alle')">Alle</button>
+      <button class="video-tab" data-cat="ernaehrung" onclick="filterVideos('ernaehrung')">Ernährung</button>
+      <button class="video-tab" data-cat="training" onclick="filterVideos('training')">Training</button>
+      <button class="video-tab" data-cat="supplemente" onclick="filterVideos('supplemente')">Supplemente</button>
+      <button class="video-tab" data-cat="weg" onclick="filterVideos('weg')">Mein Weg zur Bühne</button>
+    </div>
+    <div class="video-grid" id="videoGrid">
+      <div class="add-video-card admin-only" onclick="openAddVideoModal()" style="min-height:220px;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span>YouTube Video einbetten</span>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:40px;" id="ytChannelBtn">
+      <button class="btn-primary" onclick="window.open('https://youtube.com/@mdgelite','_blank')">YOUTUBE KANAL ÖFFNEN</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BILDER ══ -->
+<section id="sec-bilder" class="page-section">
+  <div class="content-wrap">
+    <div class="page-header">
+      <div class="eyebrow">Galerie</div>
+      <h2 data-editable>BILDER</h2>
+      <p data-editable>Transformation, Wettkampf-Prep und hinter den Kulissen</p>
+    </div>
+    <div class="gallery-grid" id="galleryGrid">
+      <div class="gallery-add admin-only" onclick="document.getElementById('galleryInput').click()">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span>Bilder hinzufügen</span>
+      </div>
+    </div>
+    <input type="file" id="galleryInput" accept="image/*" multiple onchange="addGalleryImages(event)">
+    <div id="galleryEmpty" style="text-align:center;padding:60px 20px;color:var(--muted);font-size:14px;">
+      Noch keine Bilder vorhanden.<br><span style="font-size:12px;opacity:0.6;">Bilder werden vom Admin hinzugefügt.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ RECHNER ══ -->
+<section id="sec-rechner" class="page-section">
+  <div class="content-wrap">
+    <div class="page-header">
+      <div class="eyebrow">Kostenloses Tool</div>
+      <h2 data-editable>KALORIEN­RECHNER</h2>
+      <p data-editable>Berechne deinen genauen Tagesbedarf, Makros und Ernährungsplan</p>
+    </div>
+    <div class="rechner-wrap">
+      <div class="r-section">
+        <div class="sec-head"><span class="sec-num">SCHRITTE</span><span class="sec-title">Dein Plan zum Ziel</span><div class="sec-line"></div></div>
+        <div id="stepsContainer">
+          <div class="step-item" onclick="toggleStep(this)"><div class="step-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div><div class="step-content"><div class="step-title" data-editable>Grunddaten eingeben</div><div class="step-desc" data-editable>Alter, Gewicht, Grösse und optional Körperfettanteil eintragen</div></div></div>
+          <div class="step-item" onclick="toggleStep(this)"><div class="step-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div><div class="step-content"><div class="step-title" data-editable>Aktivitätslevel wählen</div><div class="step-desc" data-editable>Wie oft trainierst du pro Woche? Wähle das passende Level</div></div></div>
+          <div class="step-item" onclick="toggleStep(this)"><div class="step-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div><div class="step-content"><div class="step-title" data-editable>Ziel definieren</div><div class="step-desc" data-editable>Cut, Maintenance oder Lean Bulk – je nach aktuellem Ziel</div></div></div>
+          <div class="step-item" onclick="toggleStep(this)"><div class="step-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div><div class="step-content"><div class="step-title" data-editable>Plan berechnen lassen</div><div class="step-desc" data-editable>Kaloriendefizit, Makros und Musterplan werden automatisch erstellt</div></div></div>
+          <div class="step-item" onclick="toggleStep(this)"><div class="step-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div><div class="step-content"><div class="step-title" data-editable>Plan umsetzen & tracken</div><div class="step-desc" data-editable>Täglich Kalorien tracken, alle 2–4 Wochen Gewicht und KFA messen</div></div></div>
+        </div>
+      </div>
+      <div class="r-section">
+        <div class="sec-head"><span class="sec-num">01</span><span class="sec-title">Grunddaten</span><div class="sec-line"></div></div>
+        <div class="grid-2" style="margin-bottom:12px;">
+          <div class="field"><label>Alter</label><input type="number" id="age" placeholder="28" min="15" max="80"><span class="field-unit">Jahre</span></div>
+          <div class="field"><label>Körpergewicht</label><input type="number" id="weight" placeholder="80" min="40" max="250" step="0.1"><span class="field-unit">kg</span></div>
+        </div>
+        <div class="grid-2" style="margin-bottom:16px;">
+          <div class="field"><label>Körpergrösse</label><input type="number" id="height" placeholder="178" min="140" max="220"><span class="field-unit">cm</span></div>
+          <div class="field"><label>Körperfett % (optional)</label><input type="number" id="bf" placeholder="15" min="3" max="50" step="0.1" oninput="highlightKFA(this.value)"><span class="field-unit">%</span></div>
+        </div>
+        <div class="toggle-wrap">
+          <span class="toggle-label">Geschlecht</span>
+          <div class="toggle-group" id="genderToggle">
+            <button class="active" data-val="male" onclick="renderKFA('male')">♂ &nbsp;Mann</button>
+            <button data-val="female" onclick="renderKFA('female')">♀ &nbsp;Frau</button>
+          </div>
+        </div>
+        <div class="kfa-visual">
+          <div class="kfa-visual-title">Körperfett-Referenz – klicke um Wert zu übernehmen</div>
+          <div class="kfa-grid" id="kfaGrid"></div>
+        </div>
+      </div>
+      <div class="r-section">
+        <div class="sec-head"><span class="sec-num">02</span><span class="sec-title">Aktivitätslevel</span><div class="sec-line"></div></div>
+        <div class="field"><label>Wöchentliches Training &amp; Alltag</label>
+          <select id="activity">
+            <option value="1.2">Sitzend – kein Sport (× 1.2)</option>
+            <option value="1.375">Leicht aktiv – 1–2× Sport/Woche (× 1.375)</option>
+            <option value="1.55" selected>Moderat – 3–5× Training/Woche (× 1.55)</option>
+            <option value="1.725">Sehr aktiv – 6–7× Training/Woche (× 1.725)</option>
+            <option value="1.9">Extrem – 2× täglich (× 1.9)</option>
+          </select>
+        </div>
+      </div>
+      <div class="r-section">
+        <div class="sec-head"><span class="sec-num">03</span><span class="sec-title">Ziel &amp; Makros</span><div class="sec-line"></div></div>
+        <div class="toggle-wrap"><span class="toggle-label">Kalorienziel</span>
+          <div class="toggle-group" id="goalToggle">
+            <button data-val="-500">Aggressiver Cut<small>−500 kcal</small></button>
+            <button data-val="-300">Moderater Cut<small>−300 kcal</small></button>
+            <button class="active" data-val="0">Maintenance<small>±0 kcal</small></button>
+            <button data-val="250">Lean Bulk<small>+250 kcal</small></button>
+            <button data-val="500">Bulk<small>+500 kcal</small></button>
+          </div>
+        </div>
+        <div class="toggle-wrap"><span class="toggle-label">Protein-Priorität</span>
+          <div class="toggle-group" id="proteinToggle">
+            <button data-val="1.8">Standard<small>1.8 g/kg</small></button>
+            <button class="active" data-val="2.2">Athletisch<small>2.2 g/kg</small></button>
+            <button data-val="2.8">High Protein<small>2.8 g/kg</small></button>
+          </div>
+        </div>
+        <div class="toggle-wrap"><span class="toggle-label">Mahlzeiten pro Tag</span>
+          <div class="toggle-group" id="mealsToggle">
+            <button data-val="3">3 Mahlzeiten</button>
+            <button class="active" data-val="4">4 Mahlzeiten</button>
+            <button data-val="5">5 Mahlzeiten</button>
+          </div>
+        </div>
+      </div>
+      <button class="btn-calculate" onclick="calculate()">MEINEN PLAN BERECHNEN →</button>
+      <div id="results">
+        <div class="results-divider"></div>
+        <div class="result-hero"><div class="result-label">Täglicher Kalorienbedarf</div><div class="result-kcal" id="kcalDisplay">—</div><div class="result-unit">kcal pro Tag</div><div class="result-badge" id="goalBadge"></div></div>
+        <div class="macro-row">
+          <div class="macro-card p"><div class="mc-label">Protein</div><div class="mc-val" id="proteinG">—</div><div class="mc-unit">Gramm</div><div class="mc-kcal" id="proteinKcal">—</div></div>
+          <div class="macro-card c"><div class="mc-label">Kohlenhydrate</div><div class="mc-val" id="carbsG">—</div><div class="mc-unit">Gramm</div><div class="mc-kcal" id="carbsKcal">—</div></div>
+          <div class="macro-card f"><div class="mc-label">Fett</div><div class="mc-val" id="fatG">—</div><div class="mc-unit">Gramm</div><div class="mc-kcal" id="fatKcal">—</div></div>
+        </div>
+        <div class="breakdown">
+          <div class="bd-head">Berechnungsdetails</div>
+          <div class="bd-row"><span class="lbl">Formel</span><span class="val" id="formulaUsed">—</span></div>
+          <div class="bd-row"><span class="lbl">BMR</span><span class="val" id="bmrVal">—</span></div>
+          <div class="bd-row"><span class="lbl">TDEE</span><span class="val" id="tdeeVal">—</span></div>
+          <div class="bd-row"><span class="lbl">Kalorienziel</span><span class="val" id="targetVal">—</span></div>
+          <div class="bd-row"><span class="lbl">Wöchentlicher Effekt</span><span class="val" id="weeklyVal">—</span></div>
+        </div>
+        <div class="sec-head"><span class="sec-num">PLAN</span><span class="sec-title">Beispiel-Ernährungsplan</span><div class="sec-line"></div></div>
+        <div id="mealPlan"></div>
+        <div class="disclaimer"><strong>⚠ Hinweis:</strong> Schätzwerte auf Basis Mifflin-St Jeor / Katch-McArdle. Kein Ersatz für Fachberatung.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ KONTAKT ══ -->
+<section id="sec-kontakt" class="page-section">
+  <div class="content-wrap">
+    <div class="page-header">
+      <div class="eyebrow">Get in Touch</div>
+      <h2 data-editable>KONTAKT</h2>
+      <p data-editable>Fragen, Kooperationen oder einfach Hallo sagen</p>
+    </div>
+    <div class="kontakt-wrap">
+      <div id="contactForm">
+        <div class="grid-2" style="margin-bottom:16px;">
+          <div class="form-field"><label>Vorname</label><input type="text" id="fname" placeholder="Marco"></div>
+          <div class="form-field"><label>Nachname</label><input type="text" id="lname" placeholder="Müller"></div>
+        </div>
+        <div class="form-field"><label>E-Mail</label><input type="email" id="femail" placeholder="deine@email.com"></div>
+        <div class="form-field"><label>Betreff</label>
+          <select id="fsubject">
+            <option value="">Bitte wählen...</option>
+            <option>Ernährungsberatung</option>
+            <option>Coaching Anfrage</option>
+            <option>Kooperation / Sponsoring</option>
+            <option>YouTube / Content</option>
+            <option>Allgemeine Frage</option>
+          </select>
+        </div>
+        <div class="form-field"><label>Nachricht</label><textarea id="fmessage" placeholder="Deine Nachricht..."></textarea></div>
+        <button class="btn-submit" onclick="sendContact()">NACHRICHT SENDEN →</button>
+      </div>
+      <div class="form-success" id="formSuccess"><div class="icon">✅</div><h3>GESENDET</h3><p>Danke! Ich melde mich so schnell wie möglich.</p></div>
+      <div class="social-links">
+        <a class="social-link" href="https://youtube.com/@mdgelite" target="_blank">▶ YouTube</a>
+        <a class="social-link" href="https://instagram.com/mdgelite" target="_blank">◈ Instagram</a>
+        <a class="social-link" href="mailto:mdgelite87@gmail.com">✉ mdgelite87@gmail.com</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">MDG ELITE</div>
+  <p>© 2026 Marco Di Giovanni · <a href="#" onclick="showSection('kontakt');return false;">Kontakt</a> · <a href="#">Impressum</a> · <a href="#">Datenschutz</a><br>
+  <span style="font-size:11px;opacity:0.5;">mdgelite.com</span></p>
+</footer>
+
+<!-- ══ ADMIN BAR ══ -->
+<div class="admin-bar" id="adminBar">
+  <span class="admin-bar-title">⚡ ADMIN</span>
+  <button class="admin-btn" onclick="showSection('home')">🏠 Home</button>
+  <button class="admin-btn" onclick="showSection('videos')">🎬 Videos</button>
+  <button class="admin-btn" onclick="showSection('bilder')">🖼 Bilder</button>
+  <button class="admin-btn" onclick="openStatsModal()">📊 Stats</button>
+  <button class="admin-btn" onclick="openPasswordModal()">🔑 Passwort ändern</button>
+  <button class="admin-btn gold" onclick="saveAll()">💾 Speichern</button>
+  <button class="admin-btn" onclick="adminLogout()">Logout</button>
+  <span class="admin-hint">Alle Texte direkt anklicken &amp; bearbeiten</span>
+</div>
+
+<!-- ══ LOGIN MODAL ══ -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('loginModal')">×</button>
+    <h3>ADMIN LOGIN</h3>
+    <p>Gib dein Admin-Passwort ein um den Bearbeitungsmodus zu aktivieren.</p>
+    <label>Passwort</label>
+    <input type="password" id="pwInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkLogin()">
+    <div class="modal-error" id="pwError">Falsches Passwort. Bitte versuche es erneut.</div>
+    <button class="btn-primary" style="width:100%;padding:16px;font-size:18px;letter-spacing:3px;" onclick="checkLogin()">EINLOGGEN</button>
+    <p style="margin-top:12px;font-size:11px;color:var(--muted);text-align:center;">Tipp: Drücke Shift+Shift+A um den Login zu öffnen</p>
+  </div>
+</div>
+
+<!-- ══ ADD VIDEO MODAL ══ -->
+<div class="modal-overlay" id="addVideoModal">
+  <div class="modal" style="max-width:520px;">
+    <button class="modal-close" onclick="closeModal('addVideoModal')">×</button>
+    <h3>VIDEO EINBETTEN</h3>
+    <p>YouTube-Link einfügen und Kategorie wählen.</p>
+    <label>YouTube URL oder Video-ID</label>
+    <input type="text" id="ytUrl" placeholder="https://www.youtube.com/watch?v=... oder Video-ID">
+    <label>Video-Titel</label>
+    <input type="text" id="ytTitle" placeholder="z.B. Mein täglicher Ernährungsplan">
+    <label>Kategorie</label>
+    <select id="ytCat" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:3px;padding:14px 18px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none;margin-bottom:16px;">
+      <option value="ernaehrung">Ernährung</option>
+      <option value="training">Training</option>
+      <option value="supplemente">Supplemente</option>
+      <option value="weg">Mein Weg zur Bühne</option>
+    </select>
+    <button class="btn-primary" style="width:100%;padding:16px;font-size:18px;letter-spacing:3px;" onclick="addVideo()">VIDEO HINZUFÜGEN</button>
+  </div>
+</div>
+
+<!-- ══ STATS MODAL ══ -->
+<div class="modal-overlay" id="statsModal">
+  <div class="modal" style="max-width:480px;">
+    <button class="modal-close" onclick="closeModal('statsModal')">×</button>
+    <h3>STATS BEARBEITEN</h3>
+    <p>Diese Werte werden auf der Startseite angezeigt.</p>
+    <div class="modal-grid">
+      <div class="form-group"><label>Stat 1 Wert</label><input type="text" id="s1v" placeholder="-22kg"></div>
+      <div class="form-group"><label>Stat 1 Label</label><input type="text" id="s1l" placeholder="Transformation"></div>
+    </div>
+    <div class="modal-grid">
+      <div class="form-group"><label>Stat 2 Wert</label><input type="text" id="s2v" placeholder="8.4%"></div>
+      <div class="form-group"><label>Stat 2 Label</label><input type="text" id="s2l" placeholder="Körperfett"></div>
+    </div>
+    <div class="modal-grid">
+      <div class="form-group"><label>Stat 3 Wert</label><input type="text" id="s3v" placeholder="2027"></div>
+      <div class="form-group"><label>Stat 3 Label</label><input type="text" id="s3l" placeholder="IFBB Debut"></div>
+    </div>
+    <button class="btn-primary" style="width:100%;padding:16px;font-size:18px;letter-spacing:3px;margin-top:8px;" onclick="saveStats()">SPEICHERN</button>
+  </div>
+</div>
+
+<!-- ══ CHANGE PASSWORD MODAL ══ -->
+<div class="modal-overlay" id="changePwModal">
+  <div class="modal" style="max-width:400px;">
+    <button class="modal-close" onclick="closeModal('changePwModal')">×</button>
+    <h3>PASSWORT ÄNDERN</h3>
+    <label>Neues Passwort</label>
+    <input type="password" id="newPw1" placeholder="Neues Passwort">
+    <label>Passwort wiederholen</label>
+    <input type="password" id="newPw2" placeholder="Nochmals eingeben">
+    <div class="modal-error" id="pwChangeError"></div>
+    <button class="btn-primary" style="width:100%;padding:16px;font-size:18px;letter-spacing:3px;" onclick="changePassword()">ÄNDERN</button>
+  </div>
+</div>
+
+<!-- ══ LIGHTBOX ══ -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close">×</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ ADMIN PASSWORD (change this!) ══
+let ADMIN_PW = 'MDGElite2027';
+let isAdmin = false;
+
+// ══ KEYBOARD SHORTCUT: Shift+Shift+A ══
+let shiftCount = 0, shiftTimer;
+document.addEventListener('keydown', e => {
+  if (e.key === 'Shift') {
+    shiftCount++;
+    clearTimeout(shiftTimer);
+    shiftTimer = setTimeout(() => shiftCount = 0, 800);
+    if (shiftCount >= 2) { shiftCount = 0; openModal('loginModal'); setTimeout(()=>document.getElementById('pwInput').focus(),100); }
+  }
+});
+
+function checkLogin() {
+  const val = document.getElementById('pwInput').value;
+  if (val === ADMIN_PW) {
+    isAdmin = true;
+    closeModal('loginModal');
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwError').style.display = 'none';
+    activateAdminMode();
+    showToast('✓ Admin-Modus aktiv');
+  } else {
+    document.getElementById('pwError').style.display = 'block';
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwInput').focus();
+  }
+}
+
+function activateAdminMode() {
+  document.body.classList.add('admin-mode');
+  document.getElementById('adminBar').classList.add('visible');
+  document.getElementById('adminBadge').classList.add('visible');
+  // Make editable elements actually editable
+  document.querySelectorAll('[data-editable]').forEach(el => {
+    el.contentEditable = 'true';
+    el.spellcheck = false;
+  });
+  // Load current stats into modal fields
+  document.getElementById('s1v').value = document.getElementById('stat1').textContent;
+  document.getElementById('s1l').value = document.getElementById('stat1l').textContent;
+  document.getElementById('s2v').value = document.getElementById('stat2').textContent;
+  document.getElementById('s2l').value = document.getElementById('stat2l').textContent;
+  document.getElementById('s3v').value = document.getElementById('stat3').textContent;
+  document.getElementById('s3l').value = document.getElementById('stat3l').textContent;
+}
+
+function adminLogout() {
+  isAdmin = false;
+  document.body.classList.remove('admin-mode');
+  document.getElementById('adminBar').classList.remove('visible');
+  document.getElementById('adminBadge').classList.remove('visible');
+  document.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = 'false');
+  showToast('Admin-Modus beendet');
+}
+
+function adminOnly(fn) { if (isAdmin) fn(); else showToast('⚠ Nur im Admin-Modus verfügbar'); }
+
+function saveAll() {
+  // In a real deployment this would persist to a backend.
+  // Here we save to localStorage as a demo.
+  const data = {};
+  document.querySelectorAll('[data-editable][id]').forEach(el => { data[el.id] = el.innerHTML; });
+  try { localStorage.setItem('mdgelite_content', JSON.stringify(data)); } catch(e) {}
+  showToast('✓ Änderungen gespeichert');
+}
+
+function loadSaved() {
+  try {
+    const saved = localStorage.getItem('mdgelite_content');
+    if (saved) { const data = JSON.parse(saved); Object.keys(data).forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = data[id]; }); }
+    const pw = localStorage.getItem('mdgelite_pw');
+    if (pw) ADMIN_PW = pw;
+  } catch(e) {}
+}
+
+function changePassword() {
+  const p1 = document.getElementById('newPw1').value;
+  const p2 = document.getElementById('newPw2').value;
+  const err = document.getElementById('pwChangeError');
+  if (!p1 || p1.length < 6) { err.style.display='block'; err.textContent='Mindestens 6 Zeichen.'; return; }
+  if (p1 !== p2) { err.style.display='block'; err.textContent='Passwörter stimmen nicht überein.'; return; }
+  ADMIN_PW = p1;
+  try { localStorage.setItem('mdgelite_pw', p1); } catch(e) {}
+  closeModal('changePwModal');
+  showToast('✓ Passwort geändert');
+}
+
+// ══ MODALS ══
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openAddVideoModal() { if (!isAdmin) return; openModal('addVideoModal'); }
+function openStatsModal() { openModal('statsModal'); }
+function openPasswordModal() { openModal('changePwModal'); }
+
+// ══ NAVIGATION ══
+function showSection(id) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach((a,i) => {
+    a.classList.toggle('active', ['home','videos','bilder','rechner','kontakt'][i] === id);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+
+// ══ HERO IMAGE ══
+function setHeroImg(e) {
+  if (!isAdmin) return;
+  const file = e.target.files[0]; if (!file) return;
+  const url = URL.createObjectURL(file);
+  document.getElementById('heroImgWrap').innerHTML = `<img src="${url}" alt="Marco Di Giovanni" style="width:100%;height:100%;object-fit:cover;">`;
+  showToast('✓ Profilfoto aktualisiert');
+}
+
+// ══ VIDEOS ══
+function getYTId(input) {
+  const patterns = [/youtube\.com\/watch\?v=([^&]+)/,/youtu\.be\/([^?]+)/,/youtube\.com\/embed\/([^?]+)/,/^([a-zA-Z0-9_-]{11})$/];
+  for (const p of patterns) { const m = input.match(p); if (m) return m[1]; }
+  return null;
+}
+
+function addVideo() {
+  const url = document.getElementById('ytUrl').value.trim();
+  const title = document.getElementById('ytTitle').value.trim() || 'MDG Elite Video';
+  const cat = document.getElementById('ytCat').value;
+  const vid = getYTId(url);
+  if (!vid) { showToast('⚠ Ungültige YouTube URL'); return; }
+  const catLabels = {ernaehrung:'Ernährung',training:'Training',supplemente:'Supplemente',weg:'Mein Weg zur Bühne'};
+  const card = document.createElement('div');
+  card.className = 'video-card'; card.dataset.cat = cat;
+  card.innerHTML = `
+    <button class="video-delete-btn" onclick="this.closest('.video-card').remove();showToast('Video entfernt')">×</button>
+    <div class="video-thumb" onclick="playVideo(this,'${vid}')">
+      <img src="https://img.youtube.com/vi/${vid}/mqdefault.jpg" style="width:100%;height:100%;object-fit:cover;" alt="">
+      <div class="video-play-overlay"><div class="video-play"><svg width="16" height="16" viewBox="0 0 24 24" fill="#000"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+    </div>
+    <div class="video-info">
+      <div class="video-cat">${catLabels[cat]}</div>
+      <div class="video-title">${title}</div>
+      <div class="video-meta">MDG Elite · YouTube</div>
+    </div>`;
+  document.getElementById('videoGrid').appendChild(card);
+  document.getElementById('ytUrl').value = '';
+  document.getElementById('ytTitle').value = '';
+  closeModal('addVideoModal');
+  showToast('✓ Video hinzugefügt');
+}
+
+function playVideo(thumb, vid) {
+  const iframe = document.createElement('iframe');
+  iframe.src = `https://www.youtube.com/embed/${vid}?autoplay=1`;
+  iframe.allowFullscreen = true; iframe.allow = 'autoplay';
+  thumb.innerHTML = ''; thumb.appendChild(iframe);
+}
+
+function filterVideos(cat) {
+  document.querySelectorAll('.video-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === cat));
+  document.querySelectorAll('.video-card').forEach(c => { c.style.display = (cat==='alle'||c.dataset.cat===cat)?'':'none'; });
+  document.querySelector('.add-video-card') && (document.querySelector('.add-video-card').style.display = '');
+}
+
+// ══ GALLERY ══
+function addGalleryImages(e) {
+  if (!isAdmin) return;
+  const files = Array.from(e.target.files);
+  const grid = document.getElementById('galleryGrid');
+  document.getElementById('galleryEmpty').style.display = 'none';
+  files.forEach(file => {
+    const url = URL.createObjectURL(file);
+    const item = document.createElement('div'); item.className='gallery-item';
+    item.innerHTML = `<img src="${url}" alt=""><button class="gallery-delete" onclick="event.stopPropagation();this.parentElement.remove();checkGalleryEmpty()">×</button>`;
+    item.querySelector('img').onclick = () => openLightbox(url);
+    grid.insertBefore(item, grid.firstChild);
+  });
+  showToast(`✓ ${files.length} Bild(er) hinzugefügt`);
+  e.target.value = '';
+}
+
+function checkGalleryEmpty() {
+  const hasItems = document.querySelectorAll('.gallery-item').length > 0;
+  document.getElementById('galleryEmpty').style.display = hasItems ? 'none' : 'block';
+}
+
+function openLightbox(src) { document.getElementById('lightboxImg').src=src; document.getElementById('lightbox').classList.add('open'); }
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+document.getElementById('lightbox').addEventListener('click', closeLightbox);
+
+// ══ STATS MODAL ══
+function saveStats() {
+  document.getElementById('stat1').textContent = document.getElementById('s1v').value || '-22kg';
+  document.getElementById('stat1l').textContent = document.getElementById('s1l').value || 'Transformation';
+  document.getElementById('stat2').textContent = document.getElementById('s2v').value || '8.4%';
+  document.getElementById('stat2l').textContent = document.getElementById('s2l').value || 'Körperfett';
+  document.getElementById('stat3').textContent = document.getElementById('s3v').value || '2027';
+  document.getElementById('stat3l').textContent = document.getElementById('s3l').value || 'IFBB Debut';
+  closeModal('statsModal');
+  showToast('✓ Stats aktualisiert');
+}
+
+// ══ STEPS ══
+function toggleStep(el) { el.classList.toggle('done'); }
+
+// ══ KFA VISUAL ══
+const kfaData = {
+  male:[{val:5,label:'~5%',cls:'bf-m-5',desc:'Wettkampf'},{val:10,label:'~10%',cls:'bf-m-10',desc:'sehr lean'},{val:15,label:'~15%',cls:'bf-m-15',desc:'athletisch'},{val:20,label:'~20%',cls:'bf-m-20',desc:'fit'},{val:25,label:'~25%',cls:'bf-m-25',desc:'normal'}],
+  female:[{val:15,label:'~15%',cls:'bf-f-15',desc:'Wettkampf'},{val:20,label:'~20%',cls:'bf-f-20',desc:'sehr lean'},{val:25,label:'~25%',cls:'bf-f-25',desc:'athletisch'},{val:30,label:'~30%',cls:'bf-f-30',desc:'fit'},{val:35,label:'~35%',cls:'bf-f-35',desc:'normal'}]
+};
+let kfaGender='male';
+function renderKFA(g) {
+  kfaGender=g;
+  document.getElementById('kfaGrid').innerHTML = kfaData[g].map(i=>`
+    <div class="kfa-item" data-val="${i.val}" onclick="selectKFA(${i.val})">
+      <div class="kfa-body ${i.cls}"><div class="muscle"></div></div>
+      <div class="kfa-label">${i.label}</div><div class="kfa-sublabel">${i.desc}</div>
+    </div>`).join('');
+  highlightKFA(document.getElementById('bf').value);
+}
+function selectKFA(v) { document.getElementById('bf').value=v; highlightKFA(v); showToast(`KFA ${v}% übernommen`); }
+function highlightKFA(v) { document.querySelectorAll('.kfa-item').forEach(i=>i.classList.toggle('selected',parseInt(i.dataset.val)===parseFloat(v))); }
+renderKFA('male');
+
+// ══ TOGGLES ══
+['genderToggle','goalToggle','proteinToggle','mealsToggle'].forEach(id=>{
+  document.getElementById(id).querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.getElementById(id).querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+});
+function getVal(id){return(document.querySelector(`#${id} button.active`)||{}).dataset?.val;}
+
+// ══ CALCULATE ══
+function calculate(){
+  const age=parseFloat(document.getElementById('age').value);
+  const weight=parseFloat(document.getElementById('weight').value);
+  const height=parseFloat(document.getElementById('height').value);
+  const bf=parseFloat(document.getElementById('bf').value);
+  const activity=parseFloat(document.getElementById('activity').value);
+  const gender=getVal('genderToggle');
+  const goalDelta=parseFloat(getVal('goalToggle'));
+  const protMult=parseFloat(getVal('proteinToggle'));
+  const meals=parseInt(getVal('mealsToggle'));
+  if(!age||!weight||!height){showToast('⚠ Alter, Gewicht und Grösse eingeben');return;}
+  let bmr,formula;
+  if(!isNaN(bf)&&bf>0&&bf<50){bmr=370+21.6*weight*(1-bf/100);formula='Katch-McArdle';}
+  else{bmr=gender==='male'?10*weight+6.25*height-5*age+5:10*weight+6.25*height-5*age-161;formula='Mifflin-St Jeor';}
+  const tdee=bmr*activity,target=Math.round(tdee+goalDelta);
+  const protG=Math.round(weight*protMult),fatG=Math.round(weight*1.0);
+  const carbsG=Math.max(0,Math.round((target-protG*4-fatG*9)/4));
+  const wk=goalDelta*7,wkg=(wk/7700).toFixed(2);
+  const wt=wk===0?'Gewicht stabil':wk<0?`Fettabbau ~${Math.abs(wkg)} kg/Woche`:`Gewichtszunahme ~${wkg} kg/Woche`;
+  const gl={'-500':'Aggressiver Cut · −500 kcal','-300':'Moderater Cut · −300 kcal','0':'Maintenance','250':'Lean Bulk · +250 kcal','500':'Bulk · +500 kcal'};
+  document.getElementById('kcalDisplay').textContent=target.toLocaleString('de-CH');
+  document.getElementById('goalBadge').textContent=gl[String(goalDelta)]||'';
+  document.getElementById('formulaUsed').textContent=formula;
+  document.getElementById('bmrVal').textContent=Math.round(bmr).toLocaleString('de-CH')+' kcal';
+  document.getElementById('tdeeVal').textContent=Math.round(tdee).toLocaleString('de-CH')+' kcal';
+  document.getElementById('targetVal').textContent=target.toLocaleString('de-CH')+' kcal';
+  document.getElementById('weeklyVal').textContent=wt;
+  document.getElementById('proteinG').textContent=protG;
+  document.getElementById('carbsG').textContent=carbsG;
+  document.getElementById('fatG').textContent=fatG;
+  document.getElementById('proteinKcal').textContent=(protG*4).toLocaleString('de-CH')+' kcal';
+  document.getElementById('carbsKcal').textContent=(carbsG*4).toLocaleString('de-CH')+' kcal';
+  document.getElementById('fatKcal').textContent=(fatG*9).toLocaleString('de-CH')+' kcal';
+  generateMealPlan(target,meals);
+  const el=document.getElementById('results');
+  el.classList.add('visible');
+  setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+function generateMealPlan(kcal,meals){
+  const p={3:[{name:'Frühstück',time:'07:00',r:.30,f:[{n:'Haferflocken + Magerquark',m:'→ Carbs + Protein'},{n:'Früchte nach Wahl',m:'→ Vitamine'},{n:'Whey optional',m:'→ Protein'}]},{name:'Mittagessen',time:'13:00',r:.40,f:[{n:'Hühnerbrust / Rind',m:'→ Protein'},{n:'Reis / Kartoffeln',m:'→ Carbs'},{n:'Gemüse',m:'→ Vitamine'},{n:'Olivenöl (1 EL)',m:'→ Fette'}]},{name:'Abendessen',time:'19:00',r:.30,f:[{n:'Lachs / Eier',m:'→ Protein + Omega-3'},{n:'Süsskartoffeln',m:'→ Carbs'},{n:'Avocado',m:'→ Fette'}]}],
+  4:[{name:'Frühstück',time:'07:00',r:.25,f:[{n:'Haferflocken',m:'→ Carbs'},{n:'Magerquark 0.2%',m:'→ Protein'},{n:'Blaubeeren',m:'→ Antioxidantien'}]},{name:'Mittagessen',time:'12:30',r:.30,f:[{n:'Hühnerbrust / Rind',m:'→ Protein'},{n:'Reis / Kartoffeln',m:'→ Carbs'},{n:'Gemüse',m:'→ Vitamine'}]},{name:'Post-Workout',time:'16:00',r:.20,f:[{n:'Whey Isolat',m:'→ Protein'},{n:'Banane',m:'→ Glykogen'},{n:'Reiswaffeln',m:'→ Carbs'}]},{name:'Abendessen',time:'19:30',r:.25,f:[{n:'Lachs / Crevetten',m:'→ Protein + Omega-3'},{n:'Süsskartoffeln',m:'→ Carbs'},{n:'Avocado + Salat',m:'→ Fette'}]}],
+  5:[{name:'Frühstück',time:'07:00',r:.22,f:[{n:'Haferflocken + Chia',m:'→ Carbs + Omega-3'},{n:'Magerquark',m:'→ Protein'},{n:'Früchte',m:'→ Mikronährstoffe'}]},{name:'Zwischenmahlzeit',time:'10:30',r:.13,f:[{n:'Griechischer Joghurt',m:'→ Protein'},{n:'Mandeln (20g)',m:'→ Fette'}]},{name:'Mittagessen',time:'13:00',r:.28,f:[{n:'Hühnerbrust / Rind',m:'→ Protein'},{n:'Reis / Pasta',m:'→ Carbs'},{n:'Gemüse',m:'→ Vitamine'}]},{name:'Post-Workout',time:'16:30',r:.17,f:[{n:'Whey Isolat',m:'→ Protein'},{n:'Banane',m:'→ Glykogen'}]},{name:'Abendessen',time:'19:30',r:.20,f:[{n:'Lachs / Eier',m:'→ Protein + Fette'},{n:'Süsskartoffeln',m:'→ Carbs'}]}]};
+  document.getElementById('mealPlan').innerHTML=p[meals].map(m=>`<div class="meal-card"><div class="meal-head"><div><div class="meal-name">${m.name}</div><div class="meal-time">⏱ ${m.time}</div></div><div class="meal-stats"><strong>~${Math.round(kcal*m.r).toLocaleString('de-CH')} kcal</strong>${Math.round(m.r*100)}%</div></div><div class="meal-foods">${m.f.map(f=>`<div class="meal-food"><span class="food-n">${f.n}</span><span class="food-m">${f.m}</span></div>`).join('')}</div></div>`).join('');
+}
+
+// ══ CONTACT ══
+function sendContact(){
+  const fn=document.getElementById('fname').value,ln=document.getElementById('lname').value,em=document.getElementById('femail').value,sub=document.getElementById('fsubject').value,msg=document.getElementById('fmessage').value;
+  if(!fn||!em||!sub||!msg){showToast('⚠ Bitte alle Felder ausfüllen');return;}
+  window.location.href=`mailto:mdgelite87@gmail.com?subject=${encodeURIComponent('[MDG Elite] '+sub+' – '+fn+' '+ln)}&body=${encodeURIComponent('Von: '+fn+' '+ln+'\nE-Mail: '+em+'\n\n'+msg)}`;
+  document.getElementById('contactForm').style.display='none';
+  document.getElementById('formSuccess').style.display='block';
+}
+
+// ══ TOAST ══
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+// ══ INIT ══
+loadSaved();
+</script>
+</body>
+</html>
