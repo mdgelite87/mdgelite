@@ -581,26 +581,26 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
       </div>
       <div class="r-section">
         <div class="sec-head"><span class="sec-num">02</span><span class="sec-title">Aktivitätslevel</span><div class="sec-line"></div></div>
-        <div class="field"><label>Wöchentliches Training &amp; Alltag</label>
+        <div class="field"><label>Alltagsaktivität (ohne separates Training gerechnet)</label>
           <select id="activity">
-            <option value="1.2">Sitzend – kein Sport (× 1.2)</option>
-            <option value="1.375">Leicht aktiv – 1–2× Sport/Woche (× 1.375)</option>
-            <option value="1.55" selected>Moderat – 3–5× Training/Woche (× 1.55)</option>
-            <option value="1.725">Sehr aktiv – 6–7× Training/Woche (× 1.725)</option>
-            <option value="1.9">Extrem – 2× täglich (× 1.9)</option>
+            <option value="1.2">Sitzend – Home Office, wenig Bewegung (× 1.2)</option>
+            <option value="1.375" selected>Normal aktiv – mind. 10'000 Schritte täglich (× 1.375)</option>
+            <option value="1.55">Aktiv – viel auf den Beinen, 12'000+ Schritte (× 1.55)</option>
+            <option value="1.725">Sehr aktiv – Vereinssport, Ausdauer, 15'000+ Schritte (× 1.725)</option>
           </select>
+          <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;">Wähle ehrlich nach deinem <strong style="color:var(--text);">Alltag</strong>. Lieber etwas tiefer ansetzen – die meisten überschätzen ihren Verbrauch. Dein echter Bedarf zeigt sich nach 14 Tagen Tracking (siehe oben).</p>
         </div>
       </div>
       <div class="r-section">
         <div class="sec-head"><span class="sec-num">03</span><span class="sec-title">Ziel &amp; Makros</span><div class="sec-line"></div></div>
-        <div class="toggle-wrap"><span class="toggle-label">Kalorienziel</span>
+        <div class="toggle-wrap"><span class="toggle-label">Gewichtsziel</span>
           <div class="toggle-group" id="goalToggle">
-            <button data-val="-1000">Aggressiver Cut<small>−1000 kcal</small></button>
-            <button data-val="-500">Normaler Cut<small>−500 kcal</small></button>
-            <button data-val="-300">Moderater Cut<small>−300 kcal</small></button>
-            <button class="active" data-val="0">Maintenance<small>±0 kcal</small></button>
-            <button data-val="250">Lean Bulk<small>+250 kcal</small></button>
-            <button data-val="500">Bulk<small>+500 kcal</small></button>
+            <button data-val="-1000">Schnell abnehmen<small>−1 kg / Woche</small></button>
+            <button data-val="-500">Abnehmen<small>−0.5 kg / Woche</small></button>
+            <button data-val="-300">Langsam abnehmen<small>−0.3 kg / Woche</small></button>
+            <button class="active" data-val="0">Gewicht halten<small>±0 kg</small></button>
+            <button data-val="250">Langsam aufbauen<small>+0.25 kg / Woche</small></button>
+            <button data-val="500">Masse aufbauen<small>+0.5 kg / Woche</small></button>
           </div>
         </div>
         <div class="toggle-wrap"><span class="toggle-label">Protein-Priorität</span>
@@ -877,6 +877,34 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
 <div class="toast" id="toast"></div>
 
 <script>
+// ══ CLOUDINARY KONFIGURATION ══
+// So richtest du Cloudinary ein (kostenlos, einmalig ~10 Min):
+// 1. Konto erstellen auf https://cloudinary.com/users/register_free
+// 2. Im Dashboard findest du deinen "Cloud Name" (oben, z.B. "dxy123abc")
+// 3. Settings (Zahnrad) → Upload → "Add upload preset"
+//    → Signing Mode auf "Unsigned" stellen → speichern → Namen kopieren
+// 4. Beide Werte hier unten eintragen:
+const CLOUDINARY_CLOUD_NAME = 'dndjmq1kg';
+const CLOUDINARY_UPLOAD_PRESET = 'geqmqe8f';
+
+function cloudinaryReady() {
+  return CLOUDINARY_CLOUD_NAME && !CLOUDINARY_CLOUD_NAME.startsWith('HIER_')
+      && CLOUDINARY_UPLOAD_PRESET && !CLOUDINARY_UPLOAD_PRESET.startsWith('HIER_');
+}
+
+// Lädt eine Datei zu Cloudinary hoch und gibt die öffentliche URL zurück
+async function uploadToCloudinary(file) {
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+    method: 'POST', body: fd
+  });
+  if (!res.ok) throw new Error('Cloudinary Upload fehlgeschlagen');
+  const data = await res.json();
+  return data.secure_url;
+}
+
 // ══ ADMIN CREDENTIALS ══
 const ADMIN_USER = 'admin';
 let ADMIN_PW = 'Gabriel2010$Elia2015$SaraJane2004$';
@@ -1046,10 +1074,18 @@ async function setHeroImg(e) {
   if (!isAdmin) return;
   const file = e.target.files[0]; if (!file) return;
   try {
-    const dataUrl = await resizeImageToDataURL(file, 1200, 0.84);
-    renderHeroImg(dataUrl);
-    localStorage.setItem('mdgelite_hero_image', dataUrl);
-    showToast('✓ Profilfoto gespeichert');
+    if (cloudinaryReady()) {
+      showToast('Profilfoto wird hochgeladen...');
+      const url = await uploadToCloudinary(file);
+      renderHeroImg(url);
+      localStorage.setItem('mdgelite_hero_image', url);
+      showToast('✓ Profilfoto online – für alle sichtbar');
+    } else {
+      const dataUrl = await resizeImageToDataURL(file, 1200, 0.84);
+      renderHeroImg(dataUrl);
+      localStorage.setItem('mdgelite_hero_image', dataUrl);
+      showToast('✓ Profilfoto lokal gespeichert (nur dieser Browser)');
+    }
   } catch(err) {
     showToast('⚠ Bild konnte nicht gespeichert werden');
   }
@@ -1068,11 +1104,20 @@ function renderAboutImg(type, src) {
 async function setAboutImg(e, type) {
   if (!isAdmin) return;
   const file = e.target.files[0]; if (!file) return;
+  const key = type === 'before' ? 'mdgelite_about_before' : 'mdgelite_about_after';
   try {
-    const dataUrl = await resizeImageToDataURL(file, 1600, 0.84);
-    renderAboutImg(type, dataUrl);
-    localStorage.setItem(type === 'before' ? 'mdgelite_about_before' : 'mdgelite_about_after', dataUrl);
-    showToast('✓ Über-mich-Foto gespeichert');
+    if (cloudinaryReady()) {
+      showToast('Foto wird hochgeladen...');
+      const url = await uploadToCloudinary(file);
+      renderAboutImg(type, url);
+      localStorage.setItem(key, url);
+      showToast('✓ Foto online – für alle sichtbar');
+    } else {
+      const dataUrl = await resizeImageToDataURL(file, 1600, 0.84);
+      renderAboutImg(type, dataUrl);
+      localStorage.setItem(key, dataUrl);
+      showToast('✓ Foto lokal gespeichert (nur dieser Browser)');
+    }
   } catch(err) {
     showToast('⚠ Bild konnte nicht gespeichert werden');
   }
@@ -1143,16 +1188,27 @@ async function addGalleryImages(e) {
   if (!isAdmin) return;
   const files = Array.from(e.target.files);
   let added = 0;
+  const useCloud = cloudinaryReady();
+  showToast(useCloud ? 'Bilder werden hochgeladen...' : 'Bilder werden gespeichert...');
   for (const file of files) {
     try {
-      const dataUrl = await resizeImageToDataURL(file, 1600, 0.82);
-      addGalleryItem(dataUrl, false);
+      if (useCloud) {
+        // Echtes Hosting: für alle Besucher sichtbar
+        const url = await uploadToCloudinary(file);
+        addGalleryItem(url, false);
+      } else {
+        // Fallback: nur lokal im eigenen Browser sichtbar
+        const dataUrl = await resizeImageToDataURL(file, 1600, 0.82);
+        addGalleryItem(dataUrl, false);
+      }
       added++;
     } catch(err) {}
   }
   saveGalleryToStorage();
   checkGalleryEmpty();
-  showToast(`✓ ${added} Bild(er) gespeichert`);
+  showToast(useCloud
+    ? `✓ ${added} Bild(er) online – für alle sichtbar`
+    : `✓ ${added} Bild(er) lokal gespeichert (nur dieser Browser)`);
   e.target.value = '';
 }
 
@@ -1263,7 +1319,7 @@ function calculate(){
 
   const wk=goalDelta*7,wkg=(wk/7700).toFixed(2);
   const wt=wk===0?'Gewicht stabil':wk<0?`Fettabbau ~${Math.abs(wkg)} kg/Woche`:`Gewichtszunahme ~${wkg} kg/Woche`;
-  const gl={'-1000':'Aggressiver Cut · −1000 kcal','-500':'Normaler Cut · −500 kcal','-300':'Moderater Cut · −300 kcal','0':'Maintenance','250':'Lean Bulk · +250 kcal','500':'Bulk · +500 kcal'};
+  const gl={'-1000':'Schnell abnehmen · −1 kg/Woche','-500':'Abnehmen · −0.5 kg/Woche','-300':'Langsam abnehmen · −0.3 kg/Woche','0':'Gewicht halten','250':'Langsam aufbauen · +0.25 kg/Woche','500':'Masse aufbauen · +0.5 kg/Woche'};
 
   document.getElementById('kcalDisplay').textContent=target.toLocaleString('de-CH');
   document.getElementById('goalBadge').textContent=gl[String(goalDelta)]||'';
@@ -1810,9 +1866,41 @@ const LOCAL_FOOD_DB = [
   {name:'Pizzateig', aliases:'pizza teig dough pâte', kcal:270,p:8,c:54,f:3, source:'Standarddatenbank'},
   {name:'Döner Kebab', aliases:'doner kebab dürüm durum', kcal:240,p:13,c:25,f:10, source:'Standarddatenbank'},
   {name:'Burger Classic', aliases:'hamburger cheeseburger fast food', kcal:260,p:13,c:27,f:12, source:'Standarddatenbank'},
-  {name:'Pommes Frites', aliases:'french fries frites', kcal:312,p:3.4,c:41,f:15, source:'Standarddatenbank'},
+  {name:'Pommes Frites', aliases:'french fries frites pommes', kcal:312,p:3.4,c:41,f:15, source:'Standarddatenbank'},
   {name:'Lasagne', aliases:'lasagna', kcal:165,p:9,c:14,f:8, source:'Standarddatenbank'},
-  {name:'Spaghetti Bolognese', aliases:'pasta bolognese spaghetti', kcal:155,p:7,c:22,f:4.5, source:'Standarddatenbank'}];
+  {name:'Spaghetti Bolognese', aliases:'pasta bolognese spaghetti', kcal:155,p:7,c:22,f:4.5, source:'Standarddatenbank'},
+  {name:'Milchschokolade', aliases:'schokolade chocolate chocolat schoggi tafel', kcal:535,p:8,c:56,f:32, source:'Standarddatenbank'},
+  {name:'Dunkle Schokolade 70%', aliases:'schokolade dark chocolate chocolat zartbitter', kcal:580,p:8,c:46,f:38, source:'Standarddatenbank'},
+  {name:'Dunkle Schokolade 85%', aliases:'schokolade dark chocolate chocolat zartbitter', kcal:600,p:10,c:17,f:48, source:'Standarddatenbank'},
+  {name:'Weisse Schokolade', aliases:'schokolade white chocolate chocolat blanc', kcal:560,p:6,c:59,f:33, source:'Standarddatenbank'},
+  {name:'Kartoffelchips', aliases:'chips potato crisps zweifel', kcal:535,p:6,c:50,f:36, source:'Standarddatenbank'},
+  {name:'Tortilla Chips', aliases:'chips nachos tortilla', kcal:490,p:7,c:62,f:23, source:'Standarddatenbank'},
+  {name:'Popcorn gesalzen', aliases:'popcorn salzig snack', kcal:480,p:10,c:70,f:17, source:'Standarddatenbank'},
+  {name:'Salzstangen', aliases:'salzstangen brezel pretzel snack', kcal:381,p:10,c:79,f:2.5, source:'Standarddatenbank'},
+  {name:'Erdnussflips', aliases:'flips erdnuss peanut snack', kcal:530,p:14,c:48,f:32, source:'Standarddatenbank'},
+  {name:'Gummibärchen', aliases:'gummibärchen haribo gummibaerchen candy süssigkeit', kcal:340,p:6,c:77,f:0.1, source:'Standarddatenbank'},
+  {name:'Schokoriegel (Mars/Snickers)', aliases:'schokoriegel mars snickers twix riegel', kcal:480,p:6,c:60,f:23, source:'Standarddatenbank'},
+  {name:'Nutella', aliases:'nutella nuss nougat creme schokocreme', kcal:539,p:6,c:58,f:31, source:'Standarddatenbank'},
+  {name:'Kekse / Guetzli', aliases:'kekse guetzli cookies biscuits', kcal:480,p:6,c:64,f:22, source:'Standarddatenbank'},
+  {name:'Croissant', aliases:'croissant gipfeli butter', kcal:406,p:8,c:46,f:21, source:'Standarddatenbank'},
+  {name:'Donut', aliases:'donut doughnut krapfen', kcal:452,p:5,c:51,f:25, source:'Standarddatenbank'},
+  {name:'Eiscreme Vanille', aliases:'glace eis ice cream vanille', kcal:207,p:3.5,c:24,f:11, source:'Standarddatenbank'},
+  {name:'Honig', aliases:'honig honey miel', kcal:304,p:0.3,c:82,f:0, source:'Standarddatenbank'},
+  {name:'Marmelade', aliases:'marmelade konfitüre jam confiture', kcal:250,p:0.5,c:62,f:0.1, source:'Standarddatenbank'},
+  {name:'Zucker', aliases:'zucker sugar sucre', kcal:400,p:0,c:100,f:0, source:'Standarddatenbank'},
+  {name:'Cola', aliases:'cola coca softdrink limo', kcal:42,p:0,c:11,f:0, source:'Standarddatenbank'},
+  {name:'Orangensaft', aliases:'orangensaft orange juice jus', kcal:45,p:0.7,c:10,f:0.2, source:'Standarddatenbank'},
+  {name:'Bier', aliases:'bier beer bière lager', kcal:43,p:0.5,c:3.6,f:0, source:'Standarddatenbank'},
+  {name:'Rotwein', aliases:'wein wine vin rotwein', kcal:85,p:0.1,c:2.6,f:0, source:'Standarddatenbank'},
+  {name:'Ketchup', aliases:'ketchup tomatensauce', kcal:112,p:1.2,c:26,f:0.1, source:'Standarddatenbank'},
+  {name:'Mayonnaise', aliases:'mayo mayonnaise', kcal:680,p:1,c:1.5,f:75, source:'Standarddatenbank'},
+  {name:'Butter', aliases:'butter beurre', kcal:717,p:0.7,c:0.7,f:81, source:'Standarddatenbank'},
+  {name:'Olivenöl', aliases:'olivenöl olive oil huile olivenoel', kcal:884,p:0,c:0,f:100, source:'Standarddatenbank'},
+  {name:'Vollkornbrot', aliases:'brot bread pain vollkorn', kcal:247,p:9,c:41,f:3.3, source:'Standarddatenbank'},
+  {name:'Weissbrot / Toast', aliases:'toast weissbrot brot bread', kcal:265,p:8,c:49,f:3.2, source:'Standarddatenbank'},
+  {name:'Käse (Gouda/Emmentaler)', aliases:'käse cheese fromage gouda emmentaler', kcal:356,p:25,c:0,f:28, source:'Standarddatenbank'},
+  {name:'Apfel', aliases:'apfel apple pomme', kcal:52,p:0.3,c:14,f:0.2, source:'Standarddatenbank'},
+  {name:'Banane', aliases:'banane banana', kcal:89,p:1.1,c:23,f:0.3, source:'Standarddatenbank'}];
 
 const QUERY_SYNONYMS = {
   'hähnchen':'chicken poulet', 'haehnchen':'chicken poulet', 'hühnerbrust':'chicken breast poulet', 'huehnerbrust':'chicken breast poulet',
@@ -1825,7 +1913,10 @@ const QUERY_SYNONYMS = {
   'nudeln':'pasta pâtes', 'ei':'egg oeuf', 'eier':'eggs oeufs', 'lachs':'salmon saumon',
   'thunfisch':'tuna thon', 'garnelen':'shrimp crevettes', 'mandeln':'almonds amandes',
   'olivenöl':'olive oil huile olive', 'olivenoel':'olive oil huile olive',
-  'pizza':'pizza margherita salami prosciutto tonno pizzateig', 'döner':'doner kebab dürüm durum', 'doener':'doner kebab dürüm durum', 'burger':'hamburger cheeseburger', 'pommes':'french fries frites'
+  'pizza':'pizza margherita salami prosciutto tonno pizzateig', 'döner':'doner kebab dürüm durum', 'doener':'doner kebab dürüm durum', 'burger':'hamburger cheeseburger', 'pommes':'french fries frites',
+  'schokolade':'chocolate chocolat schoggi tafel', 'schoggi':'chocolate schokolade', 'chips':'crisps potato chips kartoffelchips', 'gummibärchen':'gummy bears haribo candy', 'gummibaerchen':'gummy bears haribo',
+  'kekse':'cookies biscuits guetzli', 'guetzli':'cookies biscuits', 'eis':'ice cream glace', 'glace':'ice cream eis', 'käse':'cheese fromage', 'kaese':'cheese fromage',
+  'cola':'cola coca soft drink', 'bier':'beer bière', 'wein':'wine vin', 'butter':'butter beurre', 'honig':'honey miel', 'zucker':'sugar sucre', 'nutella':'nutella hazelnut spread', 'popcorn':'popcorn', 'croissant':'croissant gipfeli'
 };
 
 function normText(str) {
@@ -1938,16 +2029,18 @@ async function fetchOFF(term, originalQuery, countryPriority=true) {
   const params = new URLSearchParams({
     search_terms: term,
     page_size: '40',
+    lc: 'de',
     fields: 'product_name,product_name_de,generic_name,generic_name_de,brands,nutriments,image_front_small_url,image_small_url,countries_tags,lang'
   });
   if (countryPriority) params.set('countries_tags_en', 'Switzerland,Germany,Austria');
-  const url = `https://world.openfoodfacts.org/api/v2/search?${params.toString()}`;
+  // German endpoint returns German product names by default
+  const url = `https://de.openfoodfacts.org/api/v2/search?${params.toString()}`;
   const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
   if (!res.ok) throw new Error('OpenFoodFacts API Fehler');
   const data = await res.json();
   return (data.products || [])
     .map(p => normalizeOFFProduct(p, originalQuery))
-    .filter(f => f.name && f.directMatch && (f.kcal || f.p || f.c || f.f) && f.score >= 70);
+    .filter(f => f.name && f.directMatch && (f.kcal || f.p || f.c || f.f) && f.score >= 40);
 }
 
 async function searchOpenFoodFacts(query, local=[]) {
@@ -1971,7 +2064,7 @@ async function searchOpenFoodFacts(query, local=[]) {
 
     const cleaned = merged
       .map(x => ({...x, score: x.score || relevanceScore(x, query)}))
-      .filter(x => x.source === 'Standarddatenbank' || x.score >= 70)
+      .filter(x => x.source === 'Standarddatenbank' || x.score >= 40)
       .sort((a,b) => (b.score - a.score) || ((b.source==='Standarddatenbank') - (a.source==='Standarddatenbank')))
       .slice(0, 24);
 
@@ -2030,6 +2123,26 @@ function escapeHtml(str){
 
 // ══ CHEAT MEALS ══
 const cheatMeals = [
+  // ── Fast-Food-Ketten (offizielle Herstellerangaben) ──
+  {cat:'ketten',icon:'🍔',name:'McDonald\u0027s Big Mac',portion:'1 Burger ~219g',kcal:503,p:26,c:42,f:25},
+  {cat:'ketten',icon:'🍔',name:'McDonald\u0027s Hamburger',portion:'1 Burger ~100g',kcal:251,p:12,c:31,f:9},
+  {cat:'ketten',icon:'🍔',name:'McDonald\u0027s Cheeseburger',portion:'1 Burger ~115g',kcal:301,p:15,c:32,f:13},
+  {cat:'ketten',icon:'🍔',name:'McDonald\u0027s McRoyal TS',portion:'1 Burger ~213g',kcal:508,p:30,c:39,f:26},
+  {cat:'ketten',icon:'🍟',name:'McDonald\u0027s Pommes gross',portion:'1 Portion ~150g',kcal:444,p:6,c:57,f:21},
+  {cat:'ketten',icon:'🍗',name:'McDonald\u0027s McNuggets',portion:'6 Stück ~110g',kcal:259,p:15,c:16,f:15},
+  {cat:'ketten',icon:'🍦',name:'McDonald\u0027s McFlurry',portion:'1 Becher ~180g',kcal:328,p:6,c:50,f:11},
+  {cat:'ketten',icon:'🍔',name:'Burger King Whopper',portion:'1 Burger ~270g',kcal:627,p:28,c:50,f:35},
+  {cat:'ketten',icon:'🍔',name:'Burger King Cheeseburger',portion:'1 Burger ~133g',kcal:300,p:16,c:28,f:14},
+  {cat:'ketten',icon:'🍔',name:'Burger King Double Whopper',portion:'1 Burger ~373g',kcal:891,p:48,c:50,f:56},
+  {cat:'ketten',icon:'🍗',name:'Burger King Chicken Nuggets',portion:'9 Stück ~150g',kcal:393,p:19,c:24,f:24},
+  {cat:'ketten',icon:'🍟',name:'Burger King Pommes gross',portion:'1 Portion ~154g',kcal:434,p:5,c:54,f:22},
+  {cat:'ketten',icon:'🍗',name:'KFC Original Hähnchen',portion:'1 Stück ~115g',kcal:280,p:22,c:9,f:18},
+  {cat:'ketten',icon:'🍗',name:'KFC Hot Wings',portion:'6 Stück ~285g',kcal:470,p:33,c:21,f:29},
+  {cat:'ketten',icon:'🌯',name:'KFC Twister Wrap',portion:'1 Wrap ~230g',kcal:580,p:25,c:50,f:31},
+  {cat:'ketten',icon:'🍗',name:'KFC Zinger Burger',portion:'1 Burger ~210g',kcal:450,p:25,c:42,f:21},
+  {cat:'ketten',icon:'🥪',name:'Subway Sub Italian BMT (30cm)',portion:'30 cm ~470g',kcal:840,p:40,c:90,f:36},
+  {cat:'ketten',icon:'🌮',name:'Taco Bell Crunchwrap',portion:'1 Stück ~250g',kcal:530,p:16,c:71,f:21},
+  // ── Burger & Fast Food ──
   {cat:'burger',icon:'🍔',name:'Cheeseburger',portion:'1 Burger ~220g',kcal:620,p:33,c:45,f:34},
   {cat:'burger',icon:'🍔',name:'Double Burger Menü',portion:'Burger + Pommes',kcal:1180,p:52,c:105,f:58},
   {cat:'fast-food',icon:'🍟',name:'Pommes Frites gross',portion:'1 Portion ~180g',kcal:560,p:7,c:72,f:27},
@@ -2057,7 +2170,7 @@ const cheatMeals = [
 ];
 
 const cheatCatLabels = {
-  alle:'Alle', burger:'Burger', 'fast-food':'Fast Food', pizza:'Pizza', pasta:'Pasta',
+  alle:'Alle', ketten:'🍔 Fast-Food-Ketten', burger:'Burger', 'fast-food':'Fast Food', pizza:'Pizza', pasta:'Pasta',
   dessert:'Dessert', suess:'Süsses', snacks:'Snacks', bbq:'BBQ', schweiz:'Schweizer Klassiker',
   asiatisch:'Asiatisch', mexican:'Mexican', getraenke:'Getränke'
 };
@@ -2065,7 +2178,7 @@ const cheatCatLabels = {
 function buildCheatFilters() {
   const wrap = document.getElementById('cheatFilter');
   if (!wrap) return;
-  const cats = ['alle','burger','fast-food','pizza','pasta','dessert','suess','snacks','bbq','schweiz','asiatisch','mexican','getraenke'];
+  const cats = ['alle','ketten','burger','fast-food','pizza','pasta','dessert','suess','snacks','bbq','schweiz','asiatisch','mexican','getraenke'];
   wrap.innerHTML = cats.map((cat,i)=>`<button class="cheat-filter-btn ${i===0?'active':''}" onclick="filterCheat('${cat}',this)">${cheatCatLabels[cat]}</button>`).join('');
 }
 
