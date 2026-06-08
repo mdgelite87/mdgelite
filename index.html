@@ -328,6 +328,9 @@ footer a{color:var(--gold);text-decoration:none;}
 .cheat-img{width:100%;aspect-ratio:4/3;background:var(--card2);overflow:hidden;display:block;}
 .cheat-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease;}
 .cheat-card:hover .cheat-img img{transform:scale(1.06);}
+.cheat-visual{display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,rgba(201,168,76,0.28),rgba(255,255,255,0.04) 50%,rgba(0,0,0,0.12));}
+.cheat-visual span{font-size:58px;filter:drop-shadow(0 8px 18px rgba(0,0,0,.45));transition:transform .25s ease;}
+.cheat-card:hover .cheat-visual span{transform:scale(1.08) rotate(-2deg);}
 .cheat-cat{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:5px;font-weight:700;}
 .nw-result-img{width:48px;height:48px;border-radius:4px;object-fit:cover;background:var(--card2);flex-shrink:0;}
 .nw-result-left{display:flex;gap:12px;align-items:center;min-width:0;}
@@ -691,9 +694,47 @@ footer a{color:var(--gold);text-decoration:none;}
   </div>
 </section>
 
+
+<!-- ══ IMPRESSUM ══ -->
+<section id="sec-impressum" class="page-section">
+  <div class="content-wrap">
+    <div class="page-header">
+      <div class="eyebrow">Rechtliches</div>
+      <h2>IMPRESSUM</h2>
+      <p>Angaben gemäss Schweizer Recht</p>
+    </div>
+    <div class="kontakt-wrap" style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:28px;line-height:1.8;color:var(--muted);font-size:14px;">
+      <p><strong style="color:var(--text);">MDG Elite / Marco Di Giovanni</strong></p>
+      <p>Schweiz</p>
+      <p>E-Mail: <a href="mailto:mdgelite87@gmail.com" style="color:var(--gold);">mdgelite87@gmail.com</a></p>
+      <p style="margin-top:18px;">Diese Website ist ein privates Informations- und Content-Angebot rund um Fitness, Ernährung und Lifestyle. Inhalte dienen der allgemeinen Information und ersetzen keine medizinische, rechtliche oder steuerliche Beratung.</p>
+      <p style="margin-top:18px;font-size:12px;">Hinweis: Bitte ergänze hier bei Veröffentlichung die vollständige ladungsfähige Adresse und ggf. Unternehmens-/UID-Angaben, falls die Seite geschäftlich genutzt wird.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DATENSCHUTZ ══ -->
+<section id="sec-datenschutz" class="page-section">
+  <div class="content-wrap">
+    <div class="page-header">
+      <div class="eyebrow">Rechtliches</div>
+      <h2>DATENSCHUTZ</h2>
+      <p>Informationen zur Datenbearbeitung</p>
+    </div>
+    <div class="kontakt-wrap" style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:28px;line-height:1.8;color:var(--muted);font-size:14px;">
+      <p><strong style="color:var(--text);">Verantwortlich:</strong> MDG Elite / Marco Di Giovanni, Schweiz, E-Mail: <a href="mailto:mdgelite87@gmail.com" style="color:var(--gold);">mdgelite87@gmail.com</a></p>
+      <p style="margin-top:16px;"><strong style="color:var(--text);">Kontaktformular:</strong> Wenn du das Kontaktformular nutzt, werden Name, E-Mail-Adresse, Betreff und Nachricht an den Websitebetreiber übermittelt. Der Versand erfolgt über EmailJS, sobald die EmailJS-Konfiguration in der Datei hinterlegt ist.</p>
+      <p style="margin-top:16px;"><strong style="color:var(--text);">Nährwertsuche:</strong> Der Nährwertrechner fragt Produktdaten bei OpenFoodFacts ab. Dabei wird der eingegebene Suchbegriff an OpenFoodFacts übermittelt.</p>
+      <p style="margin-top:16px;"><strong style="color:var(--text);">Lokale Speicherung:</strong> Admin-Inhalte, hochgeladene Bilder und Einstellungen können im Browser per localStorage gespeichert werden. Diese Daten bleiben lokal im jeweiligen Browser und werden nicht automatisch an einen Server übertragen.</p>
+      <p style="margin-top:16px;"><strong style="color:var(--text);">Externe Inhalte:</strong> Die Seite kann externe Dienste wie Google Fonts, YouTube, EmailJS, OpenFoodFacts und externe Bildquellen laden. Dabei können technische Daten wie IP-Adresse und Browserinformationen an diese Anbieter übertragen werden.</p>
+      <p style="margin-top:16px;font-size:12px;">Hinweis: Dies ist eine technische Basisversion. Vor produktiver Veröffentlichung sollte die Datenschutzerklärung rechtlich geprüft und an Hosting, Tracking, Cookies und Geschäftsmodell angepasst werden.</p>
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="footer-logo">MDG ELITE</div>
-  <p>© 2026 Marco Di Giovanni · <a href="#" onclick="showSection('kontakt');return false;">Kontakt</a> · <a href="#">Impressum</a> · <a href="#">Datenschutz</a><br>
+  <p>© 2026 Marco Di Giovanni · <a href="#" onclick="showSection('kontakt');return false;">Kontakt</a> · <a href="#" onclick="showSection('impressum');return false;">Impressum</a> · <a href="#" onclick="showSection('datenschutz');return false;">Datenschutz</a><br>
   <span style="font-size:11px;opacity:0.5;">mdgelite.com</span> · <a href="#" onclick="openModal('loginModal');return false;" style="font-size:10px;opacity:0.25;color:var(--muted);text-decoration:none;">Admin</a></p>
 </footer>
 
@@ -915,7 +956,9 @@ function openPasswordModal() { openModal('changePwModal'); }
 // ══ NAVIGATION ══
 function showSection(id) {
   document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-  document.getElementById('sec-' + id).classList.add('active');
+  const sec = document.getElementById('sec-' + id);
+  if (!sec) return;
+  sec.classList.add('active');
   document.querySelectorAll('.nav-links a').forEach((a,i) => {
     a.classList.toggle('active', ['home','videos','bilder','rechner','naehrwert','cheatmeals','kontakt'][i] === id);
   });
@@ -1116,7 +1159,10 @@ const FOOD_DB = {
   olivenoel:{name:'Olivenöl',p:0,c:0,f:100,kcal:884,cat:'Fette & Nüsse'},
   erdnussbutter:{name:'Erdnussbutter',p:25,c:20,f:50,kcal:588,cat:'Fette & Nüsse'},
   hafermilch:{name:'Hafermilch',p:1,c:9,f:1.5,kcal:45,cat:'Kohlenhydrate'},
-  mandelmilch:{name:'Mandelmilch',p:0.5,c:3,f:1.2,kcal:24,cat:'Kohlenhydrate'}
+  mandelmilch:{name:'Mandelmilch',p:0.5,c:3,f:1.2,kcal:24,cat:'Kohlenhydrate'},
+  vollkornbrot:{name:'Vollkornbrot',p:9,c:43,f:3.5,kcal:240,cat:'Kohlenhydrate'},
+  apfel:{name:'Apfel',p:0.3,c:14,f:0.2,kcal:52,cat:'Gemüse & Früchte'},
+  gemuese:{name:'Gemischtes Gemüse',p:2.5,c:7,f:0.4,kcal:40,cat:'Gemüse & Früchte'}
 };
 
 function calculate(){
@@ -1187,48 +1233,135 @@ function mealLabel(diet){
   return diet==='vegan'?'Vegan':diet==='vegetarian'?'Vegetarisch':'Fleisch/Fisch';
 }
 
-function composeMeal(targetP,targetC,targetF,diet,idx,totalMeals){
-  const proteinPools = {
-    meat: ['huhn','rind','lachs','thunfisch'],
-    vegetarian: ['magerquark','eier','skyr','whey'],
-    vegan: ['tofu','tempeh','seitan','vegwhey']
-  };
-  const carbPools = ['reis','kartoffeln','haferflocken','quinoa'];
-  const fatPools = ['olivenoel','avocado','mandeln','erdnussbutter'];
-  const vegPools = ['brokkoli','spinat','beeren'];
 
-  const pKey = proteinPools[diet][idx % proteinPools[diet].length];
-  const cKey = carbPools[idx % carbPools.length];
-  const fKey = fatPools[idx % fatPools.length];
-  const vKey = vegPools[idx % vegPools.length];
+function clampGrams(g, min=0, max=999){
+  if (!isFinite(g)) return 0;
+  return Math.max(min, Math.min(max, Math.round(g)));
+}
 
-  const foods = [];
-  const vegG = (vKey==='beeren') ? 100 : 150;
-  foods.push(gramsFor(vKey, vegG));
+function addFood(foods, key, grams){
+  const g = clampGrams(grams);
+  if (g <= 0 || !FOOD_DB[key]) return;
+  foods.push(gramsFor(key, g));
+}
 
-  let current=sumFoods(foods);
-  const pNeed=Math.max(0,targetP-current.p);
-  foods.push(gramsFor(pKey, pNeed/FOOD_DB[pKey].p*100));
+function fillMacroGaps(foods, target, context, diet){
+  let cur = sumFoods(foods);
+  const proteinFallback = diet === 'vegan' ? 'vegwhey' : 'whey';
 
-  current=sumFoods(foods);
-  const cNeed=Math.max(0,targetC-current.c);
-  foods.push(gramsFor(cKey, cNeed/FOOD_DB[cKey].c*100));
-
-  current=sumFoods(foods);
-  const fNeed=Math.max(0,targetF-current.fat);
-  foods.push(gramsFor(fKey, fNeed/FOOD_DB[fKey].f*100));
-
-  current=sumFoods(foods);
-  if (targetP-current.p > 3) {
-    const key = diet==='vegan' ? 'vegwhey' : 'whey';
-    foods.push(gramsFor(key, (targetP-current.p)/FOOD_DB[key].p*100));
+  // Snacks and breakfast may use protein powder; lunch/dinner should stay as real meals.
+  if ((context === 'breakfast' || context === 'snack' || context === 'fasten_shake') && target.p - cur.p > 4) {
+    addFood(foods, proteinFallback, (target.p - cur.p) / FOOD_DB[proteinFallback].p * 100);
   }
-  current=sumFoods(foods);
-  if (targetC-current.c > 4) foods.push(gramsFor('reis', (targetC-current.c)/FOOD_DB.reis.c*100));
-  current=sumFoods(foods);
-  if (targetF-current.fat > 2) foods.push(gramsFor('olivenoel', (targetF-current.fat)));
 
-  return foods.filter(f=>f.grams>0);
+  cur = sumFoods(foods);
+  if (target.c - cur.c > 5) {
+    const carbKey = context === 'breakfast' || context === 'snack' || context === 'fasten_shake' ? 'banane' : 'kartoffeln';
+    addFood(foods, carbKey, (target.c - cur.c) / FOOD_DB[carbKey].c * 100);
+  }
+
+  cur = sumFoods(foods);
+  if (target.fat - cur.fat > 2) {
+    const fatKey = context === 'lunch' || context === 'dinner' || context === 'fasten_main' ? 'olivenoel' : 'mandeln';
+    addFood(foods, fatKey, (target.fat - cur.fat) / FOOD_DB[fatKey].f * 100);
+  }
+
+  return foods.filter(f => f.grams > 0);
+}
+
+function buildMealVariant(mealType, variant, targetP, targetC, targetF, diet){
+  const target = {p:targetP, c:targetC, fat:targetF};
+  const foods = [];
+
+  if (mealType === 'breakfast') {
+    if (variant === 0) {
+      // Frühstück 1: Bowl / Porridge – kein Reis, kein Gemüse-Mix.
+      const dairy = diet === 'vegan' ? 'vegwhey' : 'magerquark';
+      addFood(foods, dairy, targetP / FOOD_DB[dairy].p * 100 * 0.70);
+      addFood(foods, 'haferflocken', Math.max(30, targetC / FOOD_DB.haferflocken.c * 100 * 0.70));
+      addFood(foods, 'beeren', 120);
+      addFood(foods, 'mandeln', Math.max(8, targetF / FOOD_DB.mandeln.f * 100 * 0.65));
+    } else {
+      // Frühstück 2: herzhaft, aber weiterhin frühstückstypisch.
+      if (diet === 'vegan') {
+        addFood(foods, 'tofu', targetP / FOOD_DB.tofu.p * 100 * 0.75);
+      } else {
+        addFood(foods, 'eier', Math.max(120, targetP / FOOD_DB.eier.p * 100 * 0.55));
+        const extra = diet === 'meat' ? 'thunfisch' : 'skyr';
+        addFood(foods, extra, Math.max(60, targetP / FOOD_DB[extra].p * 100 * 0.25));
+      }
+      addFood(foods, 'vollkornbrot', Math.max(45, targetC / FOOD_DB.vollkornbrot.c * 100 * 0.75));
+      addFood(foods, 'avocado', Math.max(30, targetF / FOOD_DB.avocado.f * 100 * 0.55));
+      addFood(foods, 'spinat', 80);
+    }
+    return fillMacroGaps(foods, target, 'breakfast', diet);
+  }
+
+  if (mealType === 'snack') {
+    if (variant === 0) {
+      const base = diet === 'vegan' ? 'vegwhey' : 'skyr';
+      addFood(foods, base, targetP / FOOD_DB[base].p * 100 * 0.80);
+      addFood(foods, 'banane', Math.max(80, targetC / FOOD_DB.banane.c * 100 * 0.55));
+      addFood(foods, 'mandeln', Math.max(10, targetF / FOOD_DB.mandeln.f * 100 * 0.70));
+    } else {
+      const protein = diet === 'vegan' ? 'tofu' : 'magerquark';
+      addFood(foods, protein, targetP / FOOD_DB[protein].p * 100 * 0.75);
+      addFood(foods, 'haferflocken', Math.max(25, targetC / FOOD_DB.haferflocken.c * 100 * 0.55));
+      addFood(foods, 'beeren', 100);
+      addFood(foods, 'erdnussbutter', Math.max(8, targetF / FOOD_DB.erdnussbutter.f * 100 * 0.55));
+    }
+    return fillMacroGaps(foods, target, 'snack', diet);
+  }
+
+  // Lunch / dinner: echte Mahlzeiten, kein Whey als Abendessen.
+  const isDinner = mealType === 'dinner';
+  const pool = diet === 'vegan'
+    ? (variant === 0 ? ['tofu','kartoffeln','gemuese','olivenoel'] : ['tempeh','quinoa','spinat','avocado'])
+    : diet === 'vegetarian'
+      ? (variant === 0 ? ['eier','kartoffeln','brokkoli','olivenoel'] : ['magerquark','quinoa','spinat','avocado'])
+      : (variant === 0
+        ? (isDinner ? ['lachs','kartoffeln','brokkoli','olivenoel'] : ['huhn','reis','brokkoli','olivenoel'])
+        : (isDinner ? ['rind','quinoa','spinat','avocado'] : ['thunfisch','kartoffeln','gemuese','olivenoel']));
+
+  const [pKey,cKey,vKey,fKey] = pool;
+  addFood(foods, vKey, isDinner ? 180 : 160);
+  let cur = sumFoods(foods);
+  addFood(foods, pKey, Math.max(80, (targetP - cur.p) / FOOD_DB[pKey].p * 100));
+  cur = sumFoods(foods);
+  addFood(foods, cKey, Math.max(80, (targetC - cur.c) / FOOD_DB[cKey].c * 100));
+  cur = sumFoods(foods);
+  addFood(foods, fKey, Math.max(fKey === 'olivenoel' ? 5 : 30, (targetF - cur.fat) / FOOD_DB[fKey].f * 100));
+
+  // Close remaining gaps with food-appropriate ingredients only.
+  cur = sumFoods(foods);
+  if (target.p - cur.p > 5) addFood(foods, pKey, (target.p - cur.p) / FOOD_DB[pKey].p * 100);
+  cur = sumFoods(foods);
+  if (target.c - cur.c > 6) addFood(foods, cKey, (target.c - cur.c) / FOOD_DB[cKey].c * 100);
+  cur = sumFoods(foods);
+  if (target.fat - cur.fat > 2) addFood(foods, fKey, (target.fat - cur.fat) / FOOD_DB[fKey].f * 100);
+
+  return foods.filter(f => f.grams > 0);
+}
+
+function mealDistribution(meals){
+  if (meals === 3) return [
+    {name:'Frühstück',time:'08:00',tag:'🍳',type:'breakfast',share:{p:.30,c:.30,f:.30}},
+    {name:'Mittagessen',time:'13:00',tag:'🥗',type:'lunch',share:{p:.35,c:.40,f:.35}},
+    {name:'Abendessen',time:'19:00',tag:'🍽️',type:'dinner',share:{p:.35,c:.30,f:.35}}
+  ];
+  if (meals === 5) return [
+    {name:'Frühstück',time:'07:30',tag:'🍳',type:'breakfast',share:{p:.24,c:.25,f:.24}},
+    {name:'Snack 1',time:'10:30',tag:'🥣',type:'snack',share:{p:.16,c:.15,f:.16}},
+    {name:'Mittagessen',time:'13:30',tag:'🥗',type:'lunch',share:{p:.26,c:.30,f:.24}},
+    {name:'Snack 2',time:'16:30',tag:'🥤',type:'snack',share:{p:.14,c:.12,f:.14}},
+    {name:'Abendessen',time:'20:00',tag:'🍽️',type:'dinner',share:{p:.20,c:.18,f:.22}}
+  ];
+  return [
+    {name:'Frühstück',time:'08:00',tag:'🍳',type:'breakfast',share:{p:.28,c:.30,f:.28}},
+    {name:'Mittagessen',time:'12:30',tag:'🥗',type:'lunch',share:{p:.32,c:.35,f:.30}},
+    {name:'Snack',time:'16:00',tag:'🥣',type:'snack',share:{p:.18,c:.15,f:.17}},
+    {name:'Abendessen',time:'19:30',tag:'🍽️',type:'dinner',share:{p:.22,c:.20,f:.25}}
+  ];
 }
 
 function generateMealPlan(kcal, meals, proteinG, carbsG, fatG, diet) {
@@ -1237,56 +1370,85 @@ function generateMealPlan(kcal, meals, proteinG, carbsG, fatG, diet) {
     return;
   }
 
-  const names = {
-    3: ['Frühstück','Mittagessen','Abendessen'],
-    4: ['Frühstück','Mittagessen','Snack','Abendessen'],
-    5: ['Frühstück','Snack 1','Mittagessen','Snack 2','Abendessen']
-  }[meals] || ['Frühstück','Mittagessen','Snack','Abendessen'];
-  const times = {
-    3: ['08:00','13:00','19:00'],
-    4: ['08:00','12:30','16:00','19:30'],
-    5: ['07:30','10:30','13:30','16:30','20:00']
-  }[meals] || ['08:00','12:30','16:00','19:30'];
+  const templates = mealDistribution(meals).map((m, i) => {
+    const targetP = proteinG * m.share.p;
+    const targetC = carbsG * m.share.c;
+    const targetF = fatG * m.share.f;
+    return {
+      name: m.name,
+      time: m.time,
+      tag: m.tag,
+      type: m.type,
+      alts: [0,1].map(v => ({
+        label: v === 0 ? 'Option A' : 'Option B',
+        foods: buildMealVariant(m.type, v, targetP, targetC, targetF, diet)
+      }))
+    };
+  });
 
-  const baseP=proteinG/meals, baseC=carbsG/meals, baseF=fatG/meals;
-  const mealList = names.map((name,i)=>({
-    name, time:times[i], tag:i===0?'🍳':i===names.length-1?'🍽️':'🥗',
-    foods: composeMeal(baseP, baseC, baseF, diet, i, meals)
-  }));
-
-  renderMealPlan(mealList, diet, {kcal, proteinG, carbsG, fatG});
+  window._mealTemplates = templates;
+  window._mealAltIdx = templates.map(() => 0);
+  window._currentDiet = diet;
+  window._currentTargets = {kcal, proteinG, carbsG, fatG};
+  renderMealPlan(templates, diet, window._currentTargets);
 }
 
 function generateFastenPlan(kcal, proteinG, carbsG, fatG, diet) {
-  const shakeP = Math.round(proteinG*0.28);
-  const mainP = proteinG - shakeP*2;
-  const shakeC = Math.round(carbsG*0.18);
-  const mainC = carbsG - shakeC*2;
-  const shakeF = Math.round(fatG*0.12);
-  const mainF = fatG - shakeF*2;
+  const proteinKey = diet === 'vegan' ? 'vegwhey' : 'whey';
+  const mainType = 'dinner';
+  const shakeTarget1 = {p:proteinG*.28, c:carbsG*.18, fat:fatG*.12};
+  const shakeTarget2 = {p:proteinG*.28, c:carbsG*.14, fat:fatG*.10};
+  const mainTarget = {p:proteinG - shakeTarget1.p - shakeTarget2.p, c:carbsG - shakeTarget1.c - shakeTarget2.c, fat:fatG - shakeTarget1.fat - shakeTarget2.fat};
 
-  const proteinKey = diet==='vegan' ? 'vegwhey' : 'whey';
-
-  function shakeFoods(i){
-    const foods = [
-      gramsFor(proteinKey, shakeP/FOOD_DB[proteinKey].p*100),
-      gramsFor(i===1?'banane':'beeren', shakeC/(i===1?FOOD_DB.banane.c:FOOD_DB.beeren.c)*100)
-    ];
-    let cur=sumFoods(foods);
-    if (shakeF-cur.fat > 1) foods.push(gramsFor('mandeln',(shakeF-cur.fat)/FOOD_DB.mandeln.f*100));
-    return foods.filter(f=>f.grams>0);
+  function shakeVariant(target, variant){
+    const foods=[];
+    addFood(foods, proteinKey, target.p / FOOD_DB[proteinKey].p * 100);
+    addFood(foods, variant === 0 ? 'banane' : 'beeren', target.c / FOOD_DB[variant === 0 ? 'banane' : 'beeren'].c * 100 * .75);
+    addFood(foods, variant === 0 ? 'mandeln' : 'erdnussbutter', target.fat / FOOD_DB[variant === 0 ? 'mandeln' : 'erdnussbutter'].f * 100 * .80);
+    return fillMacroGaps(foods, target, 'fasten_shake', diet);
   }
 
-  const mainFoods = composeMeal(mainP, mainC, mainF, diet, 0, 1);
-  const mealList = [
-    { name:'Protein Shake 1', time:'08:00', tag:'🥤', foods:shakeFoods(1) },
-    { name:'Hauptmahlzeit', time:'13:00 oder 19:00', tag:'🍽️', foods:mainFoods, highlight:true },
-    { name:'Protein Shake 2', time:'16:00', tag:'🥤', foods:shakeFoods(2) }
+  const templates = [
+    {name:'Protein Shake 1',time:'08:00',tag:'🥤',type:'snack',alts:[
+      {label:'Banane',foods:shakeVariant(shakeTarget1,0)},
+      {label:'Beeren',foods:shakeVariant(shakeTarget1,1)}
+    ]},
+    {name:'Hauptmahlzeit',time:'13:00 oder 19:00',tag:'🍽️',type:mainType,highlight:true,alts:[
+      {label:'Option A',foods:buildMealVariant(mainType,0,mainTarget.p,mainTarget.c,mainTarget.fat,diet)},
+      {label:'Option B',foods:buildMealVariant(mainType,1,mainTarget.p,mainTarget.c,mainTarget.fat,diet)}
+    ]},
+    {name:'Protein Shake 2',time:'16:00',tag:'🥤',type:'snack',alts:[
+      {label:'Banane',foods:shakeVariant(shakeTarget2,0)},
+      {label:'Beeren',foods:shakeVariant(shakeTarget2,1)}
+    ]}
   ];
-  renderMealPlan(mealList, diet, {kcal, proteinG, carbsG, fatG}, true);
+  window._mealTemplates = templates;
+  window._mealAltIdx = templates.map(() => 0);
+  window._currentDiet = diet;
+  window._currentTargets = {kcal, proteinG, carbsG, fatG};
+  renderMealPlan(templates, diet, window._currentTargets, true);
 }
 
-function renderMealPlan(mealList, diet, targets, isFasten=false){
+function getActiveMealList(){
+  if (!window._mealTemplates) return [];
+  return window._mealTemplates.map((meal, i) => ({
+    name: meal.name,
+    time: meal.time,
+    tag: meal.tag,
+    type: meal.type,
+    highlight: meal.highlight,
+    foods: meal.alts[window._mealAltIdx[i] || 0].foods
+  }));
+}
+
+function setMealAlt(mealIdx, altIdx){
+  if (!window._mealTemplates || !window._mealTemplates[mealIdx]) return;
+  window._mealAltIdx[mealIdx] = altIdx;
+  renderMealPlan(window._mealTemplates, window._currentDiet, window._currentTargets);
+}
+
+function renderMealPlan(templates, diet, targets, isFasten=false){
+  const mealList = getActiveMealList();
   const totals = mealList.reduce((a,m)=>{
     const t=sumFoods(m.foods);
     a.p+=t.p; a.c+=t.c; a.fat+=t.fat; a.cal+=t.cal; return a;
@@ -1294,12 +1456,14 @@ function renderMealPlan(mealList, diet, targets, isFasten=false){
 
   const summary = `<div style="margin-bottom:16px;padding:12px 20px;background:rgba(201,168,76,0.08);border:1px solid var(--gold-dim);border-radius:4px;font-size:13px;color:var(--text);line-height:1.6;">
     Ziel: <strong>${targets.proteinG}g P</strong> · <strong>${targets.carbsG}g C</strong> · <strong>${targets.fatG}g F</strong> · <strong>${targets.kcal} kcal</strong><br>
-    Plan-Summe: <strong>${Math.round(totals.p)}g P</strong> · <strong>${Math.round(totals.c)}g C</strong> · <strong>${Math.round(totals.fat)}g F</strong> · <strong>${Math.round(totals.cal)} kcal</strong>
+    Aktuelle Auswahl: <strong>${Math.round(totals.p)}g P</strong> · <strong>${Math.round(totals.c)}g C</strong> · <strong>${Math.round(totals.fat)}g F</strong> · <strong>${Math.round(totals.cal)} kcal</strong><br>
+    <span style="color:var(--muted);font-size:12px;">Jede Mahlzeit hat zwei sinnvolle Optionen. Die Einkaufsliste passt sich deiner Auswahl automatisch an.</span>
   </div>`;
 
   const html = mealList.map((meal, idx)=>{
     const t=sumFoods(meal.foods);
     const border = meal.highlight ? `border-left:3px solid var(--gold);` : `border-left:3px solid var(--border2);`;
+    const altBtns = (templates[idx].alts || []).map((alt, ai)=>`<button class="alt-btn ${window._mealAltIdx[idx]===ai?'active':''}" onclick="setMealAlt(${idx},${ai})">${escapeHtml(alt.label)}</button>`).join('');
     const rows = meal.foods.map(fd=>`
       <div class="meal-food">
         <span class="food-n">${fd.name} <span style="color:var(--muted);font-size:12px;">${fd.grams}g</span></span>
@@ -1315,6 +1479,7 @@ function renderMealPlan(mealList, diet, targets, isFasten=false){
         <div><div class="meal-name">${meal.tag} ${meal.name}</div><div class="meal-time">⏱ ${meal.time} Uhr</div></div>
         <div class="meal-stats"><strong>~${Math.round(t.cal)} kcal</strong><span style="font-size:11px;color:var(--muted);">${Math.round(t.p)}g P · ${Math.round(t.c)}g C · ${Math.round(t.fat)}g F</span></div>
       </div>
+      <div style="display:flex;gap:6px;padding:10px 20px;border-bottom:1px solid var(--border2);">${altBtns}</div>
       <div class="meal-foods">${rows}</div>
       <div class="meal-total"><span>${isFasten?'⚡ Protein Fasten':mealLabel(diet)}</span><span><strong>${Math.round(t.p)}g</strong> P · <strong>${Math.round(t.c)}g</strong> C · <strong>${Math.round(t.fat)}g</strong> F · <strong>${Math.round(t.cal)} kcal</strong></span></div>
     </div>`;
@@ -1533,30 +1698,30 @@ function escapeHtml(str){
 
 // ══ CHEAT MEALS ══
 const cheatMeals = [
-  {cat:'burger',img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80',name:'Cheeseburger',portion:'1 Burger ~220g',kcal:620,p:33,c:45,f:34},
-  {cat:'burger',img:'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80',name:'Double Burger Menü',portion:'Burger + Pommes',kcal:1180,p:52,c:105,f:58},
-  {cat:'fast-food',img:'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=80',name:'Pommes Frites gross',portion:'1 Portion ~180g',kcal:560,p:7,c:72,f:27},
-  {cat:'fast-food',img:'https://images.unsplash.com/photo-1612392062631-94dd858cba88?auto=format&fit=crop&w=600&q=80',name:'Chicken Nuggets',portion:'9 Stück',kcal:430,p:24,c:28,f:25},
-  {cat:'pizza',img:'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=600&q=80',name:'Pizza Margherita',portion:'1 Pizza ~350g',kcal:850,p:34,c:110,f:28},
-  {cat:'pizza',img:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80',name:'Pizza Salami',portion:'1 Pizza ~380g',kcal:1050,p:45,c:105,f:50},
-  {cat:'pasta',img:'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=600&q=80',name:'Spaghetti Carbonara',portion:'1 Teller ~420g',kcal:920,p:38,c:92,f:43},
-  {cat:'pasta',img:'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=600&q=80',name:'Lasagne',portion:'1 Portion ~400g',kcal:760,p:42,c:62,f:38},
-  {cat:'dessert',img:'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80',name:'Schokoladenkuchen',portion:'1 Stück ~140g',kcal:520,p:7,c:62,f:28},
-  {cat:'dessert',img:'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=600&q=80',name:'Eisbecher',portion:'1 Becher ~250g',kcal:650,p:10,c:82,f:30},
-  {cat:'suess',img:'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80',name:'Brownie',portion:'1 Stück ~90g',kcal:410,p:5,c:48,f:22},
-  {cat:'suess',img:'https://images.unsplash.com/photo-1587132137056-bfbf0166836e?auto=format&fit=crop&w=600&q=80',name:'Donut',portion:'1 Stück ~75g',kcal:330,p:5,c:38,f:17},
-  {cat:'snacks',img:'https://images.unsplash.com/photo-1566478989037-eec170784d0b?auto=format&fit=crop&w=600&q=80',name:'Chips',portion:'1 Tüte ~175g',kcal:930,p:10,c:90,f:58},
-  {cat:'snacks',img:'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?auto=format&fit=crop&w=600&q=80',name:'Nachos mit Käse',portion:'1 Portion ~250g',kcal:780,p:22,c:78,f:42},
-  {cat:'bbq',img:'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?auto=format&fit=crop&w=600&q=80',name:'BBQ Ribs',portion:'1 Portion ~450g',kcal:1150,p:72,c:35,f:78},
-  {cat:'bbq',img:'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=600&q=80',name:'Pulled Pork Sandwich',portion:'1 Sandwich ~300g',kcal:760,p:42,c:62,f:36},
-  {cat:'schweiz',img:'https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=600&q=80',name:'Cordon Bleu mit Pommes',portion:'1 Teller',kcal:1250,p:65,c:85,f:68},
-  {cat:'schweiz',img:'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=600&q=80',name:'Rösti mit Käse',portion:'1 Portion ~350g',kcal:820,p:28,c:78,f:45},
-  {cat:'asiatisch',img:'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=600&q=80',name:'Sushi Mix',portion:'16 Stück',kcal:720,p:38,c:105,f:14},
-  {cat:'asiatisch',img:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=600&q=80',name:'Ramen',portion:'1 Bowl',kcal:790,p:35,c:92,f:30},
-  {cat:'mexican',img:'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=600&q=80',name:'Burrito',portion:'1 Stück ~350g',kcal:850,p:42,c:95,f:32},
-  {cat:'mexican',img:'https://images.unsplash.com/photo-1613514785940-daed07799d9b?auto=format&fit=crop&w=600&q=80',name:'Tacos',portion:'3 Stück',kcal:690,p:34,c:66,f:32},
-  {cat:'getraenke',img:'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=600&q=80',name:'Milchshake',portion:'500ml',kcal:720,p:18,c:105,f:24},
-  {cat:'getraenke',img:'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=600&q=80',name:'Softdrink',portion:'500ml',kcal:210,p:0,c:53,f:0}
+  {cat:'burger',icon:'🍔',name:'Cheeseburger',portion:'1 Burger ~220g',kcal:620,p:33,c:45,f:34},
+  {cat:'burger',icon:'🍔',name:'Double Burger Menü',portion:'Burger + Pommes',kcal:1180,p:52,c:105,f:58},
+  {cat:'fast-food',icon:'🍟',name:'Pommes Frites gross',portion:'1 Portion ~180g',kcal:560,p:7,c:72,f:27},
+  {cat:'fast-food',icon:'🍗',name:'Chicken Nuggets',portion:'9 Stück',kcal:430,p:24,c:28,f:25},
+  {cat:'pizza',icon:'🍕',name:'Pizza Margherita',portion:'1 Pizza ~350g',kcal:850,p:34,c:110,f:28},
+  {cat:'pizza',icon:'🍕',name:'Pizza Salami',portion:'1 Pizza ~380g',kcal:1050,p:45,c:105,f:50},
+  {cat:'pasta',icon:'🍝',name:'Spaghetti Carbonara',portion:'1 Teller ~420g',kcal:920,p:38,c:92,f:43},
+  {cat:'pasta',icon:'🍲',name:'Lasagne',portion:'1 Portion ~400g',kcal:760,p:42,c:62,f:38},
+  {cat:'dessert',icon:'🍰',name:'Schokoladenkuchen',portion:'1 Stück ~140g',kcal:520,p:7,c:62,f:28},
+  {cat:'dessert',icon:'🍨',name:'Eisbecher',portion:'1 Becher ~250g',kcal:650,p:10,c:82,f:30},
+  {cat:'suess',icon:'🍫',name:'Brownie',portion:'1 Stück ~90g',kcal:410,p:5,c:48,f:22},
+  {cat:'suess',icon:'🍩',name:'Donut',portion:'1 Stück ~75g',kcal:330,p:5,c:38,f:17},
+  {cat:'snacks',icon:'🥔',name:'Chips',portion:'1 Tüte ~175g',kcal:930,p:10,c:90,f:58},
+  {cat:'snacks',icon:'🧀',name:'Nachos mit Käse',portion:'1 Portion ~250g',kcal:780,p:22,c:78,f:42},
+  {cat:'bbq',icon:'🍖',name:'BBQ Ribs',portion:'1 Portion ~450g',kcal:1150,p:72,c:35,f:78},
+  {cat:'bbq',icon:'🥪',name:'Pulled Pork Sandwich',portion:'1 Sandwich ~300g',kcal:760,p:42,c:62,f:36},
+  {cat:'schweiz',icon:'🧀',name:'Cordon Bleu mit Pommes',portion:'1 Teller',kcal:1250,p:65,c:85,f:68},
+  {cat:'schweiz',icon:'🥔',name:'Rösti mit Käse',portion:'1 Portion ~350g',kcal:820,p:28,c:78,f:45},
+  {cat:'asiatisch',icon:'🍣',name:'Sushi Mix',portion:'16 Stück',kcal:720,p:38,c:105,f:14},
+  {cat:'asiatisch',icon:'🍜',name:'Ramen',portion:'1 Bowl',kcal:790,p:35,c:92,f:30},
+  {cat:'mexican',icon:'🌯',name:'Burrito',portion:'1 Stück ~350g',kcal:850,p:42,c:95,f:32},
+  {cat:'mexican',icon:'🌮',name:'Tacos',portion:'3 Stück',kcal:690,p:34,c:66,f:32},
+  {cat:'getraenke',icon:'🥤',name:'Milchshake',portion:'500ml',kcal:720,p:18,c:105,f:24},
+  {cat:'getraenke',icon:'🥤',name:'Softdrink',portion:'500ml',kcal:210,p:0,c:53,f:0}
 ];
 
 const cheatCatLabels = {
@@ -1577,12 +1742,12 @@ function buildCheatGrid(cat='alle') {
   const filtered = cat === 'alle' ? cheatMeals : cheatMeals.filter(c => c.cat === cat);
   document.getElementById('cheatGrid').innerHTML = filtered.map(c => `
     <div class="cheat-card" data-cat="${c.cat}">
-      <span class="cheat-img"><img src="${c.img}" alt="${escapeHtml(c.name)}" loading="lazy"></span>
+      <span class="cheat-img cheat-visual"><span>${c.icon || '🍽️'}</span></span>
       <div class="cheat-info">
         <div class="cheat-cat">${cheatCatLabels[c.cat] || c.cat}</div>
-        <div class="cheat-name">${c.name}</div>
+        <div class="cheat-name">${escapeHtml(c.name)}</div>
         <div class="cheat-kcal">${c.kcal} kcal</div>
-        <div class="cheat-portion">${c.portion}</div>
+        <div class="cheat-portion">${escapeHtml(c.portion)}</div>
         <div class="cheat-pills">
           <span class="cheat-pill p">${c.p}g P</span>
           <span class="cheat-pill c">${c.c}g C</span>
