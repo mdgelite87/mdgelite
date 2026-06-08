@@ -1269,7 +1269,41 @@ function fillMacroGaps(foods, target, context, diet){
   return foods.filter(f => f.grams > 0);
 }
 
-function buildMealVariant(mealType, variant, targetP, targetC, targetF, diet){
+
+function normalizeFoodsToCalories(foods, targetKcal) {
+  // Wichtig: Jede Option pro Mahlzeit wird auf dasselbe kcal-Ziel normiert.
+  // Dadurch bleibt der Tagesplan unabhängig von der Auswahl beim Kalorienziel.
+  if (!targetKcal || targetKcal <= 0 || !foods.length) return foods;
+  let cur = sumFoods(foods);
+  if (!cur.cal) return foods;
+
+  let factor = targetKcal / cur.cal;
+  let normalized = foods.map(f => gramsFor(f.k, Math.max(1, f.grams * factor)));
+
+  // Kleine Rundungsdifferenzen über das kaloriendichteste passende Lebensmittel korrigieren.
+  // Bei grossen Abweichungen erneut proportional skalieren.
+  for (let tries = 0; tries < 4; tries++) {
+    cur = sumFoods(normalized);
+    let diff = Math.round(targetKcal - cur.cal);
+    if (Math.abs(diff) <= 3) break;
+    if (Math.abs(diff) > 35) {
+      factor = targetKcal / cur.cal;
+      normalized = normalized.map(f => gramsFor(f.k, Math.max(1, f.grams * factor)));
+      continue;
+    }
+    const adjustFood = normalized.find(f => ['olivenoel','mandeln','erdnussbutter','avocado'].includes(f.k))
+                    || normalized.find(f => ['reis','kartoffeln','haferflocken','vollkornbrot','quinoa','banane'].includes(f.k))
+                    || normalized[normalized.length - 1];
+    const kcalPerGram = FOOD_DB[adjustFood.k].kcal / 100;
+    const gramChange = Math.round(diff / kcalPerGram);
+    adjustFood.grams = Math.max(1, adjustFood.grams + gramChange);
+    const rebuilt = gramsFor(adjustFood.k, adjustFood.grams);
+    Object.assign(adjustFood, rebuilt);
+  }
+  return normalized.filter(f => f.grams > 0);
+}
+
+function buildMealVariant(mealType, variant, targetP, targetC, targetF, diet, targetKcal){
   const target = {p:targetP, c:targetC, fat:targetF};
   const foods = [];
 
@@ -1294,7 +1328,7 @@ function buildMealVariant(mealType, variant, targetP, targetC, targetF, diet){
       addFood(foods, 'avocado', Math.max(30, targetF / FOOD_DB.avocado.f * 100 * 0.55));
       addFood(foods, 'spinat', 80);
     }
-    return fillMacroGaps(foods, target, 'breakfast', diet);
+    return normalizeFoodsToCalories(fillMacroGaps(foods, target, 'breakfast', diet), targetKcal);
   }
 
   if (mealType === 'snack') {
@@ -1310,7 +1344,7 @@ function buildMealVariant(mealType, variant, targetP, targetC, targetF, diet){
       addFood(foods, 'beeren', 100);
       addFood(foods, 'erdnussbutter', Math.max(8, targetF / FOOD_DB.erdnussbutter.f * 100 * 0.55));
     }
-    return fillMacroGaps(foods, target, 'snack', diet);
+    return normalizeFoodsToCalories(fillMacroGaps(foods, target, 'snack', diet), targetKcal);
   }
 
   // Lunch / dinner: echte Mahlzeiten, kein Whey als Abendessen.
@@ -1340,7 +1374,7 @@ function buildMealVariant(mealType, variant, targetP, targetC, targetF, diet){
   cur = sumFoods(foods);
   if (target.fat - cur.fat > 2) addFood(foods, fKey, (target.fat - cur.fat) / FOOD_DB[fKey].f * 100);
 
-  return foods.filter(f => f.grams > 0);
+  return normalizeFoodsToCalories(foods.filter(f => f.grams > 0), targetKcal);
 }
 
 function mealDistribution(meals){
@@ -1370,18 +1404,25 @@ function generateMealPlan(kcal, meals, proteinG, carbsG, fatG, diet) {
     return;
   }
 
-  const templates = mealDistribution(meals).map((m, i) => {
+  const dist = mealDistribution(meals);
+  const macroEnergyTotal = proteinG*4 + carbsG*4 + fatG*9;
+  let assignedKcal = 0;
+  const templates = dist.map((m, i) => {
     const targetP = proteinG * m.share.p;
     const targetC = carbsG * m.share.c;
     const targetF = fatG * m.share.f;
+    const shareEnergy = (targetP*4 + targetC*4 + targetF*9) / macroEnergyTotal;
+    const targetKcal = i === dist.length - 1 ? kcal - assignedKcal : Math.round(kcal * shareEnergy);
+    assignedKcal += targetKcal;
     return {
       name: m.name,
       time: m.time,
       tag: m.tag,
       type: m.type,
+      targetKcal,
       alts: [0,1].map(v => ({
         label: v === 0 ? 'Option A' : 'Option B',
-        foods: buildMealVariant(m.type, v, targetP, targetC, targetF, diet)
+        foods: buildMealVariant(m.type, v, targetP, targetC, targetF, diet, targetKcal)
       }))
     };
   });
@@ -1399,27 +1440,30 @@ function generateFastenPlan(kcal, proteinG, carbsG, fatG, diet) {
   const shakeTarget1 = {p:proteinG*.28, c:carbsG*.18, fat:fatG*.12};
   const shakeTarget2 = {p:proteinG*.28, c:carbsG*.14, fat:fatG*.10};
   const mainTarget = {p:proteinG - shakeTarget1.p - shakeTarget2.p, c:carbsG - shakeTarget1.c - shakeTarget2.c, fat:fatG - shakeTarget1.fat - shakeTarget2.fat};
+  const shakeKcal1 = Math.round(kcal * 0.24);
+  const shakeKcal2 = Math.round(kcal * 0.22);
+  const mainKcal = kcal - shakeKcal1 - shakeKcal2;
 
-  function shakeVariant(target, variant){
+  function shakeVariant(target, variant, targetKcal){
     const foods=[];
     addFood(foods, proteinKey, target.p / FOOD_DB[proteinKey].p * 100);
     addFood(foods, variant === 0 ? 'banane' : 'beeren', target.c / FOOD_DB[variant === 0 ? 'banane' : 'beeren'].c * 100 * .75);
     addFood(foods, variant === 0 ? 'mandeln' : 'erdnussbutter', target.fat / FOOD_DB[variant === 0 ? 'mandeln' : 'erdnussbutter'].f * 100 * .80);
-    return fillMacroGaps(foods, target, 'fasten_shake', diet);
+    return normalizeFoodsToCalories(fillMacroGaps(foods, target, 'fasten_shake', diet), targetKcal);
   }
 
   const templates = [
-    {name:'Protein Shake 1',time:'08:00',tag:'🥤',type:'snack',alts:[
-      {label:'Banane',foods:shakeVariant(shakeTarget1,0)},
-      {label:'Beeren',foods:shakeVariant(shakeTarget1,1)}
+    {name:'Protein Shake 1',time:'08:00',tag:'🥤',type:'snack',targetKcal:shakeKcal1,alts:[
+      {label:'Banane',foods:shakeVariant(shakeTarget1,0,shakeKcal1)},
+      {label:'Beeren',foods:shakeVariant(shakeTarget1,1,shakeKcal1)}
     ]},
-    {name:'Hauptmahlzeit',time:'13:00 oder 19:00',tag:'🍽️',type:mainType,highlight:true,alts:[
-      {label:'Option A',foods:buildMealVariant(mainType,0,mainTarget.p,mainTarget.c,mainTarget.fat,diet)},
-      {label:'Option B',foods:buildMealVariant(mainType,1,mainTarget.p,mainTarget.c,mainTarget.fat,diet)}
+    {name:'Hauptmahlzeit',time:'13:00 oder 19:00',tag:'🍽️',type:mainType,highlight:true,targetKcal:mainKcal,alts:[
+      {label:'Option A',foods:buildMealVariant(mainType,0,mainTarget.p,mainTarget.c,mainTarget.fat,diet,mainKcal)},
+      {label:'Option B',foods:buildMealVariant(mainType,1,mainTarget.p,mainTarget.c,mainTarget.fat,diet,mainKcal)}
     ]},
-    {name:'Protein Shake 2',time:'16:00',tag:'🥤',type:'snack',alts:[
-      {label:'Banane',foods:shakeVariant(shakeTarget2,0)},
-      {label:'Beeren',foods:shakeVariant(shakeTarget2,1)}
+    {name:'Protein Shake 2',time:'16:00',tag:'🥤',type:'snack',targetKcal:shakeKcal2,alts:[
+      {label:'Banane',foods:shakeVariant(shakeTarget2,0,shakeKcal2)},
+      {label:'Beeren',foods:shakeVariant(shakeTarget2,1,shakeKcal2)}
     ]}
   ];
   window._mealTemplates = templates;
@@ -1456,7 +1500,7 @@ function renderMealPlan(templates, diet, targets, isFasten=false){
 
   const summary = `<div style="margin-bottom:16px;padding:12px 20px;background:rgba(201,168,76,0.08);border:1px solid var(--gold-dim);border-radius:4px;font-size:13px;color:var(--text);line-height:1.6;">
     Ziel: <strong>${targets.proteinG}g P</strong> · <strong>${targets.carbsG}g C</strong> · <strong>${targets.fatG}g F</strong> · <strong>${targets.kcal} kcal</strong><br>
-    Aktuelle Auswahl: <strong>${Math.round(totals.p)}g P</strong> · <strong>${Math.round(totals.c)}g C</strong> · <strong>${Math.round(totals.fat)}g F</strong> · <strong>${Math.round(totals.cal)} kcal</strong><br>
+    Aktuelle Auswahl: <strong>${Math.round(totals.p)}g P</strong> · <strong>${Math.round(totals.c)}g C</strong> · <strong>${Math.round(totals.fat)}g F</strong> · <strong>${Math.round(totals.cal)} kcal</strong> <span style="color:var(--muted);">(${Math.round(totals.cal-targets.kcal)} kcal Abweichung)</span><br>
     <span style="color:var(--muted);font-size:12px;">Jede Mahlzeit hat zwei sinnvolle Optionen. Die Einkaufsliste passt sich deiner Auswahl automatisch an.</span>
   </div>`;
 
@@ -1602,13 +1646,128 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 let nwSelected = null;
 let nwSearchTimer = null;
 
+// Lokale Basisdatenbank: funktioniert sofort, ohne Internet/API.
+// Werte pro 100g, möglichst alltagstypisch gerundet.
+const LOCAL_FOOD_DB = [
+  {name:'Banane', aliases:'banana', kcal:89,p:1.1,c:23,f:0.3, source:'Standarddatenbank'},
+  {name:'Apfel', aliases:'apple', kcal:52,p:0.3,c:14,f:0.2, source:'Standarddatenbank'},
+  {name:'Orange', aliases:'apfelsine', kcal:47,p:0.9,c:12,f:0.1, source:'Standarddatenbank'},
+  {name:'Erdbeeren', aliases:'strawberry fraise', kcal:32,p:0.8,c:8,f:0.3, source:'Standarddatenbank'},
+  {name:'Blaubeeren', aliases:'heidelbeeren blueberry myrtille', kcal:57,p:0.7,c:12,f:0.3, source:'Standarddatenbank'},
+  {name:'Avocado', aliases:'avocat', kcal:160,p:2,c:9,f:15, source:'Standarddatenbank'},
+  {name:'Brokkoli', aliases:'broccoli', kcal:34,p:2.8,c:5,f:0.4, source:'Standarddatenbank'},
+  {name:'Spinat', aliases:'spinach epinards', kcal:23,p:2.9,c:3.6,f:0.4, source:'Standarddatenbank'},
+  {name:'Tomaten', aliases:'tomato tomate', kcal:18,p:0.9,c:3.9,f:0.2, source:'Standarddatenbank'},
+  {name:'Gurke', aliases:'cucumber concombre', kcal:15,p:0.7,c:3.6,f:0.1, source:'Standarddatenbank'},
+  {name:'Paprika', aliases:'bell pepper poivron', kcal:31,p:1,c:6,f:0.3, source:'Standarddatenbank'},
+  {name:'Karotten', aliases:'möhren carrot carotte', kcal:41,p:0.9,c:10,f:0.2, source:'Standarddatenbank'},
+  {name:'Zwiebeln', aliases:'onion oignon', kcal:40,p:1.1,c:9.3,f:0.1, source:'Standarddatenbank'},
+  {name:'Salat', aliases:'lettuce laitue', kcal:15,p:1.4,c:2.9,f:0.2, source:'Standarddatenbank'},
+
+  {name:'Hühnerbrust roh', aliases:'hähnchenbrust chicken breast poulet', kcal:110,p:23,c:0,f:1.5, source:'Standarddatenbank'},
+  {name:'Hühnerbrust gebraten', aliases:'hähnchenbrust chicken breast cooked poulet cuit', kcal:165,p:31,c:0,f:3.6, source:'Standarddatenbank'},
+  {name:'Putenbrust', aliases:'truthahn turkey dinde', kcal:135,p:29,c:0,f:1.5, source:'Standarddatenbank'},
+  {name:'Rindssteak mager', aliases:'rind steak beef boeuf', kcal:158,p:28,c:0,f:5, source:'Standarddatenbank'},
+  {name:'Rindshack 5% Fett', aliases:'hackfleisch beef mince ground beef', kcal:137,p:21,c:0,f:5, source:'Standarddatenbank'},
+  {name:'Rindshack 20% Fett', aliases:'hackfleisch beef mince ground beef', kcal:254,p:17,c:0,f:20, source:'Standarddatenbank'},
+  {name:'Schweinefilet', aliases:'pork filet porc', kcal:143,p:26,c:0,f:4, source:'Standarddatenbank'},
+  {name:'Lachs', aliases:'salmon saumon', kcal:208,p:20,c:0,f:13, source:'Standarddatenbank'},
+  {name:'Thunfisch in Wasser', aliases:'tuna thon dose', kcal:103,p:25,c:0,f:1, source:'Standarddatenbank'},
+  {name:'Kabeljau', aliases:'cod cabillaud', kcal:82,p:18,c:0,f:0.7, source:'Standarddatenbank'},
+  {name:'Garnelen', aliases:'shrimps prawns crevettes', kcal:99,p:20,c:1,f:0.9, source:'Standarddatenbank'},
+  {name:'Ei ganz', aliases:'egg oeuf', kcal:143,p:13,c:0.7,f:10, source:'Standarddatenbank'},
+  {name:'Eiklar', aliases:'eiweiss egg white blanc oeuf', kcal:52,p:11,c:0.7,f:0.2, source:'Standarddatenbank'},
+
+  {name:'Magerquark 0.2%', aliases:'quark fromage blanc', kcal:66,p:12,c:4,f:0.2, source:'Standarddatenbank'},
+  {name:'Skyr nature', aliases:'skyr naturel', kcal:63,p:11,c:4,f:0.2, source:'Standarddatenbank'},
+  {name:'Griechischer Joghurt 0%', aliases:'greek yogurt yaourt grec', kcal:59,p:10,c:4,f:0.4, source:'Standarddatenbank'},
+  {name:'Hüttenkäse', aliases:'cottage cheese fromage cottage', kcal:90,p:11,c:3,f:4, source:'Standarddatenbank'},
+  {name:'Milch 1.5%', aliases:'milk lait', kcal:47,p:3.4,c:4.9,f:1.5, source:'Standarddatenbank'},
+  {name:'Vollmilch 3.5%', aliases:'milk lait', kcal:64,p:3.4,c:4.8,f:3.5, source:'Standarddatenbank'},
+  {name:'Whey Isolat', aliases:'protein pulver whey isolate', kcal:370,p:85,c:4,f:2, source:'Standarddatenbank'},
+  {name:'Whey Protein', aliases:'protein pulver whey concentrate', kcal:390,p:78,c:7,f:6, source:'Standarddatenbank'},
+  {name:'Vegan Protein Pulver', aliases:'pea protein vegan protéine', kcal:366,p:80,c:5,f:3, source:'Standarddatenbank'},
+
+  {name:'Tofu fest', aliases:'tofu', kcal:144,p:17,c:2,f:9, source:'Standarddatenbank'},
+  {name:'Tempeh', aliases:'tempeh', kcal:193,p:19,c:9,f:11, source:'Standarddatenbank'},
+  {name:'Seitan', aliases:'seitan', kcal:140,p:25,c:4,f:2, source:'Standarddatenbank'},
+  {name:'Linsen gekocht', aliases:'lentils lentilles', kcal:116,p:9,c:20,f:0.4, source:'Standarddatenbank'},
+  {name:'Kichererbsen gekocht', aliases:'chickpeas pois chiches', kcal:164,p:9,c:27,f:2.6, source:'Standarddatenbank'},
+  {name:'Edamame', aliases:'soy beans soja', kcal:121,p:11,c:10,f:5, source:'Standarddatenbank'},
+  {name:'Kidneybohnen gekocht', aliases:'kidney beans haricots rouges', kcal:127,p:8.7,c:23,f:0.5, source:'Standarddatenbank'},
+
+  {name:'Haferflocken', aliases:'oats oatmeal avoine', kcal:370,p:13,c:58,f:7, source:'Standarddatenbank'},
+  {name:'Reis gekocht', aliases:'weisser reis rice cooked riz cuit', kcal:130,p:2.7,c:28,f:0.3, source:'Standarddatenbank'},
+  {name:'Reis trocken', aliases:'weisser reis rice raw riz cru', kcal:360,p:7,c:79,f:0.7, source:'Standarddatenbank'},
+  {name:'Basmatireis gekocht', aliases:'basmati rice cooked', kcal:121,p:3,c:25,f:0.4, source:'Standarddatenbank'},
+  {name:'Kartoffeln gekocht', aliases:'potato pomme de terre', kcal:77,p:2,c:17,f:0.1, source:'Standarddatenbank'},
+  {name:'Süsskartoffeln', aliases:'sweet potato patate douce', kcal:86,p:1.6,c:20,f:0.1, source:'Standarddatenbank'},
+  {name:'Vollkornbrot', aliases:'whole grain bread pain complet', kcal:230,p:9,c:40,f:4, source:'Standarddatenbank'},
+  {name:'Toastbrot', aliases:'toast bread pain de mie', kcal:265,p:8,c:49,f:3.5, source:'Standarddatenbank'},
+  {name:'Pasta gekocht', aliases:'nudeln gekocht pasta cooked pâtes cuites', kcal:158,p:5.8,c:31,f:0.9, source:'Standarddatenbank'},
+  {name:'Pasta trocken', aliases:'nudeln trocken pasta raw pâtes crues', kcal:350,p:12,c:72,f:1.5, source:'Standarddatenbank'},
+  {name:'Quinoa gekocht', aliases:'quinoa cuit cooked', kcal:120,p:4,c:21,f:2, source:'Standarddatenbank'},
+  {name:'Couscous gekocht', aliases:'couscous cooked cuit', kcal:112,p:3.8,c:23,f:0.2, source:'Standarddatenbank'},
+  {name:'Reiswaffeln', aliases:'rice cakes galettes de riz', kcal:387,p:8,c:82,f:3, source:'Standarddatenbank'},
+  {name:'Cornflakes', aliases:'cereal céréales', kcal:357,p:7,c:84,f:0.4, source:'Standarddatenbank'},
+
+  {name:'Olivenöl', aliases:'olive oil huile olive', kcal:884,p:0,c:0,f:100, source:'Standarddatenbank'},
+  {name:'Rapsöl', aliases:'canola oil colza', kcal:884,p:0,c:0,f:100, source:'Standarddatenbank'},
+  {name:'Butter', aliases:'beurre', kcal:717,p:0.9,c:0.1,f:81, source:'Standarddatenbank'},
+  {name:'Erdnussbutter', aliases:'peanut butter beurre de cacahuete', kcal:588,p:25,c:20,f:50, source:'Standarddatenbank'},
+  {name:'Mandeln', aliases:'almonds amandes', kcal:579,p:21,c:22,f:50, source:'Standarddatenbank'},
+  {name:'Walnüsse', aliases:'walnuts noix', kcal:654,p:15,c:14,f:65, source:'Standarddatenbank'},
+  {name:'Cashews', aliases:'noix de cajou', kcal:553,p:18,c:30,f:44, source:'Standarddatenbank'},
+  {name:'Chia Samen', aliases:'chia seeds graines', kcal:486,p:17,c:42,f:31, source:'Standarddatenbank'},
+
+  {name:'Mandelmilch ungesüsst', aliases:'almond milk lait amande', kcal:24,p:0.5,c:3,f:1.2, source:'Standarddatenbank'},
+  {name:'Hafermilch', aliases:'oat milk lait avoine', kcal:45,p:1,c:9,f:1.5, source:'Standarddatenbank'},
+  {name:'Isoclear Protein Drink', aliases:'clear whey protein drink esn', kcal:340,p:80,c:2,f:1, source:'Standarddatenbank'}
+];
+
+const QUERY_SYNONYMS = {
+  'hähnchen':'chicken poulet', 'haehnchen':'chicken poulet', 'hühnerbrust':'chicken breast poulet', 'huehnerbrust':'chicken breast poulet',
+  'poulet':'chicken hähnchen', 'rind':'beef boeuf', 'hackfleisch':'ground beef mince viande hachée',
+  'reis':'rice riz', 'kartoffel':'potato pomme de terre', 'kartoffeln':'potato pomme de terre',
+  'haferflocken':'oats oatmeal avoine', 'quark':'fromage blanc', 'magerquark':'quark fromage blanc',
+  'joghurt':'yogurt yaourt', 'hüttenkäse':'cottage cheese', 'huettenkäse':'cottage cheese',
+  'erdbeeren':'strawberry fraise', 'blaubeeren':'blueberry myrtille', 'apfel':'apple pomme',
+  'banane':'banana banane', 'brot':'bread pain', 'vollkornbrot':'whole grain bread pain complet',
+  'nudeln':'pasta pâtes', 'ei':'egg oeuf', 'eier':'eggs oeufs', 'lachs':'salmon saumon',
+  'thunfisch':'tuna thon', 'garnelen':'shrimp crevettes', 'mandeln':'almonds amandes',
+  'olivenöl':'olive oil huile olive', 'olivenoel':'olive oil huile olive'
+};
+
+function normText(str) {
+  return String(str || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ß/g,'ss');
+}
+
+function localMatches(query) {
+  const q = normText(query);
+  if (q.length < 2) return [];
+  return LOCAL_FOOD_DB
+    .map(item => {
+      const hay = normText(`${item.name} ${item.aliases || ''}`);
+      let score = 0;
+      if (normText(item.name) === q) score += 100;
+      if (normText(item.name).startsWith(q)) score += 60;
+      if (hay.includes(q)) score += 30;
+      q.split(/\s+/).filter(Boolean).forEach(part => { if (hay.includes(part)) score += 8; });
+      return { ...item, brand:'', image:'', score };
+    })
+    .filter(x => x.score > 0)
+    .sort((a,b) => b.score - a.score)
+    .slice(0, 12);
+}
+
 function normalizeOFFProduct(p) {
   const n = p.nutriments || {};
   const kcal = Number(n['energy-kcal_100g'] ?? (n['energy-kj_100g'] ? n['energy-kj_100g'] / 4.184 : 0));
+  const name = p.product_name_de || p.product_name || p.generic_name_de || p.generic_name || 'Unbekanntes Produkt';
   return {
-    name: p.product_name || p.generic_name || 'Unbekanntes Produkt',
+    name,
     brand: p.brands || '',
-    image: p.image_front_small_url || '',
+    image: p.image_front_small_url || p.image_small_url || '',
     kcal: round1(kcal || 0),
     p: round1(Number(n.proteins_100g || 0)),
     c: round1(Number(n.carbohydrates_100g || 0)),
@@ -1617,46 +1776,95 @@ function normalizeOFFProduct(p) {
   };
 }
 
+function buildSearchTerms(query) {
+  const q = query.trim();
+  const normalized = normText(q);
+  const extras = new Set([q]);
+  Object.entries(QUERY_SYNONYMS).forEach(([k, v]) => {
+    if (normalized.includes(normText(k))) v.split(/\s+/).filter(Boolean).forEach(x => extras.add(x));
+  });
+  return [...extras].slice(0, 5);
+}
+
+function renderNWResults(items, statusText='') {
+  window._nwResults = items;
+  const status = statusText ? `<div class="nw-status">${escapeHtml(statusText)}</div>` : '';
+  document.getElementById('nwResults').innerHTML = status + items.map((f,i) => `
+    <div class="nw-result-item" onclick="selectNW(${i})">
+      <div class="nw-result-left">
+        ${f.image ? `<img class="nw-result-img" src="${escapeHtml(f.image)}" alt="">` : `<div class="nw-result-img"></div>`}
+        <div style="min-width:0;">
+          <div class="nw-result-name">${escapeHtml(f.name)}</div>
+          <div class="nw-result-sub">${escapeHtml(f.brand || f.source || 'Standarddatenbank')}</div>
+        </div>
+      </div>
+      <span class="nw-result-kcal">${f.kcal || 0} kcal/100g</span>
+    </div>`).join('');
+}
+
 function searchNutrition(query) {
   clearTimeout(nwSearchTimer);
-  if (!query || query.trim().length < 2) {
+  const q = (query || '').trim();
+  if (q.length < 2) {
     document.getElementById('nwResults').innerHTML='';
     return;
   }
-  document.getElementById('nwResults').innerHTML = `<div class="nw-status">Suche in OpenFoodFacts...</div>`;
-  nwSearchTimer = setTimeout(() => searchOpenFoodFacts(query.trim()), 350);
+
+  const local = localMatches(q);
+  renderNWResults(local, local.length ? 'Lokale Treffer – OpenFoodFacts wird zusätzlich abgefragt...' : 'Suche in OpenFoodFacts...');
+  nwSearchTimer = setTimeout(() => searchOpenFoodFacts(q, local), 450);
 }
 
-async function searchOpenFoodFacts(query) {
-  try {
-    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=30&fields=product_name,generic_name,brands,nutriments,image_front_small_url`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('API Fehler');
-    const data = await res.json();
-    const products = (data.products || [])
-      .map(normalizeOFFProduct)
-      .filter(f => f.name && (f.kcal || f.p || f.c || f.f))
-      .slice(0, 20);
+async function fetchOFF(term, countryPriority=true) {
+  const params = new URLSearchParams({
+    search_terms: term,
+    page_size: '20',
+    fields: 'product_name,product_name_de,generic_name,generic_name_de,brands,nutriments,image_front_small_url,image_small_url,countries_tags,lang'
+  });
+  if (countryPriority) params.set('countries_tags_en', 'Switzerland,Germany,Austria');
+  const url = `https://world.openfoodfacts.org/api/v2/search?${params.toString()}`;
+  const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+  if (!res.ok) throw new Error('OpenFoodFacts API Fehler');
+  const data = await res.json();
+  return (data.products || []).map(normalizeOFFProduct).filter(f => f.name && (f.kcal || f.p || f.c || f.f));
+}
 
-    if (!products.length) {
-      document.getElementById('nwResults').innerHTML = `<div class="nw-status">Kein passendes Lebensmittel gefunden. Versuche eine andere Schreibweise oder Marke.</div>`;
+async function searchOpenFoodFacts(query, local=[]) {
+  const seen = new Set(local.map(x => normText((x.brand || '') + ' ' + x.name)));
+  const merged = [...local];
+
+  try {
+    const terms = buildSearchTerms(query);
+    for (const term of terms) {
+      const batches = [];
+      try { batches.push(...await fetchOFF(term, true)); } catch(e) {}
+      if (merged.length < 8) {
+        try { batches.push(...await fetchOFF(term, false)); } catch(e) {}
+      }
+      batches.forEach(item => {
+        const key = normText((item.brand || '') + ' ' + item.name);
+        if (!seen.has(key)) { seen.add(key); merged.push(item); }
+      });
+      if (merged.length >= 20) break;
+    }
+
+    if (!merged.length) {
+      document.getElementById('nwResults').innerHTML = `<div class="nw-status">Keine Treffer gefunden. Versuch z.B. „Poulet“, „Chicken“, „Hähnchen“ oder eine Marke.</div>`;
       return;
     }
 
-    window._nwResults = products;
-    document.getElementById('nwResults').innerHTML = products.map((f,i) => `
-      <div class="nw-result-item" onclick="selectNW(${i})">
-        <div class="nw-result-left">
-          ${f.image ? `<img class="nw-result-img" src="${f.image}" alt="">` : `<div class="nw-result-img"></div>`}
-          <div style="min-width:0;">
-            <div class="nw-result-name">${escapeHtml(f.name)}</div>
-            <div class="nw-result-sub">${escapeHtml(f.brand || 'OpenFoodFacts')}</div>
-          </div>
-        </div>
-        <span class="nw-result-kcal">${f.kcal || 0} kcal/100g</span>
-      </div>`).join('');
+    const offCount = merged.filter(x => x.source === 'OpenFoodFacts').length;
+    const msg = offCount
+      ? `Lokale Standardwerte + ${offCount} OpenFoodFacts-Treffer, CH/DE/AT bevorzugt.`
+      : 'Nur lokale Standardwerte gefunden. OpenFoodFacts lieferte keine passenden Produktdaten.';
+    renderNWResults(merged.slice(0, 24), msg);
   } catch(err) {
-    document.getElementById('nwResults').innerHTML = `<div class="nw-status">OpenFoodFacts konnte nicht geladen werden. Prüfe deine Internetverbindung.</div>`;
+    console.warn(err);
+    if (local.length) {
+      renderNWResults(local, 'OpenFoodFacts ist gerade nicht erreichbar – lokale Standardwerte werden angezeigt.');
+    } else {
+      document.getElementById('nwResults').innerHTML = `<div class="nw-status">OpenFoodFacts ist gerade nicht erreichbar. Versuche ein Standardlebensmittel wie Banane, Reis, Hähnchen, Quark oder Haferflocken.</div>`;
+    }
   }
 }
 
@@ -1688,7 +1896,7 @@ function updateNutritionCalc() {
         <div class="nw-macro carb"><div class="nw-macro-val">${calc(f.c)}g</div><div class="nw-macro-label">Carbs</div></div>
         <div class="nw-macro fat"><div class="nw-macro-val">${calc(f.f)}g</div><div class="nw-macro-label">Fett</div></div>
       </div>
-      <div class="nw-source">Quelle: OpenFoodFacts. Werte können je nach Produkt/Eintrag abweichen.</div>
+      <div class="nw-source">Quelle: ${escapeHtml(f.source || 'Standarddatenbank')}. Werte können je nach Produkt/Eintrag abweichen.</div>
     </div>`;
 }
 
