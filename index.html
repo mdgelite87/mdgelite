@@ -173,13 +173,65 @@ section{position:relative;z-index:1;}
 .toggle-group button small{display:block;font-size:10px;opacity:0.6;margin-top:2px;font-weight:400;}
 .toggle-group button.active{background:var(--gold);color:var(--black);font-weight:700;}
 
-.step-item{display:flex;gap:16px;align-items:flex-start;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:3px;margin-bottom:8px;transition:border-color 0.2s;cursor:pointer;}
-.step-item.done{border-color:var(--gold-dim);background:rgba(201,168,76,0.04);}
-.step-check{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;margin-top:2px;}
-.step-item.done .step-check{background:var(--gold);border-color:var(--gold);}
-.step-title{font-size:14px;font-weight:600;margin-bottom:4px;}
-.step-desc{font-size:13px;color:var(--muted);line-height:1.5;}
-.step-item.done .step-title{text-decoration:line-through;opacity:0.6;}
+/* ── HOW STEPS ── */
+.how-steps{display:flex;flex-direction:column;gap:0;margin-bottom:24px;}
+.how-step{display:flex;gap:20px;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:20px 24px;}
+.how-arrow{text-align:center;font-size:20px;color:var(--gold-dim);padding:4px 0;line-height:1;}
+.how-num{font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1;color:var(--gold);flex-shrink:0;width:44px;}
+.how-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:5px;}
+.how-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+
+/* ── TIP BOX ── */
+.tip-box{display:flex;gap:16px;background:rgba(201,168,76,0.06);border:1px solid var(--gold-dim);border-radius:4px;padding:24px;margin-top:8px;}
+.tip-icon{font-size:24px;flex-shrink:0;margin-top:2px;}
+.tip-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gold);margin-bottom:12px;}
+.tip-content p{font-size:13px;color:var(--muted);line-height:1.7;}
+.tip-content strong{color:var(--text);}
+.tip-timeline{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap;}
+.tip-milestone{flex:1;min-width:160px;background:var(--card);border:1px solid var(--border);border-radius:3px;padding:12px 16px;}
+.tip-day{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gold);margin-bottom:4px;}
+.tip-result{font-size:12px;color:var(--text);font-weight:500;}
+
+/* ── STEP ITEM (kept for admin editable compatibility) ── */
+.gram-btn{padding:6px 12px;background:var(--card);border:1px solid var(--border);color:var(--muted);font-size:12px;cursor:pointer;border-radius:2px;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+.gram-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
+.nw-card{background:var(--card);border:1px solid var(--gold-dim);border-radius:6px;padding:24px;margin-bottom:16px;animation:fadeUp 0.3s ease;}
+.nw-name{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--text);margin-bottom:4px;}
+.nw-per{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.nw-macros{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.nw-macro{background:var(--card2);border:1px solid var(--border);border-radius:4px;padding:14px;text-align:center;}
+.nw-macro-val{font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1;}
+.nw-macro-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+.nw-macro.kcal .nw-macro-val{color:var(--gold);}
+.nw-macro.prot .nw-macro-val{color:#e05c5c;}
+.nw-macro.carb .nw-macro-val{color:#5b9bd5;}
+.nw-macro.fat  .nw-macro-val{color:#c878e0;}
+.nw-result-item{padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:3px;cursor:pointer;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;transition:all 0.2s;}
+.nw-result-item:hover{border-color:var(--gold-dim);background:rgba(201,168,76,0.05);}
+.nw-result-name{font-size:14px;font-weight:500;}
+.nw-result-kcal{font-size:13px;color:var(--gold);font-weight:600;}
+/* Cheat meals */
+.cheat-filter-btn{padding:8px 16px;background:var(--card);border:1px solid var(--border);color:var(--muted);font-size:12px;letter-spacing:1px;cursor:pointer;border-radius:20px;transition:all 0.2s;font-family:'DM Sans',sans-serif;font-weight:500;}
+.cheat-filter-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
+.cheat-filter-btn.active{background:var(--gold);color:var(--black);border-color:var(--gold);font-weight:700;}
+.cheat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+@media(max-width:480px){.cheat-grid{grid-template-columns:repeat(2,1fr);}.nw-macros{grid-template-columns:repeat(2,1fr);}}
+.cheat-card{background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;transition:all 0.2s;cursor:pointer;}
+.cheat-card:hover{border-color:var(--gold-dim);transform:translateY(-2px);}
+.cheat-emoji{font-size:42px;text-align:center;padding:20px 10px 10px;background:var(--card2);display:block;}
+.cheat-info{padding:10px 12px 12px;}
+.cheat-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.3;}
+.cheat-kcal{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);line-height:1;}
+.cheat-portion{font-size:10px;color:var(--muted);margin-bottom:6px;}
+.cheat-pills{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;}
+.cheat-pill{font-size:10px;padding:2px 6px;border-radius:8px;font-weight:600;}
+.cheat-pill.p{background:rgba(224,92,92,0.15);color:#e05c5c;}
+.cheat-pill.c{background:rgba(91,155,213,0.15);color:#5b9bd5;}
+.cheat-pill.f{background:rgba(201,168,76,0.15);color:var(--gold);}
+/* alt select buttons */
+.alt-btn{flex:1;padding:7px 6px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:11px;cursor:pointer;border-radius:2px;transition:all 0.15s;font-family:'DM Sans',sans-serif;text-align:center;line-height:1.3;}
+.alt-btn.active{background:rgba(201,168,76,0.12);border-color:var(--gold-dim);color:var(--gold);}
+.alt-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
 .btn-calculate{width:100%;padding:22px;background:var(--gold);color:var(--black);border:none;font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:5px;cursor:pointer;border-radius:3px;transition:all 0.2s;}
 .btn-calculate:hover{background:var(--gold-bright);box-shadow:0 12px 40px rgba(201,168,76,0.35);transform:translateY(-1px);}
 #results{display:none;}
@@ -282,6 +334,8 @@ footer a{color:var(--gold);text-decoration:none;}
     <a href="#" onclick="showSection('videos');return false;">Videos</a>
     <a href="#" onclick="showSection('bilder');return false;">Bilder</a>
     <a href="#" onclick="showSection('rechner');return false;">Rechner</a>
+    <a href="#" onclick="showSection('naehrwert');return false;">Nährwerte</a>
+    <a href="#" onclick="showSection('cheatmeals');return false;">Cheat Meals</a>
     <a href="#" onclick="showSection('kontakt');return false;">Kontakt</a>
     <div class="admin-badge" id="adminBadge" onclick="adminLogout()">
       <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
@@ -296,6 +350,8 @@ footer a{color:var(--gold);text-decoration:none;}
   <a href="#" onclick="showSection('videos');toggleMobileMenu();return false;">Videos</a>
   <a href="#" onclick="showSection('bilder');toggleMobileMenu();return false;">Bilder</a>
   <a href="#" onclick="showSection('rechner');toggleMobileMenu();return false;">Rechner</a>
+  <a href="#" onclick="showSection('naehrwert');toggleMobileMenu();return false;">Nährwerte</a>
+  <a href="#" onclick="showSection('cheatmeals');toggleMobileMenu();return false;">Cheat Meals</a>
   <a href="#" onclick="showSection('kontakt');toggleMobileMenu();return false;">Kontakt</a>
 </div>
 
@@ -384,13 +440,45 @@ footer a{color:var(--gold);text-decoration:none;}
     </div>
     <div class="rechner-wrap">
       <div class="r-section">
-        <div class="sec-head"><span class="sec-num">SCHRITTE</span><span class="sec-title">Dein Plan zum Ziel</span><div class="sec-line"></div></div>
-        <div id="stepsContainer">
-          <div class="step-item" onclick="toggleStep(this)"><div class="step-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div><div class="step-content"><div class="step-title" data-editable>Grunddaten eingeben</div><div class="step-desc" data-editable>Alter, Gewicht, Grösse und optional Körperfettanteil eintragen</div></div></div>
-          <div class="step-item" onclick="toggleStep(this)"><div class="step-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div><div class="step-content"><div class="step-title" data-editable>Aktivitätslevel wählen</div><div class="step-desc" data-editable>Wie oft trainierst du pro Woche? Wähle das passende Level</div></div></div>
-          <div class="step-item" onclick="toggleStep(this)"><div class="step-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div><div class="step-content"><div class="step-title" data-editable>Ziel definieren</div><div class="step-desc" data-editable>Cut, Maintenance oder Lean Bulk – je nach aktuellem Ziel</div></div></div>
-          <div class="step-item" onclick="toggleStep(this)"><div class="step-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div><div class="step-content"><div class="step-title" data-editable>Plan berechnen lassen</div><div class="step-desc" data-editable>Kaloriendefizit, Makros und Musterplan werden automatisch erstellt</div></div></div>
-          <div class="step-item" onclick="toggleStep(this)"><div class="step-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div><div class="step-content"><div class="step-title" data-editable>Plan umsetzen & tracken</div><div class="step-desc" data-editable>Täglich Kalorien tracken, alle 2–4 Wochen Gewicht und KFA messen</div></div></div>
+        <div class="sec-head"><span class="sec-num">SO FUNKTIONIERT'S</span><div class="sec-line"></div></div>
+        <div class="how-steps">
+          <div class="how-step">
+            <div class="how-num">01</div>
+            <div class="how-content">
+              <div class="how-title">Daten ehrlich eingeben</div>
+              <div class="how-desc">Keine geschönten Zahlen – je genauer deine Angaben, desto präziser dein Plan.</div>
+            </div>
+          </div>
+          <div class="how-arrow">↓</div>
+          <div class="how-step">
+            <div class="how-num">02</div>
+            <div class="how-content">
+              <div class="how-title">Kalorienrichtwert &amp; Ernährungsplan – kostenlos, sofort</div>
+              <div class="how-desc">Dein persönlicher Tagesbedarf, Makros und ein kompletter Mahlzeitenplan werden direkt berechnet.</div>
+            </div>
+          </div>
+          <div class="how-arrow">↓</div>
+          <div class="how-step">
+            <div class="how-num">03</div>
+            <div class="how-content">
+              <div class="how-title">Einkaufsliste für 7 Tage direkt ausdrucken</div>
+              <div class="how-desc">Alle Lebensmittel für eine Woche auf einen Blick – einfach drucken und einkaufen gehen.</div>
+            </div>
+          </div>
+        </div>
+        <div class="tip-box">
+          <div class="tip-icon">💡</div>
+          <div class="tip-content">
+            <div class="tip-title">So überprüfst du deinen echten Kalorienbedarf</div>
+            <p>Ernähre dich <strong>14 Tage</strong> nach deinem Kalorienrichtwert und lebe deinen Alltag wie bisher – kein Extra-Sport, keine Veränderungen. Wiege dich täglich <strong>morgens nach dem Aufstehen und Toilettengang</strong> – immer zur gleichen Zeit, ohne Kleidung.</p>
+            <div class="tip-timeline">
+              <div class="tip-milestone"><div class="tip-day">Nach 7 Tagen</div><div class="tip-result">→ Erster Richtwert sichtbar</div></div>
+              <div class="tip-milestone"><div class="tip-day">Nach 14 Tagen</div><div class="tip-result">→ Gewissheit über deinen echten Kalorienbedarf</div></div>
+            </div>
+            <p style="margin-top:12px;">Mit einem Kaloriendefizit von <strong>1'000 kcal/Tag</strong> beträgt der durchschnittliche Gewichtsverlust <strong>~1 kg pro Woche</strong>. In der ersten Woche kann der Verlust deutlich höher sein – dies liegt am Wasserhaushalt, nicht an reinem Fett.</p>
+            <p style="margin-top:8px;">⚖️ <strong>Physik bleibt Physik:</strong> Für 1 kg reines Fett müssen ca. <strong>7'000 kcal</strong> eingespart oder verbrannt werden.</p>
+            <p style="margin-top:8px;font-size:12px;color:var(--muted);">📹 In meinen Videos gehe ich auf diese Thematik im Detail ein.</p>
+          </div>
         </div>
       </div>
       <div class="r-section">
@@ -496,6 +584,62 @@ footer a{color:var(--gold);text-decoration:none;}
   </div>
 </section>
 
+<!-- ══ NÄHRWERTRECHNER ══ -->
+<section id="sec-naehrwert" class="page-section">
+  <div class="content-wrap">
+    <div class="page-header">
+      <div class="eyebrow">Datenbank</div>
+      <h2>NÄHRWERT­RECHNER</h2>
+      <p>Suche nach jedem Lebensmittel und erhalte Kalorien & Makros sofort</p>
+    </div>
+    <div style="max-width:680px;margin:0 auto;">
+      <div style="position:relative;margin-bottom:24px;">
+        <input type="text" id="nwSearch" placeholder="z.B. Banane, Hähnchen, Vollkornbrot..." oninput="searchNutrition(this.value)"
+          style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:3px;padding:16px 20px;font-family:'DM Sans',sans-serif;font-size:16px;color:var(--text);outline:none;transition:border-color 0.2s;"
+          onfocus="this.style.borderColor='var(--gold-dim)'" onblur="this.style.borderColor='var(--border)'">
+        <div style="position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:18px;">🔍</div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;display:block;margin-bottom:8px;">Portion (g)</label>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="number" id="nwGrams" value="100" min="1" max="2000" oninput="updateNutritionCalc()"
+            style="width:100px;background:var(--card);border:1px solid var(--border);border-radius:3px;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:18px;font-weight:600;color:var(--text);outline:none;-moz-appearance:textfield;">
+          <span style="color:var(--muted);font-size:14px;">Gramm</span>
+          <div style="display:flex;gap:6px;margin-left:8px;">
+            <button onclick="setGrams(50)" class="gram-btn">50g</button>
+            <button onclick="setGrams(100)" class="gram-btn">100g</button>
+            <button onclick="setGrams(150)" class="gram-btn">150g</button>
+            <button onclick="setGrams(200)" class="gram-btn">200g</button>
+          </div>
+        </div>
+      </div>
+      <div id="nwResults"></div>
+      <div id="nwSelected" style="display:none;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CHEAT MEALS ══ -->
+<section id="sec-cheatmeals" class="page-section">
+  <div class="content-wrap">
+    <div class="page-header">
+      <div class="eyebrow">Sei ehrlich zu dir</div>
+      <h2>CHEAT MEALS</h2>
+      <p>Was steckt wirklich drin? Kalorien & Makros deiner Lieblingsmomente</p>
+    </div>
+    <div style="margin-bottom:24px;display:flex;gap:8px;flex-wrap:wrap;" id="cheatFilter">
+      <button class="cheat-filter-btn active" onclick="filterCheat('alle',this)">Alle</button>
+      <button class="cheat-filter-btn" onclick="filterCheat('fast-food',this)">🍔 Fast Food</button>
+      <button class="cheat-filter-btn" onclick="filterCheat('pizza',this)">🍕 Pizza</button>
+      <button class="cheat-filter-btn" onclick="filterCheat('suess',this)">🍫 Süsses</button>
+      <button class="cheat-filter-btn" onclick="filterCheat('snacks',this)">🥨 Snacks</button>
+      <button class="cheat-filter-btn" onclick="filterCheat('getraenke',this)">🥤 Getränke</button>
+      <button class="cheat-filter-btn" onclick="filterCheat('eis',this)">🍦 Eis</button>
+    </div>
+    <div class="cheat-grid" id="cheatGrid"></div>
+  </div>
+</section>
+
 <!-- ══ KONTAKT ══ -->
 <section id="sec-kontakt" class="page-section">
   <div class="content-wrap">
@@ -537,7 +681,7 @@ footer a{color:var(--gold);text-decoration:none;}
 <footer>
   <div class="footer-logo">MDG ELITE</div>
   <p>© 2026 Marco Di Giovanni · <a href="#" onclick="showSection('kontakt');return false;">Kontakt</a> · <a href="#">Impressum</a> · <a href="#">Datenschutz</a><br>
-  <span style="font-size:11px;opacity:0.5;">mdgelite.com</span></p>
+  <span style="font-size:11px;opacity:0.5;">mdgelite.com</span> · <a href="#" onclick="openModal('loginModal');return false;" style="font-size:10px;opacity:0.25;color:var(--muted);text-decoration:none;">Admin</a></p>
 </footer>
 
 <!-- ══ ADMIN BAR ══ -->
@@ -741,9 +885,10 @@ function showSection(id) {
   document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
   document.getElementById('sec-' + id).classList.add('active');
   document.querySelectorAll('.nav-links a').forEach((a,i) => {
-    a.classList.toggle('active', ['home','videos','bilder','rechner','kontakt'][i] === id);
+    a.classList.toggle('active', ['home','videos','bilder','rechner','naehrwert','cheatmeals','kontakt'][i] === id);
   });
   window.scrollTo({top:0,behavior:'smooth'});
+  if (id === 'cheatmeals' && !window._cheatBuilt) buildCheatGrid();
 }
 
 function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
@@ -949,10 +1094,24 @@ function generateMealPlan(kcal, meals, proteinG, carbsG, fatG, diet) {
     avocado:        {name:'Avocado (½)',          p:1,   c:2,   f:12,  kcal:120},
     olivenoel:      {name:'Olivenöl',             p:0,   c:0,   f:100, kcal:884},
     mandeln:        {name:'Mandeln',              p:21,  c:6,   f:50,  kcal:579},
+    walnuesse:      {name:'Walnüsse',             p:15,  c:7,   f:65,  kcal:654},
+    erdnuesse:      {name:'Erdnüsse',             p:26,  c:16,  f:49,  kcal:567},
     brokkoli:       {name:'Brokkoli',             p:2.8, c:5,   f:0.4, kcal:34},
+    spinat:         {name:'Spinat',               p:2.9, c:3.6, f:0.4, kcal:23},
     blaubeeren:     {name:'Blaubeeren',           p:0.7, c:12,  f:0.3, kcal:57},
     cashews:        {name:'Cashews',              p:18,  c:30,  f:44,  kcal:553},
-    pflanzenmilch:  {name:'Hafer-/Mandelmilch',  p:1,   c:7,   f:2,   kcal:45},
+    hafermilch:     {name:'Hafermilch',           p:1.0, c:9,   f:1.5, kcal:45},
+    mandelmilch:    {name:'Mandelmilch',          p:0.5, c:3,   f:1.2, kcal:24},
+    schinken:       {name:'Schinken (gekocht)',   p:18,  c:0.5, f:3,   kcal:107},
+    pute:           {name:'Putenaufschnitt',      p:19,  c:0.5, f:1.5, kcal:95},
+    forelle:        {name:'Forelle',              p:20,  c:0,   f:5,   kcal:119},
+    skyr:           {name:'Skyr',                 p:11,  c:4,   f:0.2, kcal:63},
+    lightkase:      {name:'Light Käse (2 Sch.)',  p:10,  c:0.4, f:4,   kcal:78},
+    nudeln:         {name:'Nudeln (gek.)',        p:5,   c:30,  f:0.9, kcal:158},
+    vollkornnudeln: {name:'Vollkornnudeln (gek.)',p:5.5, c:28,  f:1.2, kcal:149},
+    vollkornbrot:   {name:'Vollkornbrot (1 Sch.)',p:3.5, c:18,  f:1,   kcal:96},
+    toast:          {name:'Toast (2 Sch.)',       p:4,   c:22,  f:1.6, kcal:124},
+    vollkorntost:   {name:'Vollkorn-Toast (2 Sch.)',p:6, c:26,  f:2,   kcal:146},
   };
 
   function macro(key, grams) {
@@ -1011,18 +1170,18 @@ function generateMealPlan(kcal, meals, proteinG, carbsG, fatG, diet) {
     },
     vegan: {
       3: [
-        {name:'Frühstück',    time:'07:00', foods:[{k:'haferflocken',g:80*scale},{k:'pflanzenmilch',g:250*scale},{k:'chia',g:15},{k:'blaubeeren',g:80*scale},{k:'vegwhey',g:30*scale}]},
+        {name:'Frühstück',    time:'07:00', foods:[{k:'haferflocken',g:80*scale},{k:'hafermilch',g:250*scale},{k:'chia',g:15},{k:'blaubeeren',g:80*scale},{k:'vegwhey',g:30*scale}]},
         {name:'Mittagessen',  time:'13:00', foods:[{k:'tempeh',g:200*scale},{k:'quinoa',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:12}]},
         {name:'Abendessen',   time:'19:00', foods:[{k:'tofu',g:200*scale},{k:'suesskartoffel',g:200*scale},{k:'avocado',g:70*scale},{k:'cashews',g:20}]},
       ],
       4: [
-        {name:'Frühstück',    time:'07:00', foods:[{k:'haferflocken',g:70*scale},{k:'pflanzenmilch',g:200*scale},{k:'blaubeeren',g:80*scale},{k:'vegwhey',g:30*scale}]},
+        {name:'Frühstück',    time:'07:00', foods:[{k:'haferflocken',g:70*scale},{k:'hafermilch',g:200*scale},{k:'blaubeeren',g:80*scale},{k:'vegwhey',g:30*scale}]},
         {name:'Mittagessen',  time:'12:30', foods:[{k:'seitan',g:180*scale},{k:'reis',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:12}]},
         {name:'Post-Workout', time:'16:00', foods:[{k:'vegwhey',g:35*scale},{k:'banane',g:100*scale},{k:'reiswaffeln',g:30*scale}]},
         {name:'Abendessen',   time:'19:30', foods:[{k:'tempeh',g:180*scale},{k:'suesskartoffel',g:180*scale},{k:'avocado',g:60*scale}]},
       ],
       5: [
-        {name:'Frühstück',       time:'07:00', foods:[{k:'haferflocken',g:60*scale},{k:'pflanzenmilch',g:200*scale},{k:'chia',g:15},{k:'blaubeeren',g:80*scale}]},
+        {name:'Frühstück',       time:'07:00', foods:[{k:'haferflocken',g:60*scale},{k:'hafermilch',g:200*scale},{k:'chia',g:15},{k:'blaubeeren',g:80*scale}]},
         {name:'Zwischenmahlzeit',time:'10:30', foods:[{k:'edamame',g:150*scale},{k:'mandeln',g:20}]},
         {name:'Mittagessen',     time:'13:00', foods:[{k:'linsen',g:200*scale},{k:'quinoa',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:12}]},
         {name:'Post-Workout',    time:'16:30', foods:[{k:'vegwhey',g:35*scale},{k:'banane',g:100*scale},{k:'reiswaffeln',g:25*scale}]},
@@ -1030,46 +1189,291 @@ function generateMealPlan(kcal, meals, proteinG, carbsG, fatG, diet) {
       ],
     },
   };
+  // LEGACY TEMPLATES ABOVE UNUSED - using alt templates below
+
+  // Meal templates with 3 alternatives each per diet × meal count
+  const templates = {
+    meat: {
+      3: [
+        {name:'Frühstück', time:'07:00', alts:[
+          {label:'Oats & Quark', foods:[{k:'haferflocken',g:80*scale},{k:'magerquark',g:200*scale},{k:'blaubeeren',g:80*scale},{k:'whey',g:25*scale}]},
+          {label:'Rührei & Reis', foods:[{k:'eier',g:120*scale},{k:'reis',g:100*scale},{k:'brokkoli',g:100*scale},{k:'olivenoel',g:8}]},
+          {label:'Toast & Schinken', foods:[{k:'toast',g:60*scale},{k:'schinken',g:80*scale},{k:'lightkase',g:40*scale},{k:'magerquark',g:150*scale}]},
+        ]},
+        {name:'Mittagessen', time:'12:30', alts:[
+          {label:'Chicken & Rice', foods:[{k:'huhn',g:200*scale},{k:'reis',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
+          {label:'Steak & Kartoffeln', foods:[{k:'rind',g:180*scale},{k:'kartoffeln',g:220*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
+          {label:'Pute & Nudeln', foods:[{k:'pute',g:180*scale},{k:'nudeln',g:180*scale},{k:'spinat',g:100*scale},{k:'olivenoel',g:8}]},
+        ]},
+        {name:'Abendessen', time:'19:00', alts:[
+          {label:'Lachs & Süsskartoffel', foods:[{k:'lachs',g:180*scale},{k:'suesskartoffel',g:200*scale},{k:'avocado',g:60*scale}]},
+          {label:'Thunfisch Bowl', foods:[{k:'thunfisch',g:160*scale},{k:'reis',g:150*scale},{k:'avocado',g:70*scale},{k:'olivenoel',g:8}]},
+          {label:'Forelle & Kartoffeln', foods:[{k:'forelle',g:180*scale},{k:'kartoffeln',g:200*scale},{k:'spinat',g:120*scale},{k:'olivenoel',g:8}]},
+        ]},
+      ],
+      4: [
+        {name:'Frühstück', time:'07:00', alts:[
+          {label:'Oats & Quark', foods:[{k:'haferflocken',g:70*scale},{k:'magerquark',g:200*scale},{k:'blaubeeren',g:80*scale}]},
+          {label:'Bananen Shake', foods:[{k:'whey',g:40*scale},{k:'banane',g:120*scale},{k:'haferflocken',g:50*scale},{k:'magerquark',g:150*scale}]},
+          {label:'Toast & Pute', foods:[{k:'vollkorntost',g:60*scale},{k:'pute',g:80*scale},{k:'lightkase',g:40*scale},{k:'skyr',g:150*scale}]},
+        ]},
+        {name:'Mittagessen', time:'12:30', alts:[
+          {label:'Chicken & Rice', foods:[{k:'huhn',g:200*scale},{k:'reis',g:140*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
+          {label:'Rind & Quinoa', foods:[{k:'rind',g:170*scale},{k:'quinoa',g:130*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
+          {label:'Schinken & Nudeln', foods:[{k:'schinken',g:150*scale},{k:'vollkornnudeln',g:180*scale},{k:'spinat',g:100*scale},{k:'olivenoel',g:8}]},
+        ]},
+        {name:'Zwischenmahlzeit', time:'15:30', alts:[
+          {label:'Quark & Nüsse', foods:[{k:'magerquark',g:150*scale},{k:'mandeln',g:20},{k:'blaubeeren',g:60*scale}]},
+          {label:'Joghurt Bowl', foods:[{k:'joghurt',g:200*scale},{k:'mandeln',g:20},{k:'banane',g:80*scale}]},
+          {label:'Reiswaffeln & Schinken', foods:[{k:'reiswaffeln',g:40*scale},{k:'schinken',g:60*scale},{k:'lightkase',g:40*scale}]},
+        ]},
+        {name:'Abendessen', time:'19:30', alts:[
+          {label:'Lachs & Süsskartoffel', foods:[{k:'lachs',g:180*scale},{k:'suesskartoffel',g:180*scale},{k:'avocado',g:60*scale}]},
+          {label:'Ofen-Lachs & Kartoffeln', foods:[{k:'lachs',g:160*scale},{k:'kartoffeln',g:200*scale},{k:'brokkoli',g:120*scale},{k:'olivenoel',g:10}]},
+          {label:'Garnelen & Reis', foods:[{k:'garnelen',g:200*scale},{k:'reis',g:150*scale},{k:'spinat',g:100*scale},{k:'olivenoel',g:10}]},
+        ]},
+      ],
+      5: [
+        {name:'Frühstück', time:'07:00', alts:[
+          {label:'Chia Oats', foods:[{k:'haferflocken',g:60*scale},{k:'magerquark',g:150*scale},{k:'chia',g:15},{k:'blaubeeren',g:80*scale}]},
+          {label:'Ei & Avocado', foods:[{k:'eier',g:120*scale},{k:'avocado',g:60*scale},{k:'haferflocken',g:50*scale}]},
+          {label:'Toast & Pute', foods:[{k:'vollkorntost',g:60*scale},{k:'pute',g:80*scale},{k:'lightkase',g:40*scale},{k:'skyr',g:150*scale}]},
+        ]},
+        {name:'Zwischenmahlzeit', time:'10:30', alts:[
+          {label:'Joghurt & Mandeln', foods:[{k:'joghurt',g:200*scale},{k:'mandeln',g:20}]},
+          {label:'Quark & Beeren', foods:[{k:'magerquark',g:150*scale},{k:'blaubeeren',g:80*scale},{k:'mandeln',g:15}]},
+          {label:'Reiswaffeln & Schinken', foods:[{k:'reiswaffeln',g:40*scale},{k:'schinken',g:60*scale},{k:'lightkase',g:40*scale}]},
+        ]},
+        {name:'Mittagessen', time:'13:00', alts:[
+          {label:'Chicken Bowl', foods:[{k:'huhn',g:180*scale},{k:'reis',g:140*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
+          {label:'Rind & Süsskartoffel', foods:[{k:'rind',g:160*scale},{k:'suesskartoffel',g:180*scale},{k:'brokkoli',g:120*scale},{k:'olivenoel',g:10}]},
+          {label:'Pute & Nudeln', foods:[{k:'pute',g:180*scale},{k:'vollkornnudeln',g:180*scale},{k:'spinat',g:100*scale},{k:'olivenoel',g:8}]},
+        ]},
+        {name:'Nachmittagssnack', time:'16:00', alts:[
+          {label:'Protein Shake', foods:[{k:'whey',g:35*scale},{k:'banane',g:100*scale}]},
+          {label:'Thunfisch & Reiswaffeln', foods:[{k:'thunfisch',g:100*scale},{k:'reiswaffeln',g:40*scale}]},
+          {label:'Skyr & Nüsse', foods:[{k:'skyr',g:200*scale},{k:'walnuesse',g:20},{k:'blaubeeren',g:60*scale}]},
+        ]},
+        {name:'Abendessen', time:'19:30', alts:[
+          {label:'Lachs & Quinoa', foods:[{k:'lachs',g:160*scale},{k:'quinoa',g:140*scale},{k:'avocado',g:50*scale}]},
+          {label:'Eier & Kartoffeln', foods:[{k:'eier',g:180*scale},{k:'kartoffeln',g:200*scale},{k:'brokkoli',g:120*scale},{k:'olivenoel',g:8}]},
+          {label:'Garnelen & Reis', foods:[{k:'garnelen',g:200*scale},{k:'reis',g:150*scale},{k:'spinat',g:100*scale},{k:'olivenoel',g:8}]},
+        ]},
+      ],
+    },
+    vegetarian: {
+      3: [
+        {name:'Frühstück', time:'07:00', alts:[
+          {label:'Oats & Quark', foods:[{k:'haferflocken',g:80*scale},{k:'magerquark',g:200*scale},{k:'blaubeeren',g:80*scale},{k:'whey',g:25*scale}]},
+          {label:'Rührei & Avocado', foods:[{k:'eier',g:180*scale},{k:'avocado',g:60*scale},{k:'haferflocken',g:50*scale}]},
+          {label:'Toast & Ei', foods:[{k:'vollkornbrot',g:80*scale},{k:'eier',g:120*scale},{k:'lightkase',g:40*scale},{k:'skyr',g:150*scale}]},
+        ]},
+        {name:'Mittagessen', time:'12:30', alts:[
+          {label:'Tofu Bowl', foods:[{k:'tofu',g:200*scale},{k:'reis',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
+          {label:'Eier & Quinoa', foods:[{k:'eier',g:180*scale},{k:'quinoa',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
+          {label:'Hüttenkäse & Nudeln', foods:[{k:'huettenkase',g:200*scale},{k:'nudeln',g:180*scale},{k:'spinat',g:100*scale},{k:'olivenoel',g:8}]},
+        ]},
+        {name:'Abendessen', time:'19:00', alts:[
+          {label:'Tempeh & Süsskartoffel', foods:[{k:'tempeh',g:180*scale},{k:'suesskartoffel',g:200*scale},{k:'avocado',g:60*scale}]},
+          {label:'Rührei & Kartoffeln', foods:[{k:'eier',g:180*scale},{k:'kartoffeln',g:200*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:8}]},
+          {label:'Skyr & Vollkornbrot', foods:[{k:'skyr',g:200*scale},{k:'vollkornbrot',g:80*scale},{k:'lightkase',g:60*scale},{k:'walnuesse',g:20}]},
+        ]},
+      ],
+      4: [
+        {name:'Frühstück', time:'07:00', alts:[
+          {label:'Oats & Joghurt', foods:[{k:'haferflocken',g:70*scale},{k:'joghurt',g:200*scale},{k:'blaubeeren',g:80*scale}]},
+          {label:'Scrambled Eggs', foods:[{k:'eier',g:180*scale},{k:'avocado',g:60*scale},{k:'haferflocken',g:40*scale}]},
+          {label:'Toast & Hüttenkäse', foods:[{k:'vollkorntost',g:60*scale},{k:'huettenkase',g:150*scale},{k:'lightkase',g:40*scale},{k:'blaubeeren',g:60*scale}]},
+        ]},
+        {name:'Mittagessen', time:'12:30', alts:[
+          {label:'Tempeh & Reis', foods:[{k:'tempeh',g:180*scale},{k:'reis',g:140*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
+          {label:'Hüttenkäse Bowl', foods:[{k:'huettenkase',g:200*scale},{k:'quinoa',g:140*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:8}]},
+          {label:'Eier & Vollkornnudeln', foods:[{k:'eier',g:180*scale},{k:'vollkornnudeln',g:180*scale},{k:'spinat',g:100*scale},{k:'olivenoel',g:8}]},
+        ]},
+        {name:'Zwischenmahlzeit', time:'15:30', alts:[
+          {label:'Quark & Nüsse', foods:[{k:'magerquark',g:150*scale},{k:'mandeln',g:20},{k:'blaubeeren',g:60*scale}]},
+          {label:'Joghurt & Beeren', foods:[{k:'joghurt',g:200*scale},{k:'mandeln',g:15},{k:'blaubeeren',g:80*scale}]},
+          {label:'Reiswaffeln & Lightkäse', foods:[{k:'reiswaffeln',g:50*scale},{k:'lightkase',g:60*scale},{k:'skyr',g:150*scale}]},
+        ]},
+        {name:'Abendessen', time:'19:30', alts:[
+          {label:'Eier & Quinoa', foods:[{k:'eier',g:180*scale},{k:'quinoa',g:160*scale},{k:'avocado',g:60*scale}]},
+          {label:'Tofu & Süsskartoffel', foods:[{k:'tofu',g:180*scale},{k:'suesskartoffel',g:180*scale},{k:'brokkoli',g:120*scale},{k:'olivenoel',g:8}]},
+          {label:'Hüttenkäse & Kartoffeln', foods:[{k:'huettenkase',g:200*scale},{k:'kartoffeln',g:200*scale},{k:'spinat',g:100*scale},{k:'olivenoel',g:8}]},
+        ]},
+      ],
+      5: [
+        {name:'Frühstück', time:'07:00', alts:[
+          {label:'Chia Oats', foods:[{k:'haferflocken',g:60*scale},{k:'magerquark',g:150*scale},{k:'chia',g:15},{k:'blaubeeren',g:80*scale}]},
+          {label:'Ei Bowl', foods:[{k:'eier',g:150*scale},{k:'avocado',g:60*scale},{k:'haferflocken',g:50*scale}]},
+          {label:'Toast & Skyr', foods:[{k:'toast',g:60*scale},{k:'skyr',g:200*scale},{k:'lightkase',g:40*scale},{k:'blaubeeren',g:60*scale}]},
+        ]},
+        {name:'Zwischenmahlzeit', time:'10:30', alts:[
+          {label:'Hüttenkäse & Nüsse', foods:[{k:'huettenkase',g:150*scale},{k:'mandeln',g:20}]},
+          {label:'Joghurt Bowl', foods:[{k:'joghurt',g:200*scale},{k:'blaubeeren',g:60*scale},{k:'mandeln',g:15}]},
+          {label:'Skyr & Reiswaffeln', foods:[{k:'skyr',g:150*scale},{k:'reiswaffeln',g:40*scale},{k:'walnuesse',g:15}]},
+        ]},
+        {name:'Mittagessen', time:'13:00', alts:[
+          {label:'Kichererbsen Bowl', foods:[{k:'kichererbsen',g:200*scale},{k:'quinoa',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
+          {label:'Tempeh & Reis', foods:[{k:'tempeh',g:170*scale},{k:'reis',g:140*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
+          {label:'Eier & Süsskartoffel', foods:[{k:'eier',g:180*scale},{k:'suesskartoffel',g:200*scale},{k:'spinat',g:100*scale},{k:'olivenoel',g:8}]},
+        ]},
+        {name:'Nachmittagssnack', time:'16:00', alts:[
+          {label:'Quark & Banane', foods:[{k:'magerquark',g:150*scale},{k:'banane',g:100*scale}]},
+          {label:'Joghurt & Nüsse', foods:[{k:'joghurt',g:200*scale},{k:'mandeln',g:20},{k:'blaubeeren',g:60*scale}]},
+          {label:'Reiswaffeln & Lightkäse', foods:[{k:'reiswaffeln',g:50*scale},{k:'lightkase',g:60*scale},{k:'skyr',g:100*scale}]},
+        ]},
+        {name:'Abendessen', time:'19:30', alts:[
+          {label:'Tofu & Süsskartoffel', foods:[{k:'tofu',g:180*scale},{k:'suesskartoffel',g:180*scale},{k:'avocado',g:50*scale}]},
+          {label:'Rührei & Kartoffeln', foods:[{k:'eier',g:180*scale},{k:'kartoffeln',g:200*scale},{k:'brokkoli',g:120*scale},{k:'olivenoel',g:8}]},
+          {label:'Hüttenkäse & Nudeln', foods:[{k:'huettenkase',g:200*scale},{k:'vollkornnudeln',g:180*scale},{k:'spinat',g:100*scale},{k:'olivenoel',g:8}]},
+        ]},
+      ],
+    },
+    vegan: {
+      3: [
+        {name:'Frühstück', time:'07:00', alts:[
+          {label:'Overnight Oats', foods:[{k:'haferflocken',g:80*scale},{k:'hafermilch',g:250*scale},{k:'chia',g:15},{k:'blaubeeren',g:80*scale},{k:'vegwhey',g:25*scale}]},
+          {label:'Smoothie Bowl', foods:[{k:'vegwhey',g:35*scale},{k:'banane',g:120*scale},{k:'hafermilch',g:200*scale},{k:'chia',g:15}]},
+          {label:'Tofu Scramble & Toast', foods:[{k:'tofu',g:150*scale},{k:'vollkornbrot',g:80*scale},{k:'spinat',g:80*scale},{k:'olivenoel',g:8}]},
+        ]},
+        {name:'Mittagessen', time:'12:30', alts:[
+          {label:'Tempeh Bowl', foods:[{k:'tempeh',g:200*scale},{k:'quinoa',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:12}]},
+          {label:'Linsen & Reis', foods:[{k:'linsen',g:200*scale},{k:'reis',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
+          {label:'Seitan & Nudeln', foods:[{k:'seitan',g:180*scale},{k:'vollkornnudeln',g:180*scale},{k:'spinat',g:100*scale},{k:'olivenoel',g:10}]},
+        ]},
+        {name:'Abendessen', time:'19:00', alts:[
+          {label:'Tofu & Süsskartoffel', foods:[{k:'tofu',g:200*scale},{k:'suesskartoffel',g:200*scale},{k:'avocado',g:70*scale},{k:'cashews',g:20}]},
+          {label:'Seitan & Quinoa', foods:[{k:'seitan',g:180*scale},{k:'quinoa',g:150*scale},{k:'avocado',g:60*scale},{k:'olivenoel',g:10}]},
+          {label:'Kichererbsen & Kartoffeln', foods:[{k:'kichererbsen',g:200*scale},{k:'kartoffeln',g:200*scale},{k:'spinat',g:100*scale},{k:'olivenoel',g:10}]},
+        ]},
+      ],
+      4: [
+        {name:'Frühstück', time:'07:00', alts:[
+          {label:'Protein Oats', foods:[{k:'haferflocken',g:70*scale},{k:'hafermilch',g:200*scale},{k:'blaubeeren',g:80*scale},{k:'vegwhey',g:30*scale}]},
+          {label:'Chia Pudding', foods:[{k:'chia',g:40*scale},{k:'hafermilch',g:300*scale},{k:'banane',g:100*scale},{k:'vegwhey',g:25*scale}]},
+          {label:'Tofu Scramble', foods:[{k:'tofu',g:180*scale},{k:'vollkorntost',g:60*scale},{k:'spinat',g:80*scale},{k:'olivenoel',g:8}]},
+        ]},
+        {name:'Mittagessen', time:'12:30', alts:[
+          {label:'Seitan & Reis', foods:[{k:'seitan',g:180*scale},{k:'reis',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:12}]},
+          {label:'Kichererbsen Curry', foods:[{k:'kichererbsen',g:200*scale},{k:'reis',g:140*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:12}]},
+          {label:'Tempeh & Quinoa', foods:[{k:'tempeh',g:180*scale},{k:'quinoa',g:140*scale},{k:'spinat',g:100*scale},{k:'olivenoel',g:10}]},
+        ]},
+        {name:'Zwischenmahlzeit', time:'15:30', alts:[
+          {label:'Edamame & Nüsse', foods:[{k:'edamame',g:150*scale},{k:'mandeln',g:20}]},
+          {label:'Protein Shake', foods:[{k:'vegwhey',g:35*scale},{k:'banane',g:100*scale},{k:'hafermilch',g:200*scale}]},
+          {label:'Reiswaffeln & Erdnüsse', foods:[{k:'reiswaffeln',g:50*scale},{k:'erdnuesse',g:30},{k:'banane',g:80*scale}]},
+        ]},
+        {name:'Abendessen', time:'19:30', alts:[
+          {label:'Tempeh & Süsskartoffel', foods:[{k:'tempeh',g:180*scale},{k:'suesskartoffel',g:180*scale},{k:'avocado',g:60*scale}]},
+          {label:'Tofu & Quinoa', foods:[{k:'tofu',g:180*scale},{k:'quinoa',g:150*scale},{k:'brokkoli',g:120*scale},{k:'cashews',g:20}]},
+          {label:'Linsen & Kartoffeln', foods:[{k:'linsen',g:200*scale},{k:'kartoffeln',g:200*scale},{k:'spinat',g:100*scale},{k:'olivenoel',g:10}]},
+        ]},
+      ],
+      5: [
+        {name:'Frühstück', time:'07:00', alts:[
+          {label:'Chia Oats', foods:[{k:'haferflocken',g:60*scale},{k:'hafermilch',g:200*scale},{k:'chia',g:15},{k:'blaubeeren',g:80*scale}]},
+          {label:'Bananen Shake', foods:[{k:'vegwhey',g:35*scale},{k:'banane',g:120*scale},{k:'hafermilch',g:250*scale}]},
+          {label:'Tofu Toast', foods:[{k:'tofu',g:150*scale},{k:'vollkornbrot',g:80*scale},{k:'avocado',g:60*scale},{k:'spinat',g:60*scale}]},
+        ]},
+        {name:'Zwischenmahlzeit', time:'10:30', alts:[
+          {label:'Edamame & Mandeln', foods:[{k:'edamame',g:150*scale},{k:'mandeln',g:20}]},
+          {label:'Cashew & Frucht', foods:[{k:'cashews',g:30},{k:'banane',g:80*scale},{k:'hafermilch',g:150*scale}]},
+          {label:'Reiswaffeln & Erdnüsse', foods:[{k:'reiswaffeln',g:50*scale},{k:'erdnuesse',g:30},{k:'blaubeeren',g:60*scale}]},
+        ]},
+        {name:'Mittagessen', time:'13:00', alts:[
+          {label:'Linsen Bowl', foods:[{k:'linsen',g:200*scale},{k:'quinoa',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:12}]},
+          {label:'Seitan & Kartoffeln', foods:[{k:'seitan',g:180*scale},{k:'kartoffeln',g:200*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:12}]},
+          {label:'Kichererbsen & Nudeln', foods:[{k:'kichererbsen',g:180*scale},{k:'vollkornnudeln',g:180*scale},{k:'spinat',g:100*scale},{k:'olivenoel',g:10}]},
+        ]},
+        {name:'Nachmittagssnack', time:'16:00', alts:[
+          {label:'Protein Shake', foods:[{k:'vegwhey',g:35*scale},{k:'banane',g:100*scale},{k:'hafermilch',g:200*scale}]},
+          {label:'Reiswaffeln & Mandeln', foods:[{k:'reiswaffeln',g:40*scale},{k:'mandeln',g:25},{k:'banane',g:80*scale}]},
+          {label:'Edamame & Cashews', foods:[{k:'edamame',g:130*scale},{k:'cashews',g:25},{k:'blaubeeren',g:60*scale}]},
+        ]},
+        {name:'Abendessen', time:'19:30', alts:[
+          {label:'Tofu & Süsskartoffel', foods:[{k:'tofu',g:180*scale},{k:'suesskartoffel',g:180*scale},{k:'cashews',g:25}]},
+          {label:'Tempeh & Quinoa', foods:[{k:'tempeh',g:170*scale},{k:'quinoa',g:150*scale},{k:'avocado',g:50*scale},{k:'olivenoel',g:8}]},
+          {label:'Seitan & Süsskartoffel', foods:[{k:'seitan',g:170*scale},{k:'suesskartoffel',g:180*scale},{k:'spinat',g:100*scale},{k:'olivenoel',g:8}]},
+        ]},
+      ],
+    },
+  };
 
   const mealList = templates[diet][meals];
   const dietLabel = {meat:'🥩 Fleisch', vegetarian:'🥦 Vegetarisch', vegan:'🌱 Vegan'}[diet];
 
-  const html = mealList.map(meal => {
-    const items = meal.foods.map(f => macro(f.k, f.g));
+  window._mealTemplates = mealList;
+  window._mealAltIdx = mealList.map(() => 0);
+  window._mealDiet = diet;
+  window._mealDb = db;
+  window._mealScale = scale;
+
+  function renderMealCard(meal, altIdx, mealIdx) {
+    const alt = meal.alts[altIdx];
+    const items = alt.foods.map(f => macro(f.k, f.g));
     const totP = items.reduce((a,i)=>a+i.p,0);
     const totC = items.reduce((a,i)=>a+i.c,0);
     const totF = items.reduce((a,i)=>a+i.fat,0);
     const totK = items.reduce((a,i)=>a+i.k,0);
-
-    const foodRows = items.map(m => `
-      <div class="meal-food">
-        <span class="food-n">${m.name} <span style="color:var(--muted);font-size:12px;">${m.grams}g</span></span>
-        <span class="food-macros">
-          <span class="macro-pill p">${m.p}g P</span>
-          <span class="macro-pill c">${m.c}g C</span>
-          <span class="macro-pill f">${m.fat}g F</span>
-          <span class="macro-pill k">${m.k} kcal</span>
-        </span>
-      </div>`).join('');
-
-    return `<div class="meal-card">
+    const foodRows = items.map(m=>`<div class="meal-food"><span class="food-n">${m.name} <span style="color:var(--muted);font-size:12px;">${m.grams}g</span></span><span class="food-macros"><span class="macro-pill p">${m.p}g P</span><span class="macro-pill c">${m.c}g C</span><span class="macro-pill f">${m.fat}g F</span><span class="macro-pill k">${m.k} kcal</span></span></div>`).join('');
+    // 3 alt buttons
+    const altBtns = meal.alts.map((a,i) =>
+      `<button class="alt-btn ${i===altIdx?'active':''}" onclick="switchAlt(${mealIdx},${i})">${a.label}</button>`
+    ).join('');
+    return `<div class="meal-card" id="meal-${mealIdx}">
       <div class="meal-head">
-        <div><div class="meal-name">${meal.name}</div><div class="meal-time">⏱ ${meal.time} Uhr</div></div>
-        <div class="meal-stats">
-          <strong>~${totK} kcal</strong>
-          <span style="font-size:11px;color:var(--muted);">${totP}g P · ${totC}g C · ${totF}g F</span>
+        <div>
+          <div class="meal-name">${meal.name}</div>
+          <div class="meal-time" style="margin-top:3px;">⏱ ${meal.time} Uhr</div>
         </div>
+        <div class="meal-stats"><strong>~${totK} kcal</strong><span style="font-size:11px;color:var(--muted);">${totP}g P · ${totC}g C · ${totF}g F</span></div>
       </div>
+      <div style="display:flex;gap:6px;padding:10px 20px;border-bottom:1px solid var(--border2);">${altBtns}</div>
       <div class="meal-foods">${foodRows}</div>
       <div class="meal-total">
         <span>${dietLabel}</span>
         <span><strong>${totP}g</strong> P · <strong>${totC}g</strong> C · <strong>${totF}g</strong> F · <strong>${totK} kcal</strong></span>
       </div>
     </div>`;
-  }).join('');
+  }
 
-  document.getElementById('mealPlan').innerHTML = html;
-  generateShoppingList(mealList, db, scale);
+  document.getElementById('mealPlan').innerHTML = mealList.map((m,i) => renderMealCard(m,0,i)).join('');
+  updateShoppingFromAlts();
+}
+
+function switchAlt(mealIdx, newAltIdx) {
+  if (!window._mealTemplates) return;
+  window._mealAltIdx[mealIdx] = newAltIdx;
+  const meal = window._mealTemplates[mealIdx];
+  const db = window._mealDb;
+  function macro(key, grams) {
+    const f = db[key]; const g = Math.round(grams);
+    if (!f) return {name:key,grams:g,p:0,c:0,fat:0,k:0};
+    return {name:f.name,grams:g,p:Math.round(f.p*g/100),c:Math.round(f.c*g/100),fat:Math.round(f.f*g/100),k:Math.round(f.kcal*g/100)};
+  }
+  const alt = meal.alts[newAltIdx];
+  const items = alt.foods.map(f => macro(f.k, f.g));
+  const totP=items.reduce((a,i)=>a+i.p,0), totC=items.reduce((a,i)=>a+i.c,0), totF=items.reduce((a,i)=>a+i.fat,0), totK=items.reduce((a,i)=>a+i.k,0);
+  const dietLabel = {meat:'🥩 Fleisch', vegetarian:'🥦 Vegetarisch', vegan:'🌱 Vegan'}[window._mealDiet];
+  const altBtns = meal.alts.map((a,i) =>
+    `<button class="alt-btn ${i===newAltIdx?'active':''}" onclick="switchAlt(${mealIdx},${i})">${a.label}</button>`
+  ).join('');
+  const foodRows = items.map(m=>`<div class="meal-food"><span class="food-n">${m.name} <span style="color:var(--muted);font-size:12px;">${m.grams}g</span></span><span class="food-macros"><span class="macro-pill p">${m.p}g P</span><span class="macro-pill c">${m.c}g C</span><span class="macro-pill f">${m.fat}g F</span><span class="macro-pill k">${m.k} kcal</span></span></div>`).join('');
+  document.getElementById(`meal-${mealIdx}`).innerHTML = `
+    <div class="meal-head"><div><div class="meal-name">${meal.name}</div><div class="meal-time" style="margin-top:3px;">⏱ ${meal.time} Uhr</div></div><div class="meal-stats"><strong>~${totK} kcal</strong><span style="font-size:11px;color:var(--muted);">${totP}g P · ${totC}g C · ${totF}g F</span></div></div>
+    <div style="display:flex;gap:6px;padding:10px 20px;border-bottom:1px solid var(--border2);">${altBtns}</div>
+    <div class="meal-foods">${foodRows}</div>
+    <div class="meal-total"><span>${dietLabel}</span><span><strong>${totP}g</strong> P · <strong>${totC}g</strong> C · <strong>${totF}g</strong> F · <strong>${totK} kcal</strong></span></div>`;
+  updateShoppingFromAlts();
+}
+
+function updateShoppingFromAlts() {
+  if (!window._mealTemplates) return;
+  const activeMeals = window._mealTemplates.map((meal, i) => ({
+    name: meal.name,
+    foods: meal.alts[window._mealAltIdx[i]].foods
+  }));
+  generateShoppingList(activeMeals, window._mealDb, window._mealScale);
 }
 
 // ══ PROTEIN FASTEN PLAN ══
@@ -1105,8 +1509,9 @@ function generateFastenPlan(kcal, proteinG, carbsG, fatG, diet) {
     olivenoel:    {name:'Olivenöl',            p:0,   c:0,  f:100, kcal:884},
     banane:       {name:'Banane',              p:1.1, c:23, f:0.3, kcal:89},
     mandeln:      {name:'Mandeln',             p:21,  c:6,  f:50,  kcal:579},
-    pflanzenmilch:{name:'Pflanzenmilch',       p:1,   c:7,  f:2,   kcal:45},
-    magerquark:   {name:'Magerquark 0.2%',     p:12,  c:4,  f:0.2, kcal:66},
+    hafermilch:   {name:'Hafermilch',        p:1.0, c:9,  f:1.5, kcal:45},
+    mandelmilch:  {name:'Mandelmilch',        p:0.5, c:3,  f:1.2, kcal:24},
+    magerquark:   {name:'Magerquark 0.2%',   p:12,  c:4,  f:0.2, kcal:66},
   };
 
   function m(key, grams) {
@@ -1115,7 +1520,7 @@ function generateFastenPlan(kcal, proteinG, carbsG, fatG, diet) {
   }
 
   const proteinKey = diet === 'vegan' ? 'vegwhey' : 'whey';
-  const milkKey    = diet === 'vegan' ? 'pflanzenmilch' : 'magerquark';
+  const milkKey = diet === 'vegan' ? 'hafermilch' : 'magerquark';
 
   // Build 3 meals: Shake 1, Hauptmahlzeit, Shake 2
   const shake1Foods = [m(proteinKey, wheyG), m('banane', 80*scale), m('haferflocken', 40*scale)];
@@ -1190,22 +1595,41 @@ let lastMealPlanData = null;
 
 function generateShoppingList(mealList, db, scale) {
   // Aggregate all foods × 7 days
+  // Support both template format {k, g} and fasten format (pre-computed macro objects with .name, .grams)
   const totals = {};
+
   mealList.forEach(meal => {
-    meal.foods.forEach(f => {
-      const grams = Math.round(f.g * 7);
-      if (!totals[f.k]) totals[f.k] = { name: db[f.k].name, grams: 0 };
-      totals[f.k].grams += grams;
+    const foods = meal.foods;
+    foods.forEach(f => {
+      // Template format: {k: 'huhn', g: 200}
+      // Fasten format: {name:'Hühnerbrust', grams:180, p:..., ...}
+      if (f.k && db[f.k]) {
+        const key = f.k;
+        const grams = Math.round(f.g * 7);
+        if (!totals[key]) totals[key] = { name: db[key].name, grams: 0 };
+        totals[key].grams += grams;
+      } else if (f.name && f.grams) {
+        // fasten plan: use name as key
+        const key = f.name;
+        const grams = Math.round(f.grams * 7);
+        if (!totals[key]) totals[key] = { name: f.name, grams: 0 };
+        totals[key].grams += grams;
+      }
     });
   });
 
-  // Group by category
+  // Group by category – use keys OR names
   const categories = {
-    'Protein': ['huhn','rind','lachs','thunfisch','eier','tofu','tempeh','seitan','edamame','linsen','kichererbsen'],
-    'Milchprodukte & Protein': ['magerquark','joghurt','huettenkase','whey','vegwhey'],
-    'Kohlenhydrate': ['haferflocken','reis','suesskartoffel','kartoffeln','quinoa','reiswaffeln','chia','banane','pflanzenmilch'],
-    'Gemüse & Früchte': ['brokkoli','blaubeeren'],
-    'Fette & Nüsse': ['avocado','olivenoel','mandeln','cashews'],
+    'Protein': ['huhn','rind','lachs','thunfisch','eier','tofu','tempeh','seitan','edamame','linsen','kichererbsen',
+                'Hühnerbrust','Rindssteak (mager)','Lachs','Thunfisch (Dose)','Eier','Tofu (fest)','Tempeh','Seitan','Edamame','Rote Linsen (gek.)','Kichererbsen (gek.)'],
+    'Milchprodukte & Protein': ['magerquark','joghurt','huettenkase','whey','vegwhey',
+                                'Magerquark 0.2%','Griech. Joghurt 0%','Hüttenkäse','Whey Isolat','Vegan Protein'],
+    'Kohlenhydrate': ['haferflocken','reis','suesskartoffel','kartoffeln','quinoa','reiswaffeln','chia','banane',
+                      'hafermilch','mandelmilch',
+                      'Haferflocken','Weisser Reis (gek.)','Süsskartoffeln','Kartoffeln (gek.)','Quinoa (gek.)','Reiswaffeln','Chia Seeds','Banane',
+                      'Hafermilch','Mandelmilch'],
+    'Gemüse & Früchte': ['brokkoli','blaubeeren','Brokkoli','Blaubeeren'],
+    'Fette & Nüsse': ['avocado','olivenoel','mandeln','cashews','Avocado (½)','Olivenöl','Mandeln','Cashews'],
   };
 
   const catColors = {
@@ -1216,15 +1640,27 @@ function generateShoppingList(mealList, db, scale) {
     'Fette & Nüsse': '#c878e0',
   };
 
+  // Flatten all category keys for lookup
+  const allCatKeys = {};
+  Object.entries(categories).forEach(([cat, keys]) => keys.forEach(k => allCatKeys[k] = cat));
+
+  // Sort totals into categories
+  const sorted = {};
+  Object.entries(totals).forEach(([k, item]) => {
+    const cat = allCatKeys[k] || 'Sonstiges';
+    if (!sorted[cat]) sorted[cat] = [];
+    sorted[cat].push({ key: k, ...item });
+  });
+
   let html = '';
-  Object.entries(categories).forEach(([cat, keys]) => {
-    const items = keys.filter(k => totals[k]);
-    if (!items.length) return;
+  [...Object.keys(categories), 'Sonstiges'].forEach(cat => {
+    const items = sorted[cat];
+    if (!items || !items.length) return;
+    const color = catColors[cat] || '#888';
     html += `<div class="shop-cat">
-      <div class="shop-cat-head" style="border-left:3px solid ${catColors[cat]};">${cat}</div>
+      <div class="shop-cat-head" style="border-left:3px solid ${color};">${cat}</div>
       <div class="shop-items">`;
-    items.forEach(k => {
-      const item = totals[k];
+    items.forEach(item => {
       const kg = item.grams >= 1000 ? (item.grams/1000).toFixed(1)+' kg' : item.grams+'g';
       html += `<div class="shop-item">
         <div class="shop-check" onclick="this.classList.toggle('checked')"></div>
@@ -1236,7 +1672,7 @@ function generateShoppingList(mealList, db, scale) {
   });
 
   document.getElementById('shoppingList').innerHTML = html;
-  lastMealPlanData = { mealList, totals, categories, catColors };
+  lastMealPlanData = { totals, sorted, catColors };
 }
 
 function printShoppingList() {
@@ -1295,6 +1731,199 @@ function sendContact(){
 
 // ══ TOAST ══
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+// ══ NÄHRWERTRECHNER ══
+const nwDB = [
+  {name:'Banane',p:1.1,c:23,f:0.3,kcal:89},
+  {name:'Apfel',p:0.3,c:14,f:0.2,kcal:52},
+  {name:'Blaubeeren',p:0.7,c:12,f:0.3,kcal:57},
+  {name:'Erdbeeren',p:0.8,c:8,f:0.3,kcal:32},
+  {name:'Orange',p:0.9,c:12,f:0.1,kcal:47},
+  {name:'Avocado',p:2,c:9,f:15,kcal:160},
+  {name:'Hühnerbrust',p:31,c:0,f:3.6,kcal:165},
+  {name:'Hühnerschenkel',p:25,c:0,f:9,kcal:177},
+  {name:'Rindssteak (mager)',p:28,c:0,f:5,kcal:158},
+  {name:'Rindshackfleisch (20% Fett)',p:17,c:0,f:20,kcal:254},
+  {name:'Lachs',p:25,c:0,f:13,kcal:208},
+  {name:'Thunfisch (Dose, in Wasser)',p:25,c:0,f:1,kcal:103},
+  {name:'Forelle',p:20,c:0,f:5,kcal:119},
+  {name:'Garnelen',p:20,c:1,f:0.9,kcal:99},
+  {name:'Ei (1 Stk. ~60g)',p:8,c:0.4,f:6,kcal:86},
+  {name:'Magerquark 0.2%',p:12,c:4,f:0.2,kcal:66},
+  {name:'Griech. Joghurt 0%',p:10,c:4,f:0.4,kcal:59},
+  {name:'Hüttenkäse',p:11,c:3,f:4,kcal:90},
+  {name:'Skyr',p:11,c:4,f:0.2,kcal:63},
+  {name:'Mozzarella',p:22,c:2,f:17,kcal:249},
+  {name:'Light Käse (Scheibe ~20g)',p:5,c:0.2,f:2,kcal:39},
+  {name:'Schinken (gekocht)',p:18,c:0.5,f:3,kcal:107},
+  {name:'Putenaufschnitt',p:19,c:0.5,f:1.5,kcal:95},
+  {name:'Whey Isolat',p:85,c:4,f:2,kcal:370},
+  {name:'Vegan Protein Pulver',p:80,c:5,f:3,kcal:366},
+  {name:'Haferflocken',p:13,c:58,f:7,kcal:370},
+  {name:'Weissbrot (Scheibe ~30g)',p:2.5,c:14,f:0.5,kcal:72},
+  {name:'Vollkornbrot (Scheibe ~40g)',p:3.5,c:18,f:1,kcal:96},
+  {name:'Toast (Scheibe ~25g)',p:2,c:11,f:0.8,kcal:62},
+  {name:'Vollkorn-Toast (Scheibe ~30g)',p:3,c:13,f:1,kcal:73},
+  {name:'Weisser Reis (gekocht)',p:2.7,c:28,f:0.3,kcal:130},
+  {name:'Vollkornreis (gekocht)',p:2.6,c:25,f:0.9,kcal:112},
+  {name:'Reiswaffeln',p:3,c:82,f:1,kcal:387},
+  {name:'Pasta (gekocht)',p:5,c:30,f:0.9,kcal:158},
+  {name:'Vollkornnudeln (gekocht)',p:5.5,c:28,f:1.2,kcal:149},
+  {name:'Kartoffeln (gekocht)',p:2,c:17,f:0.1,kcal:77},
+  {name:'Süsskartoffeln',p:1.6,c:20,f:0.1,kcal:86},
+  {name:'Quinoa (gekocht)',p:4,c:21,f:2,kcal:120},
+  {name:'Chia Seeds',p:17,c:42,f:31,kcal:486},
+  {name:'Brokkoli',p:2.8,c:5,f:0.4,kcal:34},
+  {name:'Spinat',p:2.9,c:3.6,f:0.4,kcal:23},
+  {name:'Karotten',p:0.9,c:10,f:0.2,kcal:41},
+  {name:'Gurke',p:0.7,c:3.6,f:0.1,kcal:16},
+  {name:'Tomate',p:0.9,c:3.9,f:0.2,kcal:18},
+  {name:'Paprika (rot)',p:1,c:6,f:0.3,kcal:31},
+  {name:'Olivenöl',p:0,c:0,f:100,kcal:884},
+  {name:'Mandeln',p:21,c:6,f:50,kcal:579},
+  {name:'Walnüsse',p:15,c:7,f:65,kcal:654},
+  {name:'Cashews',p:18,c:30,f:44,kcal:553},
+  {name:'Erdnüsse',p:26,c:16,f:49,kcal:567},
+  {name:'Erdnussbutter',p:25,c:20,f:50,kcal:588},
+  {name:'Hafermilch',p:1,c:9,f:1.5,kcal:45},
+  {name:'Mandelmilch',p:0.5,c:3,f:1.2,kcal:24},
+  {name:'Vollmilch 3.5%',p:3.4,c:4.8,f:3.5,kcal:64},
+  {name:'Tofu (fest)',p:17,c:2,f:9,kcal:144},
+  {name:'Tempeh',p:19,c:9,f:11,kcal:193},
+  {name:'Edamame',p:11,c:10,f:5,kcal:121},
+  {name:'Kichererbsen (gekocht)',p:9,c:27,f:2.6,kcal:164},
+  {name:'Linsen (gekocht)',p:9,c:20,f:0.4,kcal:116},
+  {name:'Seitan',p:25,c:4,f:2,kcal:140},
+  {name:'Haferflocken (Porridge 250ml)',p:5,c:25,f:3.5,kcal:153},
+  {name:'Protein Riegel (Ø)',p:20,c:25,f:8,kcal:248},
+  {name:'Dunkle Schokolade 85%',p:10,c:17,f:48,kcal:600},
+  {name:'Bananen-Shake (300ml)',p:12,c:40,f:2,kcal:226},
+];
+
+let nwSelected = null;
+
+function searchNutrition(query) {
+  if (query.length < 2) { document.getElementById('nwResults').innerHTML=''; return; }
+  const q = query.toLowerCase();
+  const matches = nwDB.filter(f => f.name.toLowerCase().includes(q)).slice(0,8);
+  if (!matches.length) { document.getElementById('nwResults').innerHTML=`<p style="color:var(--muted);font-size:14px;padding:12px;">Kein Lebensmittel gefunden. Tipp: Englische oder deutsche Bezeichnung versuchen.</p>`; return; }
+  document.getElementById('nwResults').innerHTML = matches.map(f =>
+    `<div class="nw-result-item" onclick="selectNW('${f.name}')">
+      <span class="nw-result-name">${f.name}</span>
+      <span class="nw-result-kcal">${f.kcal} kcal/100g</span>
+    </div>`).join('');
+}
+
+function selectNW(name) {
+  nwSelected = nwDB.find(f => f.name === name);
+  document.getElementById('nwSearch').value = name;
+  document.getElementById('nwResults').innerHTML = '';
+  updateNutritionCalc();
+}
+
+function setGrams(g) {
+  document.getElementById('nwGrams').value = g;
+  updateNutritionCalc();
+}
+
+function updateNutritionCalc() {
+  if (!nwSelected) return;
+  const g = parseFloat(document.getElementById('nwGrams').value) || 100;
+  const f = nwSelected;
+  const calc = v => Math.round(v * g / 100 * 10) / 10;
+  document.getElementById('nwSelected').style.display = 'block';
+  document.getElementById('nwSelected').innerHTML = `
+    <div class="nw-card">
+      <div class="nw-name">${f.name}</div>
+      <div class="nw-per">Nährwerte für ${g}g</div>
+      <div class="nw-macros">
+        <div class="nw-macro kcal"><div class="nw-macro-val">${calc(f.kcal)}</div><div class="nw-macro-label">kcal</div></div>
+        <div class="nw-macro prot"><div class="nw-macro-val">${calc(f.p)}g</div><div class="nw-macro-label">Protein</div></div>
+        <div class="nw-macro carb"><div class="nw-macro-val">${calc(f.c)}g</div><div class="nw-macro-label">Carbs</div></div>
+        <div class="nw-macro fat"><div class="nw-macro-val">${calc(f.f)}g</div><div class="nw-macro-label">Fett</div></div>
+      </div>
+    </div>`;
+}
+
+// ══ CHEAT MEALS ══
+const cheatMeals = [
+  {cat:'fast-food',emoji:'🍔',name:'Burger (Classic)',portion:'1 Stk. ~200g',kcal:490,p:25,c:40,f:24},
+  {cat:'fast-food',emoji:'🍔',name:'Big Mac',portion:'1 Stk. ~220g',kcal:550,p:27,c:43,f:30},
+  {cat:'fast-food',emoji:'🍟',name:'Pommes Frites (gross)',portion:'1 Portion ~150g',kcal:490,p:6,c:63,f:24},
+  {cat:'fast-food',emoji:'🌭',name:'Hot Dog',portion:'1 Stk. ~150g',kcal:360,p:14,c:28,f:22},
+  {cat:'fast-food',emoji:'🥪',name:'Döner Kebab',portion:'1 Stk. ~350g',kcal:650,p:35,c:55,f:28},
+  {cat:'fast-food',emoji:'🌮',name:'Burrito (Chicken)',portion:'1 Stk. ~300g',kcal:570,p:30,c:62,f:20},
+  {cat:'fast-food',emoji:'🌯',name:'Wrap mit Mayo',portion:'1 Stk. ~250g',kcal:520,p:22,c:48,f:26},
+  {cat:'fast-food',emoji:'🍗',name:'Chicken Nuggets (6 Stk.)',portion:'6 Stk. ~100g',kcal:280,p:15,c:18,f:16},
+  {cat:'fast-food',emoji:'🍗',name:'Fried Chicken Stück',portion:'1 Stk. ~120g',kcal:320,p:22,c:14,f:19},
+  {cat:'fast-food',emoji:'🧆',name:'Falafel im Fladenbrot',portion:'1 Portion ~300g',kcal:580,p:18,c:68,f:26},
+  {cat:'pizza',emoji:'🍕',name:'Pizza Margherita (2 Stk.)',portion:'2 Stücke ~300g',kcal:600,p:22,c:78,f:20},
+  {cat:'pizza',emoji:'🍕',name:'Pizza Salami (2 Stk.)',portion:'2 Stücke ~320g',kcal:680,p:28,c:76,f:28},
+  {cat:'pizza',emoji:'🍕',name:'Pizza Hawaii (2 Stk.)',portion:'2 Stücke ~310g',kcal:620,p:26,c:78,f:22},
+  {cat:'pizza',emoji:'🍕',name:'Pizza 4 Käse (2 Stk.)',portion:'2 Stücke ~320g',kcal:720,p:32,c:72,f:32},
+  {cat:'pizza',emoji:'🥫',name:'Lasagne',portion:'1 Portion ~350g',kcal:490,p:24,c:42,f:22},
+  {cat:'suess',emoji:'🍫',name:'Milka Tafel (100g)',portion:'100g',kcal:535,p:7,c:59,f:29},
+  {cat:'suess',emoji:'🍫',name:'Dunkle Schokolade 85%',portion:'100g',kcal:600,p:10,c:17,f:48},
+  {cat:'suess',emoji:'🍭',name:'Gummibärchen (Haribo)',portion:'1 Tüte ~100g',kcal:340,p:6,c:77,f:0.1},
+  {cat:'suess',emoji:'🧁',name:'Cupcake mit Frosting',portion:'1 Stk. ~100g',kcal:380,p:4,c:52,f:18},
+  {cat:'suess',emoji:'🍰',name:'Cheesecake',portion:'1 Stück ~120g',kcal:400,p:6,c:38,f:25},
+  {cat:'suess',emoji:'🥐',name:'Croissant (Butter)',portion:'1 Stk. ~60g',kcal:240,p:5,c:24,f:14},
+  {cat:'suess',emoji:'🍩',name:'Donut (glazed)',portion:'1 Stk. ~60g',kcal:250,p:3,c:31,f:13},
+  {cat:'suess',emoji:'🍪',name:'Cookies (3 Stk.)',portion:'3 Stk. ~60g',kcal:290,p:3,c:38,f:14},
+  {cat:'suess',emoji:'🧇',name:'Pancakes mit Ahornsirup',portion:'3 Stk. ~200g',kcal:480,p:10,c:82,f:14},
+  {cat:'suess',emoji:'🎂',name:'Geburtstagskuchen (Stück)',portion:'1 Stück ~100g',kcal:360,p:4,c:52,f:16},
+  {cat:'snacks',emoji:'🥨',name:'Chips (Lays, gesalzen)',portion:'1 Packung ~50g',kcal:267,p:3,c:26,f:17},
+  {cat:'snacks',emoji:'🍿',name:'Popcorn (gesalzen)',portion:'1 Portion ~80g',kcal:380,p:8,c:56,f:14},
+  {cat:'snacks',emoji:'🥜',name:'Erdnüsse (gesalzen)',portion:'1 Portion ~50g',kcal:283,p:13,c:8,f:24},
+  {cat:'snacks',emoji:'🧀',name:'Nachos mit Käsesauce',portion:'1 Portion ~150g',kcal:480,p:10,c:52,f:26},
+  {cat:'snacks',emoji:'🫙',name:'Pringles (halbe Dose)',portion:'~90g',kcal:476,p:5,c:52,f:27},
+  {cat:'snacks',emoji:'🥓',name:'Bacon (4 Streifen)',portion:'4 Stk. ~50g',kcal:218,p:15,c:0,f:17},
+  {cat:'snacks',emoji:'🫓',name:'Baguette mit Butter',portion:'2 Scheiben ~100g',kcal:310,p:8,c:48,f:10},
+  {cat:'getraenke',emoji:'🥤',name:'Cola (gross)',portion:'500ml',kcal:210,p:0,c:53,f:0},
+  {cat:'getraenke',emoji:'🍺',name:'Bier (0.5L)',portion:'500ml',kcal:215,p:1.7,c:17,f:0},
+  {cat:'getraenke',emoji:'🍷',name:'Rotwein (2 Gläser)',portion:'2x 125ml',kcal:210,p:0.2,c:6,f:0},
+  {cat:'getraenke',emoji:'🍹',name:'Mojito',portion:'1 Glas ~250ml',kcal:195,p:0.3,c:24,f:0},
+  {cat:'getraenke',emoji:'☕',name:'Frappuccino (Starbucks)',portion:'Grande ~360ml',kcal:380,p:6,c:60,f:13},
+  {cat:'getraenke',emoji:'🥛',name:'Milchshake (Vanille)',portion:'1 Becher ~400ml',kcal:560,p:12,c:80,f:22},
+  {cat:'getraenke',emoji:'🍊',name:'Orangensaft (Flasche)',portion:'330ml',kcal:150,p:1,c:34,f:0},
+  {cat:'getraenke',emoji:'⚡',name:'Energy Drink (250ml)',portion:'250ml',kcal:110,p:1,c:27,f:0},
+  {cat:'eis',emoji:'🍦',name:'Softeis (Waffel)',portion:'1 Stk. ~100g',kcal:230,p:4,c:30,f:10},
+  {cat:'eis',emoji:'🍨',name:'Magnum Classic',portion:'1 Stk. ~110g',kcal:275,p:3,c:26,f:18},
+  {cat:'eis',emoji:'🍧',name:'Häagen-Dazs Vanilla (½ B.)',portion:'½ Becher ~100g',kcal:250,p:4,c:24,f:16},
+  {cat:'eis',emoji:'🍡',name:'Eis am Stiel (Erdbeere)',portion:'1 Stk. ~75g',kcal:70,p:1,c:16,f:0.5},
+  {cat:'eis',emoji:'🍨',name:'Ben & Jerry's (½ B.)',portion:'½ Becher ~105g',kcal:340,p:5,c:40,f:18},
+  {cat:'fast-food',emoji:'🫔',name:'Shawarma',portion:'1 Stk. ~320g',kcal:590,p:32,c:52,f:24},
+  {cat:'fast-food',emoji:'🍜',name:'Instant Noodles',portion:'1 Packung ~85g',kcal:380,p:9,c:52,f:15},
+  {cat:'suess',emoji:'🍬',name:'Twix (2 Riegel)',portion:'2 Stk. ~58g',kcal:289,p:3,c:38,f:14},
+  {cat:'suess',emoji:'🍫',name:'Snickers',portion:'1 Stk. ~50g',kcal:245,p:4,c:32,f:12},
+  {cat:'pizza',emoji:'🫓',name:'Tiefkühlpizza (Ganz)',portion:'1 Stk. ~360g',kcal:830,p:36,c:100,f:29},
+  {cat:'snacks',emoji:'🌭',name:'Frankfurter Würstchen (2)',portion:'2 Stk. ~100g',kcal:305,p:11,c:1,f:28},
+];
+
+function buildCheatGrid(cat='alle') {
+  window._cheatBuilt = true;
+  const filtered = cat === 'alle' ? cheatMeals : cheatMeals.filter(c => c.cat === cat);
+  document.getElementById('cheatGrid').innerHTML = filtered.map(c => `
+    <div class="cheat-card" data-cat="${c.cat}">
+      <span class="cheat-emoji">${c.emoji}</span>
+      <div class="cheat-info">
+        <div class="cheat-name">${c.name}</div>
+        <div class="cheat-kcal">${c.kcal} kcal</div>
+        <div class="cheat-portion">${c.portion}</div>
+        <div class="cheat-pills">
+          <span class="cheat-pill p">${c.p}g P</span>
+          <span class="cheat-pill c">${c.c}g C</span>
+          <span class="cheat-pill f">${c.f}g F</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function filterCheat(cat, btn) {
+  document.querySelectorAll('.cheat-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildCheatGrid(cat);
+}
 
 // ══ INIT ══
 loadSaved();
