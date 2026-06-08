@@ -1126,71 +1126,6 @@ function generateMealPlan(kcal, meals, proteinG, carbsG, fatG, diet) {
     };
   }
 
-  // Meal templates per diet type
-  const templates = {
-    meat: {
-      3: [
-        {name:'Frühstück',    time:'07:00', foods:[{k:'haferflocken',g:80*scale},{k:'magerquark',g:200*scale},{k:'blaubeeren',g:80*scale},{k:'whey',g:30*scale}]},
-        {name:'Mittagessen',  time:'13:00', foods:[{k:'huhn',g:200*scale},{k:'reis',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
-        {name:'Abendessen',   time:'19:00', foods:[{k:'lachs',g:180*scale},{k:'suesskartoffel',g:200*scale},{k:'avocado',g:60*scale}]},
-      ],
-      4: [
-        {name:'Frühstück',    time:'07:00', foods:[{k:'haferflocken',g:70*scale},{k:'magerquark',g:200*scale},{k:'blaubeeren',g:80*scale}]},
-        {name:'Mittagessen',  time:'12:30', foods:[{k:'huhn',g:200*scale},{k:'reis',g:140*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
-        {name:'Post-Workout', time:'16:00', foods:[{k:'whey',g:35*scale},{k:'banane',g:100*scale},{k:'reiswaffeln',g:30*scale}]},
-        {name:'Abendessen',   time:'19:30', foods:[{k:'lachs',g:180*scale},{k:'suesskartoffel',g:180*scale},{k:'avocado',g:60*scale}]},
-      ],
-      5: [
-        {name:'Frühstück',       time:'07:00', foods:[{k:'haferflocken',g:60*scale},{k:'magerquark',g:150*scale},{k:'chia',g:15},{k:'blaubeeren',g:80*scale}]},
-        {name:'Zwischenmahlzeit',time:'10:30', foods:[{k:'joghurt',g:200*scale},{k:'mandeln',g:20}]},
-        {name:'Mittagessen',     time:'13:00', foods:[{k:'rind',g:180*scale},{k:'kartoffeln',g:200*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
-        {name:'Post-Workout',    time:'16:30', foods:[{k:'whey',g:35*scale},{k:'banane',g:100*scale},{k:'reiswaffeln',g:25*scale}]},
-        {name:'Abendessen',      time:'19:30', foods:[{k:'lachs',g:160*scale},{k:'suesskartoffel',g:180*scale},{k:'avocado',g:50*scale}]},
-      ],
-    },
-    vegetarian: {
-      3: [
-        {name:'Frühstück',    time:'07:00', foods:[{k:'haferflocken',g:80*scale},{k:'magerquark',g:200*scale},{k:'blaubeeren',g:80*scale},{k:'whey',g:30*scale}]},
-        {name:'Mittagessen',  time:'13:00', foods:[{k:'eier',g:120*scale},{k:'quinoa',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
-        {name:'Abendessen',   time:'19:00', foods:[{k:'tofu',g:200*scale},{k:'suesskartoffel',g:200*scale},{k:'avocado',g:60*scale}]},
-      ],
-      4: [
-        {name:'Frühstück',    time:'07:00', foods:[{k:'haferflocken',g:70*scale},{k:'joghurt',g:200*scale},{k:'blaubeeren',g:80*scale}]},
-        {name:'Mittagessen',  time:'12:30', foods:[{k:'tempeh',g:180*scale},{k:'reis',g:140*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
-        {name:'Post-Workout', time:'16:00', foods:[{k:'whey',g:35*scale},{k:'banane',g:100*scale},{k:'reiswaffeln',g:30*scale}]},
-        {name:'Abendessen',   time:'19:30', foods:[{k:'eier',g:120*scale},{k:'quinoa',g:160*scale},{k:'avocado',g:60*scale}]},
-      ],
-      5: [
-        {name:'Frühstück',       time:'07:00', foods:[{k:'haferflocken',g:60*scale},{k:'magerquark',g:150*scale},{k:'chia',g:15},{k:'blaubeeren',g:80*scale}]},
-        {name:'Zwischenmahlzeit',time:'10:30', foods:[{k:'huettenkase',g:150*scale},{k:'mandeln',g:20}]},
-        {name:'Mittagessen',     time:'13:00', foods:[{k:'kichererbsen',g:200*scale},{k:'quinoa',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:10}]},
-        {name:'Post-Workout',    time:'16:30', foods:[{k:'whey',g:35*scale},{k:'banane',g:100*scale},{k:'reiswaffeln',g:25*scale}]},
-        {name:'Abendessen',      time:'19:30', foods:[{k:'tofu',g:180*scale},{k:'suesskartoffel',g:180*scale},{k:'avocado',g:50*scale}]},
-      ],
-    },
-    vegan: {
-      3: [
-        {name:'Frühstück',    time:'07:00', foods:[{k:'haferflocken',g:80*scale},{k:'hafermilch',g:250*scale},{k:'chia',g:15},{k:'blaubeeren',g:80*scale},{k:'vegwhey',g:30*scale}]},
-        {name:'Mittagessen',  time:'13:00', foods:[{k:'tempeh',g:200*scale},{k:'quinoa',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:12}]},
-        {name:'Abendessen',   time:'19:00', foods:[{k:'tofu',g:200*scale},{k:'suesskartoffel',g:200*scale},{k:'avocado',g:70*scale},{k:'cashews',g:20}]},
-      ],
-      4: [
-        {name:'Frühstück',    time:'07:00', foods:[{k:'haferflocken',g:70*scale},{k:'hafermilch',g:200*scale},{k:'blaubeeren',g:80*scale},{k:'vegwhey',g:30*scale}]},
-        {name:'Mittagessen',  time:'12:30', foods:[{k:'seitan',g:180*scale},{k:'reis',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:12}]},
-        {name:'Post-Workout', time:'16:00', foods:[{k:'vegwhey',g:35*scale},{k:'banane',g:100*scale},{k:'reiswaffeln',g:30*scale}]},
-        {name:'Abendessen',   time:'19:30', foods:[{k:'tempeh',g:180*scale},{k:'suesskartoffel',g:180*scale},{k:'avocado',g:60*scale}]},
-      ],
-      5: [
-        {name:'Frühstück',       time:'07:00', foods:[{k:'haferflocken',g:60*scale},{k:'hafermilch',g:200*scale},{k:'chia',g:15},{k:'blaubeeren',g:80*scale}]},
-        {name:'Zwischenmahlzeit',time:'10:30', foods:[{k:'edamame',g:150*scale},{k:'mandeln',g:20}]},
-        {name:'Mittagessen',     time:'13:00', foods:[{k:'linsen',g:200*scale},{k:'quinoa',g:150*scale},{k:'brokkoli',g:150*scale},{k:'olivenoel',g:12}]},
-        {name:'Post-Workout',    time:'16:30', foods:[{k:'vegwhey',g:35*scale},{k:'banane',g:100*scale},{k:'reiswaffeln',g:25*scale}]},
-        {name:'Abendessen',      time:'19:30', foods:[{k:'tofu',g:180*scale},{k:'suesskartoffel',g:180*scale},{k:'cashews',g:25}]},
-      ],
-    },
-  };
-  // LEGACY TEMPLATES ABOVE UNUSED - using alt templates below
-
   // Meal templates with 3 alternatives each per diet × meal count
   const templates = {
     meat: {
@@ -1891,7 +1826,7 @@ const cheatMeals = [
   {cat:'eis',emoji:'🍨',name:'Magnum Classic',portion:'1 Stk. ~110g',kcal:275,p:3,c:26,f:18},
   {cat:'eis',emoji:'🍧',name:'Häagen-Dazs Vanilla (½ B.)',portion:'½ Becher ~100g',kcal:250,p:4,c:24,f:16},
   {cat:'eis',emoji:'🍡',name:'Eis am Stiel (Erdbeere)',portion:'1 Stk. ~75g',kcal:70,p:1,c:16,f:0.5},
-  {cat:'eis',emoji:'🍨',name:'Ben & Jerry's (½ B.)',portion:'½ Becher ~105g',kcal:340,p:5,c:40,f:18},
+  {cat:'eis',emoji:'🍨',name:"Ben & Jerry's (½ B.)",portion:'½ Becher ~105g',kcal:340,p:5,c:40,f:18},
   {cat:'fast-food',emoji:'🫔',name:'Shawarma',portion:'1 Stk. ~320g',kcal:590,p:32,c:52,f:24},
   {cat:'fast-food',emoji:'🍜',name:'Instant Noodles',portion:'1 Packung ~85g',kcal:380,p:9,c:52,f:15},
   {cat:'suess',emoji:'🍬',name:'Twix (2 Riegel)',portion:'2 Stk. ~58g',kcal:289,p:3,c:38,f:14},
