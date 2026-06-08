@@ -324,14 +324,16 @@ footer a{color:var(--gold);text-decoration:none;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .admin-mode footer{padding-bottom:120px;}
 
-.cheat-img{width:100%;height:120px;object-fit:cover;display:block;background:var(--card2);}
-.cheat-card.featured .cheat-img{height:150px;}
-.nw-source{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;}
-.nw-result-brand{font-size:11px;color:var(--muted);margin-top:3px;}
-.contact-note{font-size:12px;color:var(--muted);line-height:1.6;margin-top:10px;}
-.config-warning{padding:12px 16px;background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.35);border-radius:4px;color:#ff9b72;font-size:12px;margin-bottom:16px;}
-.plan-summary{margin-bottom:16px;padding:14px 18px;background:rgba(201,168,76,0.06);border:1px solid var(--gold-dim);border-radius:4px;font-size:13px;color:var(--muted);line-height:1.6;}
-.plan-summary strong{color:var(--text);}
+/* ── PATCH: Cheatmeal Bilder & API-Nährwerte ── */
+.cheat-img{width:100%;aspect-ratio:4/3;background:var(--card2);overflow:hidden;display:block;}
+.cheat-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease;}
+.cheat-card:hover .cheat-img img{transform:scale(1.06);}
+.cheat-cat{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:5px;font-weight:700;}
+.nw-result-img{width:48px;height:48px;border-radius:4px;object-fit:cover;background:var(--card2);flex-shrink:0;}
+.nw-result-left{display:flex;gap:12px;align-items:center;min-width:0;}
+.nw-result-sub{font-size:11px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:360px;}
+.nw-status{color:var(--muted);font-size:14px;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:4px;margin-bottom:12px;}
+.nw-source{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5;}
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -640,16 +642,12 @@ footer a{color:var(--gold);text-decoration:none;}
     </div>
     <div style="margin-bottom:24px;display:flex;gap:8px;flex-wrap:wrap;" id="cheatFilter">
       <button class="cheat-filter-btn active" onclick="filterCheat('alle',this)">Alle</button>
-      <button class="cheat-filter-btn" onclick="filterCheat('burger',this)">🍔 Burger</button>
+      <button class="cheat-filter-btn" onclick="filterCheat('fast-food',this)">🍔 Fast Food</button>
       <button class="cheat-filter-btn" onclick="filterCheat('pizza',this)">🍕 Pizza</button>
-      <button class="cheat-filter-btn" onclick="filterCheat('pasta',this)">🍝 Pasta</button>
-      <button class="cheat-filter-btn" onclick="filterCheat('dessert',this)">🍰 Dessert</button>
-      <button class="cheat-filter-btn" onclick="filterCheat('fast-food',this)">🍟 Fast Food</button>
-      <button class="cheat-filter-btn" onclick="filterCheat('bbq',this)">🔥 BBQ</button>
-      <button class="cheat-filter-btn" onclick="filterCheat('schweiz',this)">🇨🇭 Schweizer Klassiker</button>
-      <button class="cheat-filter-btn" onclick="filterCheat('asiatisch',this)">🍜 Asiatisch</button>
-      <button class="cheat-filter-btn" onclick="filterCheat('mexican',this)">🌮 Mexican</button>
+      <button class="cheat-filter-btn" onclick="filterCheat('suess',this)">🍫 Süsses</button>
+      <button class="cheat-filter-btn" onclick="filterCheat('snacks',this)">🥨 Snacks</button>
       <button class="cheat-filter-btn" onclick="filterCheat('getraenke',this)">🥤 Getränke</button>
+      <button class="cheat-filter-btn" onclick="filterCheat('eis',this)">🍦 Eis</button>
     </div>
     <div class="cheat-grid" id="cheatGrid"></div>
   </div>
@@ -795,104 +793,67 @@ footer a{color:var(--gold);text-decoration:none;}
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════════════
-// MDG ELITE – korrigierte Version
-// - Makro-/Kalorienplan wird aus Zielmakros erzeugt
-// - OpenFoodFacts API für tausende Lebensmittel
-// - EmailJS Kontaktformular
-// - Admin-Bilder/Galerie/Videos/Text werden lokal persistent gespeichert
-// ═══════════════════════════════════════════════════════════════════════════
-
-// WICHTIG: Für echten Mailversand in EmailJS ersetzen.
-const EMAILJS_PUBLIC_KEY = 'DEIN_EMAILJS_PUBLIC_KEY';
-const EMAILJS_SERVICE_ID = 'DEIN_EMAILJS_SERVICE_ID';
-const EMAILJS_TEMPLATE_ID = 'DEIN_EMAILJS_TEMPLATE_ID';
-
-try {
-  if (window.emailjs && !EMAILJS_PUBLIC_KEY.startsWith('DEIN_')) {
-    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-  }
-} catch(e) { console.warn('EmailJS init Fehler:', e); }
-
 // ══ ADMIN CREDENTIALS ══
 const ADMIN_USER = 'admin';
 let ADMIN_PW = 'Gabriel2010$Elia2015$SaraJane2004$';
 let isAdmin = false;
-let shiftCount = 0, shiftTimer;
-let lastMealPlanData = null;
-let nwSelected = null;
-let nwAbortController = null;
-
-// ══ BASICS ══
-function $(id){ return document.getElementById(id); }
-function showToast(msg){
-  const t=$('toast');
-  if(!t) return;
-  t.textContent=msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3200);
-}
-function getVal(id){ return (document.querySelector(`#${id} button.active`)||{}).dataset?.val; }
-function fmt(n){ return Math.round(n).toLocaleString('de-CH'); }
-function clamp(v,min,max){ return Math.min(max, Math.max(min, v)); }
-function round1(v){ return Math.round(v*10)/10; }
-function escapeHtml(s){
-  return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-}
 
 // ══ KEYBOARD SHORTCUT: Shift+Shift+A ══
+let shiftCount = 0, shiftTimer;
 document.addEventListener('keydown', e => {
   if (e.key === 'Shift') {
     shiftCount++;
     clearTimeout(shiftTimer);
     shiftTimer = setTimeout(() => shiftCount = 0, 800);
-    if (shiftCount >= 2) {
-      shiftCount = 0;
-      openModal('loginModal');
-      setTimeout(()=> $('pwInput')?.focus(),100);
-    }
+    if (shiftCount >= 2) { shiftCount = 0; openModal('loginModal'); setTimeout(()=>document.getElementById('pwInput').focus(),100); }
   }
 });
 
 function checkLogin() {
-  const user = $('userInput').value.trim();
-  const pw   = $('pwInput').value;
+  const user = document.getElementById('userInput').value.trim();
+  const pw   = document.getElementById('pwInput').value;
   if (user === ADMIN_USER && pw === ADMIN_PW) {
     isAdmin = true;
     closeModal('loginModal');
-    $('userInput').value = '';
-    $('pwInput').value = '';
-    $('pwError').style.display = 'none';
+    document.getElementById('userInput').value = '';
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwError').style.display = 'none';
     activateAdminMode();
     showToast('✓ Admin-Modus aktiv');
   } else {
-    $('pwError').style.display = 'block';
-    $('pwInput').value = '';
-    $('pwInput').focus();
+    document.getElementById('pwError').style.display = 'block';
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwInput').focus();
   }
 }
+
 function activateAdminMode() {
   document.body.classList.add('admin-mode');
-  $('adminBar')?.classList.add('visible');
-  $('adminBadge')?.classList.add('visible');
+  document.getElementById('adminBar').classList.add('visible');
+  document.getElementById('adminBadge').classList.add('visible');
+  // Make editable elements actually editable
   document.querySelectorAll('[data-editable]').forEach(el => {
     el.contentEditable = 'true';
     el.spellcheck = false;
   });
-  ['1','2','3'].forEach(i=>{
-    const v=$(`stat${i}`), l=$(`stat${i}l`);
-    if($(`s${i}v`) && v) $(`s${i}v`).value = v.textContent;
-    if($(`s${i}l`) && l) $(`s${i}l`).value = l.textContent;
-  });
+  // Load current stats into modal fields
+  document.getElementById('s1v').value = document.getElementById('stat1').textContent;
+  document.getElementById('s1l').value = document.getElementById('stat1l').textContent;
+  document.getElementById('s2v').value = document.getElementById('stat2').textContent;
+  document.getElementById('s2l').value = document.getElementById('stat2l').textContent;
+  document.getElementById('s3v').value = document.getElementById('stat3').textContent;
+  document.getElementById('s3l').value = document.getElementById('stat3l').textContent;
 }
+
 function adminLogout() {
   isAdmin = false;
   document.body.classList.remove('admin-mode');
-  $('adminBar')?.classList.remove('visible');
-  $('adminBadge')?.classList.remove('visible');
+  document.getElementById('adminBar').classList.remove('visible');
+  document.getElementById('adminBadge').classList.remove('visible');
   document.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = 'false');
   showToast('Admin-Modus beendet');
 }
+
 function adminOnly(fn) { if (isAdmin) fn(); else showToast('⚠ Nur im Admin-Modus verfügbar'); }
 
 function saveAll() {
@@ -900,30 +861,42 @@ function saveAll() {
   document.querySelectorAll('[data-editable][id]').forEach(el => { data[el.id] = el.innerHTML; });
   try {
     localStorage.setItem('mdgelite_content', JSON.stringify(data));
-    localStorage.setItem('mdgelite_videos', JSON.stringify(getVideosFromDOM()));
-    showToast('✓ Änderungen gespeichert');
+    saveGalleryToStorage();
   } catch(e) {
-    showToast('⚠ Speicher zu voll oder blockiert');
+    showToast('⚠ Speicherlimit erreicht – bitte kleinere Bilder verwenden');
+    return;
   }
+  showToast('✓ Änderungen gespeichert');
 }
+
 function loadSaved() {
   try {
     const saved = localStorage.getItem('mdgelite_content');
     if (saved) {
       const data = JSON.parse(saved);
-      Object.keys(data).forEach(id => { const el = $(id); if (el) el.innerHTML = data[id]; });
+      Object.keys(data).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = data[id];
+      });
     }
     const pw = localStorage.getItem('mdgelite_pw');
     if (pw) ADMIN_PW = pw;
-    loadHeroImg();
-    loadGallery();
-    loadVideos();
-  } catch(e) { console.warn(e); }
+
+    const heroImg = localStorage.getItem('mdgelite_hero_image');
+    if (heroImg) renderHeroImg(heroImg);
+
+    const gallery = JSON.parse(localStorage.getItem('mdgelite_gallery_images') || '[]');
+    if (gallery.length) {
+      gallery.forEach(src => addGalleryItem(src, false));
+      checkGalleryEmpty();
+    }
+  } catch(e) {}
 }
+
 function changePassword() {
-  const p1 = $('newPw1').value;
-  const p2 = $('newPw2').value;
-  const err = $('pwChangeError');
+  const p1 = document.getElementById('newPw1').value;
+  const p2 = document.getElementById('newPw2').value;
+  const err = document.getElementById('pwChangeError');
   if (!p1 || p1.length < 6) { err.style.display='block'; err.textContent='Mindestens 6 Zeichen.'; return; }
   if (p1 !== p2) { err.style.display='block'; err.textContent='Passwörter stimmen nicht überein.'; return; }
   ADMIN_PW = p1;
@@ -931,8 +904,10 @@ function changePassword() {
   closeModal('changePwModal');
   showToast('✓ Passwort geändert');
 }
-function openModal(id) { $(id)?.classList.add('open'); }
-function closeModal(id) { $(id)?.classList.remove('open'); }
+
+// ══ MODALS ══
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 function openAddVideoModal() { if (!isAdmin) return; openModal('addVideoModal'); }
 function openStatsModal() { openModal('statsModal'); }
 function openPasswordModal() { openModal('changePwModal'); }
@@ -940,102 +915,56 @@ function openPasswordModal() { openModal('changePwModal'); }
 // ══ NAVIGATION ══
 function showSection(id) {
   document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-  $('sec-' + id)?.classList.add('active');
+  document.getElementById('sec-' + id).classList.add('active');
   document.querySelectorAll('.nav-links a').forEach((a,i) => {
     a.classList.toggle('active', ['home','videos','bilder','rechner','naehrwert','cheatmeals','kontakt'][i] === id);
   });
   window.scrollTo({top:0,behavior:'smooth'});
   if (id === 'cheatmeals' && !window._cheatBuilt) buildCheatGrid();
 }
-function toggleMobileMenu() { $('mobileMenu')?.classList.toggle('open'); }
-function showFastenInfo() { $('fastenInfo').style.display='block'; }
-function hideFastenInfo() { $('fastenInfo').style.display='none'; }
-['genderToggle','goalToggle','proteinToggle','dietToggle','mealsToggle'].forEach(id=>{
-  const el=$(id);
-  if(!el) return;
-  el.querySelectorAll('button').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      el.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-    });
-  });
-});
 
-// ══ HERO IMAGE / GALLERY ══
-function compressImage(file, maxW=1200, quality=0.82) {
-  return new Promise((resolve,reject)=>{
+function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+
+// ══ HERO IMAGE ══
+function resizeImageToDataURL(file, maxSize = 1400, quality = 0.82) {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = e => {
+    reader.onerror = reject;
+    reader.onload = () => {
       const img = new Image();
+      img.onerror = reject;
       img.onload = () => {
-        const scale = Math.min(1, maxW / img.width);
+        const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
         const canvas = document.createElement('canvas');
         canvas.width = Math.round(img.width * scale);
         canvas.height = Math.round(img.height * scale);
         const ctx = canvas.getContext('2d');
-        ctx.drawImage(img,0,0,canvas.width,canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         resolve(canvas.toDataURL('image/jpeg', quality));
       };
-      img.onerror = reject;
-      img.src = e.target.result;
+      img.src = reader.result;
     };
-    reader.onerror = reject;
     reader.readAsDataURL(file);
   });
 }
+
+function renderHeroImg(src) {
+  document.getElementById('heroImgWrap').innerHTML = `<img src="${src}" alt="Marco Di Giovanni" style="width:100%;height:100%;object-fit:cover;" onclick="adminOnly(()=>document.getElementById('heroImgInput').click())">`;
+}
+
 async function setHeroImg(e) {
   if (!isAdmin) return;
   const file = e.target.files[0]; if (!file) return;
   try {
-    const dataUrl = await compressImage(file, 800, 0.86);
-    localStorage.setItem('mdgelite_hero_image', dataUrl);
+    const dataUrl = await resizeImageToDataURL(file, 1200, 0.84);
     renderHeroImg(dataUrl);
+    localStorage.setItem('mdgelite_hero_image', dataUrl);
     showToast('✓ Profilfoto gespeichert');
-  } catch(err) { showToast('⚠ Bild konnte nicht gespeichert werden'); }
+  } catch(err) {
+    showToast('⚠ Bild konnte nicht gespeichert werden');
+  }
+  e.target.value = '';
 }
-function renderHeroImg(src) {
-  $('heroImgWrap').innerHTML = `<img src="${src}" alt="Marco Di Giovanni" style="width:100%;height:100%;object-fit:cover;" onclick="adminOnly(()=>document.getElementById('heroImgInput').click())">`;
-}
-function loadHeroImg() {
-  const img = localStorage.getItem('mdgelite_hero_image');
-  if (img) renderHeroImg(img);
-}
-async function addGalleryImages(e) {
-  if (!isAdmin) return;
-  const files = Array.from(e.target.files||[]);
-  if (!files.length) return;
-  const current = JSON.parse(localStorage.getItem('mdgelite_gallery') || '[]');
-  try {
-    for (const file of files) current.push(await compressImage(file, 1200, 0.82));
-    localStorage.setItem('mdgelite_gallery', JSON.stringify(current));
-    renderGallery(current);
-    showToast(`✓ ${files.length} Bild(er) gespeichert`);
-  } catch(err) { showToast('⚠ Galerie-Speicher voll oder blockiert'); }
-}
-function loadGallery(){
-  const imgs = JSON.parse(localStorage.getItem('mdgelite_gallery') || '[]');
-  renderGallery(imgs);
-}
-function renderGallery(imgs){
-  const grid=$('galleryGrid');
-  if(!grid) return;
-  const add = grid.querySelector('.gallery-add')?.outerHTML || `<div class="gallery-add admin-only" onclick="document.getElementById('galleryInput').click()">Bilder hinzufügen</div>`;
-  grid.innerHTML = add + imgs.map((src,i)=>`
-    <div class="gallery-item">
-      <button class="gallery-delete" onclick="deleteGalleryImage(${i});event.stopPropagation();">×</button>
-      <img src="${src}" alt="MDG Galerie ${i+1}" onclick="openLightbox('${src}')">
-    </div>`).join('');
-  $('galleryEmpty').style.display = imgs.length ? 'none' : 'block';
-}
-function deleteGalleryImage(i){
-  if(!isAdmin) return;
-  const imgs = JSON.parse(localStorage.getItem('mdgelite_gallery') || '[]');
-  imgs.splice(i,1);
-  localStorage.setItem('mdgelite_gallery', JSON.stringify(imgs));
-  renderGallery(imgs);
-}
-function openLightbox(src){ $('lightboxImg').src = src; $('lightbox').classList.add('open'); }
-function closeLightbox(){ $('lightbox')?.classList.remove('open'); }
 
 // ══ VIDEOS ══
 function getYTId(input) {
@@ -1043,325 +972,549 @@ function getYTId(input) {
   for (const p of patterns) { const m = input.match(p); if (m) return m[1]; }
   return null;
 }
+
 function addVideo() {
-  const url = $('ytUrl')?.value.trim();
-  const title = $('ytTitle')?.value.trim() || 'MDG Elite Video';
-  const cat = $('ytCat')?.value || 'ernaehrung';
-  const vid = getYTId(url || '');
+  const url = document.getElementById('ytUrl').value.trim();
+  const title = document.getElementById('ytTitle').value.trim() || 'MDG Elite Video';
+  const cat = document.getElementById('ytCat').value;
+  const vid = getYTId(url);
   if (!vid) { showToast('⚠ Ungültige YouTube URL'); return; }
-  const videos = getVideosFromDOM();
-  videos.push({vid,title,cat,date:new Date().toLocaleDateString('de-CH')});
-  renderVideos(videos);
-  localStorage.setItem('mdgelite_videos', JSON.stringify(videos));
+  const catLabels = {ernaehrung:'Ernährung',training:'Training',supplemente:'Supplemente',weg:'Mein Weg zur Bühne'};
+  const card = document.createElement('div');
+  card.className = 'video-card'; card.dataset.cat = cat;
+  card.innerHTML = `
+    <button class="video-delete-btn" onclick="this.closest('.video-card').remove();showToast('Video entfernt')">×</button>
+    <div class="video-thumb" onclick="playVideo(this,'${vid}')">
+      <img src="https://img.youtube.com/vi/${vid}/mqdefault.jpg" style="width:100%;height:100%;object-fit:cover;" alt="">
+      <div class="video-play-overlay"><div class="video-play"><svg width="16" height="16" viewBox="0 0 24 24" fill="#000"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+    </div>
+    <div class="video-info">
+      <div class="video-cat">${catLabels[cat]}</div>
+      <div class="video-title">${title}</div>
+      <div class="video-meta">MDG Elite · YouTube</div>
+    </div>`;
+  document.getElementById('videoGrid').appendChild(card);
+  document.getElementById('ytUrl').value = '';
+  document.getElementById('ytTitle').value = '';
   closeModal('addVideoModal');
-  if($('ytUrl')) $('ytUrl').value='';
-  if($('ytTitle')) $('ytTitle').value='';
   showToast('✓ Video hinzugefügt');
 }
-function getVideosFromDOM(){
-  return Array.from(document.querySelectorAll('.video-card[data-vid]')).map(c=>({
-    vid:c.dataset.vid, title:c.dataset.title, cat:c.dataset.cat, date:c.dataset.date || ''
-  }));
-}
-function loadVideos(){
-  const videos = JSON.parse(localStorage.getItem('mdgelite_videos') || '[]');
-  renderVideos(videos);
-}
-function renderVideos(videos){
-  const grid=$('videoGrid'); if(!grid) return;
-  const add = `<div class="add-video-card admin-only" onclick="openAddVideoModal()" style="min-height:220px;">
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>YouTube Video einbetten</span>
-  </div>`;
-  grid.innerHTML = add + videos.map((v,i)=>`
-    <div class="video-card" data-vid="${v.vid}" data-cat="${v.cat}" data-title="${escapeHtml(v.title)}" data-date="${v.date||''}">
-      <button class="video-delete-btn" onclick="deleteVideo(${i})">×</button>
-      <div class="video-thumb" onclick="window.open('https://www.youtube.com/watch?v=${v.vid}','_blank')">
-        <iframe src="https://www.youtube.com/embed/${v.vid}" allowfullscreen></iframe>
-        <div class="video-play-overlay"><div class="video-play">▶</div></div>
-      </div>
-      <div class="video-info">
-        <div class="video-cat">${v.cat}</div>
-        <div class="video-title">${escapeHtml(v.title)}</div>
-        <div class="video-meta">${v.date || 'YouTube'}</div>
-      </div>
-    </div>`).join('');
-}
-function deleteVideo(i){
-  if(!isAdmin) return;
-  const videos=getVideosFromDOM();
-  videos.splice(i,1);
-  localStorage.setItem('mdgelite_videos', JSON.stringify(videos));
-  renderVideos(videos);
-}
-function filterVideos(cat){
-  document.querySelectorAll('.video-tab').forEach(t=>t.classList.toggle('active', t.dataset.cat===cat));
-  document.querySelectorAll('.video-card').forEach(c=>c.style.display = (cat==='alle'||c.dataset.cat===cat) ? '' : 'none');
+
+function playVideo(thumb, vid) {
+  const iframe = document.createElement('iframe');
+  iframe.src = `https://www.youtube.com/embed/${vid}?autoplay=1`;
+  iframe.allowFullscreen = true; iframe.allow = 'autoplay';
+  thumb.innerHTML = ''; thumb.appendChild(iframe);
 }
 
-// ══ KALORIEN- UND MAKRORECHNER ══
-const foodDB = {
+function filterVideos(cat) {
+  document.querySelectorAll('.video-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === cat));
+  document.querySelectorAll('.video-card').forEach(c => { c.style.display = (cat==='alle'||c.dataset.cat===cat)?'':'none'; });
+  document.querySelector('.add-video-card') && (document.querySelector('.add-video-card').style.display = '');
+}
+
+// ══ GALLERY ══
+function addGalleryItem(src, persist = true) {
+  const grid = document.getElementById('galleryGrid');
+  document.getElementById('galleryEmpty').style.display = 'none';
+  const item = document.createElement('div');
+  item.className = 'gallery-item';
+  item.innerHTML = `<img src="${src}" alt=""><button class="gallery-delete" onclick="event.stopPropagation();this.parentElement.remove();saveGalleryToStorage();checkGalleryEmpty()">×</button>`;
+  item.querySelector('img').onclick = () => openLightbox(src);
+  const addCard = grid.querySelector('.gallery-add');
+  grid.insertBefore(item, addCard || grid.firstChild);
+  if (persist) saveGalleryToStorage();
+}
+
+async function addGalleryImages(e) {
+  if (!isAdmin) return;
+  const files = Array.from(e.target.files);
+  let added = 0;
+  for (const file of files) {
+    try {
+      const dataUrl = await resizeImageToDataURL(file, 1600, 0.82);
+      addGalleryItem(dataUrl, false);
+      added++;
+    } catch(err) {}
+  }
+  saveGalleryToStorage();
+  checkGalleryEmpty();
+  showToast(`✓ ${added} Bild(er) gespeichert`);
+  e.target.value = '';
+}
+
+function saveGalleryToStorage() {
+  const imgs = Array.from(document.querySelectorAll('#galleryGrid .gallery-item img')).map(img => img.src);
+  try { localStorage.setItem('mdgelite_gallery_images', JSON.stringify(imgs)); } catch(e) {}
+}
+
+function checkGalleryEmpty() {
+  const hasItems = document.querySelectorAll('.gallery-item').length > 0;
+  document.getElementById('galleryEmpty').style.display = hasItems ? 'none' : 'block';
+}
+
+function openLightbox(src) { document.getElementById('lightboxImg').src=src; document.getElementById('lightbox').classList.add('open'); }
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+document.getElementById('lightbox').addEventListener('click', closeLightbox);
+
+// ══ STATS MODAL ══
+function saveStats() {
+  document.getElementById('stat1').textContent = document.getElementById('s1v').value || '-22kg';
+  document.getElementById('stat1l').textContent = document.getElementById('s1l').value || 'Transformation';
+  document.getElementById('stat2').textContent = document.getElementById('s2v').value || '8.4%';
+  document.getElementById('stat2l').textContent = document.getElementById('s2l').value || 'Körperfett';
+  document.getElementById('stat3').textContent = document.getElementById('s3v').value || '2027';
+  document.getElementById('stat3l').textContent = document.getElementById('s3l').value || 'IFBB Debut';
+  closeModal('statsModal');
+  showToast('✓ Stats aktualisiert');
+}
+
+// ══ STEPS ══
+function toggleStep(el) { el.classList.toggle('done'); }
+
+// ══ KFA VISUAL ══
+
+
+// ══ TOGGLES ══
+['genderToggle','goalToggle','proteinToggle','dietToggle','mealsToggle'].forEach(id=>{
+  document.getElementById(id).querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.getElementById(id).querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+});
+function getVal(id){return(document.querySelector(`#${id} button.active`)||{}).dataset?.val;}
+
+function showFastenInfo() { document.getElementById('fastenInfo').style.display='block'; }
+function hideFastenInfo() { document.getElementById('fastenInfo').style.display='none'; }
+
+// ══ CALCULATE ══
+const FOOD_DB = {
   huhn:{name:'Hühnerbrust',p:31,c:0,f:3.6,kcal:165,cat:'Protein'},
   rind:{name:'Rindssteak mager',p:28,c:0,f:5,kcal:158,cat:'Protein'},
   lachs:{name:'Lachs',p:25,c:0,f:13,kcal:208,cat:'Protein'},
-  thunfisch:{name:'Thunfisch Dose',p:25,c:0,f:1,kcal:103,cat:'Protein'},
+  thunfisch:{name:'Thunfisch in Wasser',p:25,c:0,f:1,kcal:103,cat:'Protein'},
   eier:{name:'Eier',p:13,c:0.7,f:10,kcal:143,cat:'Protein'},
   magerquark:{name:'Magerquark 0.2%',p:12,c:4,f:0.2,kcal:66,cat:'Milchprodukte & Protein'},
-  joghurt:{name:'Griechischer Joghurt 0%',p:10,c:4,f:0.4,kcal:59,cat:'Milchprodukte & Protein'},
+  skyr:{name:'Skyr / High Protein Joghurt',p:11,c:4,f:0.2,kcal:64,cat:'Milchprodukte & Protein'},
   whey:{name:'Whey Isolat',p:85,c:4,f:2,kcal:370,cat:'Milchprodukte & Protein'},
   tofu:{name:'Tofu fest',p:17,c:2,f:9,kcal:144,cat:'Protein'},
   tempeh:{name:'Tempeh',p:19,c:9,f:11,kcal:193,cat:'Protein'},
   seitan:{name:'Seitan',p:25,c:4,f:2,kcal:140,cat:'Protein'},
-  linsen:{name:'Rote Linsen gekocht',p:9,c:20,f:0.4,kcal:116,cat:'Protein'},
-  vegwhey:{name:'Vegan Protein Pulver',p:80,c:5,f:3,kcal:366,cat:'Milchprodukte & Protein'},
+  vegwhey:{name:'Veganes Proteinpulver',p:80,c:5,f:3,kcal:366,cat:'Milchprodukte & Protein'},
   reis:{name:'Weisser Reis gekocht',p:2.7,c:28,f:0.3,kcal:130,cat:'Kohlenhydrate'},
   kartoffeln:{name:'Kartoffeln gekocht',p:2,c:17,f:0.1,kcal:77,cat:'Kohlenhydrate'},
-  suesskartoffel:{name:'Süsskartoffeln',p:1.6,c:20,f:0.1,kcal:86,cat:'Kohlenhydrate'},
-  quinoa:{name:'Quinoa gekocht',p:4,c:21,f:2,kcal:120,cat:'Kohlenhydrate'},
   haferflocken:{name:'Haferflocken',p:13,c:58,f:7,kcal:370,cat:'Kohlenhydrate'},
+  quinoa:{name:'Quinoa gekocht',p:4,c:21,f:2,kcal:120,cat:'Kohlenhydrate'},
   banane:{name:'Banane',p:1.1,c:23,f:0.3,kcal:89,cat:'Gemüse & Früchte'},
   brokkoli:{name:'Brokkoli',p:2.8,c:5,f:0.4,kcal:34,cat:'Gemüse & Früchte'},
   spinat:{name:'Spinat',p:2.9,c:3.6,f:0.4,kcal:23,cat:'Gemüse & Früchte'},
-  gemuese:{name:'Gemüsemix',p:2,c:6,f:0.3,kcal:35,cat:'Gemüse & Früchte'},
+  beeren:{name:'Beerenmix',p:0.7,c:12,f:0.3,kcal:57,cat:'Gemüse & Früchte'},
   avocado:{name:'Avocado',p:2,c:9,f:15,kcal:160,cat:'Fette & Nüsse'},
-  olivenoel:{name:'Olivenöl',p:0,c:0,f:100,kcal:884,cat:'Fette & Nüsse'},
   mandeln:{name:'Mandeln',p:21,c:6,f:50,kcal:579,cat:'Fette & Nüsse'},
-  cashews:{name:'Cashews',p:18,c:30,f:44,kcal:553,cat:'Fette & Nüsse'},
-  hafermilch:{name:'Hafermilch',p:1,c:9,f:1.5,kcal:45,cat:'Kohlenhydrate'}
+  olivenoel:{name:'Olivenöl',p:0,c:0,f:100,kcal:884,cat:'Fette & Nüsse'},
+  erdnussbutter:{name:'Erdnussbutter',p:25,c:20,f:50,kcal:588,cat:'Fette & Nüsse'},
+  hafermilch:{name:'Hafermilch',p:1,c:9,f:1.5,kcal:45,cat:'Kohlenhydrate'},
+  mandelmilch:{name:'Mandelmilch',p:0.5,c:3,f:1.2,kcal:24,cat:'Kohlenhydrate'}
 };
-const mealTemplates = {
-  meat:[
-    ['huhn','reis','olivenoel','brokkoli'], ['rind','kartoffeln','olivenoel','spinat'], ['lachs','quinoa','avocado','gemuese'], ['thunfisch','suesskartoffel','mandeln','brokkoli']
-  ],
-  vegetarian:[
-    ['magerquark','haferflocken','mandeln','banane'], ['eier','kartoffeln','olivenoel','spinat'], ['joghurt','quinoa','cashews','brokkoli'], ['whey','reis','avocado','gemuese']
-  ],
-  vegan:[
-    ['tofu','reis','olivenoel','brokkoli'], ['tempeh','kartoffeln','avocado','spinat'], ['seitan','quinoa','cashews','gemuese'], ['vegwhey','haferflocken','mandeln','banane']
-  ]
-};
+
 function calculate(){
-  const age=parseFloat($('age').value), weight=parseFloat($('weight').value), height=parseFloat($('height').value);
-  const bf=parseFloat($('bf').value), activity=parseFloat($('activity').value), gender=getVal('genderToggle') || 'male';
-  const goalDelta=parseFloat(getVal('goalToggle') || 0), protMult=parseFloat(getVal('proteinToggle') || 2.2);
+  const age=parseFloat(document.getElementById('age').value);
+  const weight=parseFloat(document.getElementById('weight').value);
+  const height=parseFloat(document.getElementById('height').value);
+  const bf=parseFloat(document.getElementById('bf').value);
+  const activity=parseFloat(document.getElementById('activity').value);
+  const gender=getVal('genderToggle') || 'male';
+  const goalDelta=parseFloat(getVal('goalToggle') || 0);
+  const protMult=parseFloat(getVal('proteinToggle') || 2.2);
   if(!age||!weight||!height){showToast('⚠ Alter, Gewicht und Grösse eingeben');return;}
-  let bmr, formula;
-  if(!isNaN(bf)&&bf>0&&bf<50){ bmr=370+21.6*weight*(1-bf/100); formula='Katch-McArdle'; }
-  else { bmr=gender==='male'?10*weight+6.25*height-5*age+5:10*weight+6.25*height-5*age-161; formula='Mifflin-St Jeor'; }
-  const tdee=bmr*activity, target=Math.max(900, Math.round(tdee+goalDelta));
+
+  let bmr,formula;
+  if(!isNaN(bf)&&bf>0&&bf<50){bmr=370+21.6*weight*(1-bf/100);formula='Katch-McArdle';}
+  else{bmr=gender==='male'?10*weight+6.25*height-5*age+5:10*weight+6.25*height-5*age-161;formula='Mifflin-St Jeor';}
+
+  const tdee=bmr*activity;
+  const target=Math.max(900, Math.round(tdee+goalDelta));
   const protG=Math.round(weight*protMult);
-  const fatMult = goalDelta < 0 ? 0.75 : goalDelta === 0 ? 0.9 : 1.0;
+
+  let fatMult = goalDelta < 0 ? 0.75 : goalDelta === 0 ? 0.9 : 1.0;
   let fatG=Math.round(weight*fatMult);
   let carbsG=Math.round((target-protG*4-fatG*9)/4);
-  if(carbsG < 30){
-    carbsG = Math.max(0, carbsG);
-    fatG = Math.max(Math.round(weight*0.55), Math.round((target-protG*4-carbsG*4)/9));
+
+  if (carbsG < 30) {
+    fatG = Math.max(Math.round(weight*0.55), Math.floor((target - protG*4 - 120) / 9));
+    carbsG = Math.max(0, Math.round((target-protG*4-fatG*9)/4));
   }
-  carbsG=Math.max(0, Math.round((target-protG*4-fatG*9)/4));
-  const wk=goalDelta*7, wkg=(wk/7700).toFixed(2);
+
+  const wk=goalDelta*7,wkg=(wk/7700).toFixed(2);
   const wt=wk===0?'Gewicht stabil':wk<0?`Fettabbau ~${Math.abs(wkg)} kg/Woche`:`Gewichtszunahme ~${wkg} kg/Woche`;
   const gl={'-1000':'Aggressiver Cut · −1000 kcal','-500':'Normaler Cut · −500 kcal','-300':'Moderater Cut · −300 kcal','0':'Maintenance','250':'Lean Bulk · +250 kcal','500':'Bulk · +500 kcal'};
 
-  $('kcalDisplay').textContent=target.toLocaleString('de-CH');
-  $('goalBadge').textContent=gl[String(goalDelta)]||'';
-  $('formulaUsed').textContent=formula;
-  $('bmrVal').textContent=fmt(bmr)+' kcal';
-  $('tdeeVal').textContent=fmt(tdee)+' kcal';
-  $('targetVal').textContent=fmt(target)+' kcal';
-  $('weeklyVal').textContent=wt;
-  $('proteinG').textContent=protG;
-  $('carbsG').textContent=carbsG;
-  $('fatG').textContent=fatG;
-  $('proteinKcal').textContent=fmt(protG*4)+' kcal';
-  $('carbsKcal').textContent=fmt(carbsG*4)+' kcal';
-  $('fatKcal').textContent=fmt(fatG*9)+' kcal';
+  document.getElementById('kcalDisplay').textContent=target.toLocaleString('de-CH');
+  document.getElementById('goalBadge').textContent=gl[String(goalDelta)]||'';
+  document.getElementById('formulaUsed').textContent=formula;
+  document.getElementById('bmrVal').textContent=Math.round(bmr).toLocaleString('de-CH')+' kcal';
+  document.getElementById('tdeeVal').textContent=Math.round(tdee).toLocaleString('de-CH')+' kcal';
+  document.getElementById('targetVal').textContent=target.toLocaleString('de-CH')+' kcal';
+  document.getElementById('weeklyVal').textContent=wt;
+  document.getElementById('proteinG').textContent=protG;
+  document.getElementById('carbsG').textContent=carbsG;
+  document.getElementById('fatG').textContent=fatG;
+  document.getElementById('proteinKcal').textContent=(protG*4).toLocaleString('de-CH')+' kcal';
+  document.getElementById('carbsKcal').textContent=(carbsG*4).toLocaleString('de-CH')+' kcal';
+  document.getElementById('fatKcal').textContent=(fatG*9).toLocaleString('de-CH')+' kcal';
 
   const diet = getVal('dietToggle') || 'meat';
   const mealsVal = getVal('mealsToggle');
-  generateMealPlan(target, mealsVal === 'fasten' ? 'fasten' : parseInt(mealsVal || '4'), protG, carbsG, fatG, diet);
-  const el=$('results');
+  const mealsNum = mealsVal === 'fasten' ? 'fasten' : parseInt(mealsVal || '4', 10);
+  generateMealPlan(target, mealsNum, protG, carbsG, fatG, diet);
+
+  const el=document.getElementById('results');
   el.classList.add('visible');
   setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),100);
 }
-function foodItem(key, grams){
-  const f=foodDB[key]; const g=Math.max(0, Math.round(grams));
-  return {k:key,name:f.name,grams:g,p:round1(f.p*g/100),c:round1(f.c*g/100),fat:round1(f.f*g/100),cal:Math.round(f.kcal*g/100),cat:f.cat};
+
+function gramsFor(key, grams){
+  const f=FOOD_DB[key]; const g=Math.max(0, Math.round(grams));
+  return {k:key,name:f.name,grams:g,p:round1(f.p*g/100),c:round1(f.c*g/100),fat:round1(f.f*g/100),cal:Math.round(f.kcal*g/100)};
 }
-function totals(foods){
+function round1(n){return Math.round(n*10)/10;}
+function sumFoods(foods){
   return foods.reduce((a,i)=>({p:a.p+i.p,c:a.c+i.c,fat:a.fat+i.fat,cal:a.cal+i.cal}),{p:0,c:0,fat:0,cal:0});
 }
-function buildMeal(targetP,targetC,targetF, keys, label, time){
-  const [pKey,cKey,fKey,vKey]=keys;
-  const vegG = (vKey==='banane') ? 80 : 150;
-  let items=[foodItem(vKey, vegG)];
-  let t=totals(items);
-  const pFood=foodDB[pKey];
-  let pG = ((targetP - t.p) / Math.max(1,pFood.p)) * 100;
-  pG = clamp(pG, pKey.includes('whey') ? 20 : 60, pKey==='eier' ? 500 : 350);
-  items.unshift(foodItem(pKey,pG));
-  t=totals(items);
-  const cFood=foodDB[cKey];
-  let cG = ((targetC - t.c) / Math.max(1,cFood.c)) * 100;
-  cG = clamp(cG, 0, cKey==='haferflocken'?160:500);
-  items.splice(1,0,foodItem(cKey,cG));
-  t=totals(items);
-  const fFood=foodDB[fKey];
-  let fG = ((targetF - t.fat) / Math.max(1,fFood.f)) * 100;
-  fG = clamp(fG, 0, fKey==='olivenoel'?35:120);
-  items.splice(2,0,foodItem(fKey,fG));
-  return {name:label,time,foods:items};
+function mealLabel(diet){
+  return diet==='vegan'?'Vegan':diet==='vegetarian'?'Vegetarisch':'Fleisch/Fisch';
 }
+
+function composeMeal(targetP,targetC,targetF,diet,idx,totalMeals){
+  const proteinPools = {
+    meat: ['huhn','rind','lachs','thunfisch'],
+    vegetarian: ['magerquark','eier','skyr','whey'],
+    vegan: ['tofu','tempeh','seitan','vegwhey']
+  };
+  const carbPools = ['reis','kartoffeln','haferflocken','quinoa'];
+  const fatPools = ['olivenoel','avocado','mandeln','erdnussbutter'];
+  const vegPools = ['brokkoli','spinat','beeren'];
+
+  const pKey = proteinPools[diet][idx % proteinPools[diet].length];
+  const cKey = carbPools[idx % carbPools.length];
+  const fKey = fatPools[idx % fatPools.length];
+  const vKey = vegPools[idx % vegPools.length];
+
+  const foods = [];
+  const vegG = (vKey==='beeren') ? 100 : 150;
+  foods.push(gramsFor(vKey, vegG));
+
+  let current=sumFoods(foods);
+  const pNeed=Math.max(0,targetP-current.p);
+  foods.push(gramsFor(pKey, pNeed/FOOD_DB[pKey].p*100));
+
+  current=sumFoods(foods);
+  const cNeed=Math.max(0,targetC-current.c);
+  foods.push(gramsFor(cKey, cNeed/FOOD_DB[cKey].c*100));
+
+  current=sumFoods(foods);
+  const fNeed=Math.max(0,targetF-current.fat);
+  foods.push(gramsFor(fKey, fNeed/FOOD_DB[fKey].f*100));
+
+  current=sumFoods(foods);
+  if (targetP-current.p > 3) {
+    const key = diet==='vegan' ? 'vegwhey' : 'whey';
+    foods.push(gramsFor(key, (targetP-current.p)/FOOD_DB[key].p*100));
+  }
+  current=sumFoods(foods);
+  if (targetC-current.c > 4) foods.push(gramsFor('reis', (targetC-current.c)/FOOD_DB.reis.c*100));
+  current=sumFoods(foods);
+  if (targetF-current.fat > 2) foods.push(gramsFor('olivenoel', (targetF-current.fat)));
+
+  return foods.filter(f=>f.grams>0);
+}
+
 function generateMealPlan(kcal, meals, proteinG, carbsG, fatG, diet) {
-  if (meals === 'fasten') return generateFastenPlan(kcal, proteinG, carbsG, fatG, diet);
-  const times = {3:['08:00','13:00','19:00'],4:['08:00','12:00','16:00','20:00'],5:['07:30','10:30','13:30','17:00','20:00']}[meals] || ['08:00','12:00','16:00','20:00'];
-  const names = {3:['Frühstück','Mittagessen','Abendessen'],4:['Frühstück','Mittagessen','Snack','Abendessen'],5:['Frühstück','Snack 1','Mittagessen','Snack 2','Abendessen']}[meals] || [];
-  const pPer=proteinG/meals, cPer=carbsG/meals, fPer=fatG/meals;
-  const templates=mealTemplates[diet] || mealTemplates.meat;
-  const mealList = Array.from({length:meals},(_,i)=> buildMeal(pPer,cPer,fPer,templates[i%templates.length],names[i]||`Mahlzeit ${i+1}`,times[i]));
-  renderMealPlan(mealList, diet, {kcal,proteinG,carbsG,fatG});
+  if (meals === 'fasten') {
+    generateFastenPlan(kcal, proteinG, carbsG, fatG, diet);
+    return;
+  }
+
+  const names = {
+    3: ['Frühstück','Mittagessen','Abendessen'],
+    4: ['Frühstück','Mittagessen','Snack','Abendessen'],
+    5: ['Frühstück','Snack 1','Mittagessen','Snack 2','Abendessen']
+  }[meals] || ['Frühstück','Mittagessen','Snack','Abendessen'];
+  const times = {
+    3: ['08:00','13:00','19:00'],
+    4: ['08:00','12:30','16:00','19:30'],
+    5: ['07:30','10:30','13:30','16:30','20:00']
+  }[meals] || ['08:00','12:30','16:00','19:30'];
+
+  const baseP=proteinG/meals, baseC=carbsG/meals, baseF=fatG/meals;
+  const mealList = names.map((name,i)=>({
+    name, time:times[i], tag:i===0?'🍳':i===names.length-1?'🍽️':'🥗',
+    foods: composeMeal(baseP, baseC, baseF, diet, i, meals)
+  }));
+
+  renderMealPlan(mealList, diet, {kcal, proteinG, carbsG, fatG});
 }
-function generateFastenPlan(kcal, proteinG, carbsG, fatG, diet){
+
+function generateFastenPlan(kcal, proteinG, carbsG, fatG, diet) {
+  const shakeP = Math.round(proteinG*0.28);
+  const mainP = proteinG - shakeP*2;
+  const shakeC = Math.round(carbsG*0.18);
+  const mainC = carbsG - shakeC*2;
+  const shakeF = Math.round(fatG*0.12);
+  const mainF = fatG - shakeF*2;
+
   const proteinKey = diet==='vegan' ? 'vegwhey' : 'whey';
-  const mainTemplate = (mealTemplates[diet] || mealTemplates.meat)[0];
-  const shakeP = proteinG*0.28, shakeC = carbsG*0.18, shakeF = fatG*0.12;
-  const mainP = proteinG - 2*shakeP, mainC = carbsG - 2*shakeC, mainF = fatG - 2*shakeF;
-  const shake1 = buildMeal(shakeP, shakeC, shakeF, [proteinKey,'haferflocken','mandeln','banane'], 'Protein Shake 1', '08:00');
-  const main = buildMeal(mainP, mainC, mainF, mainTemplate, 'Hauptmahlzeit', '13:00 oder 19:00');
-  const shake2 = buildMeal(shakeP, shakeC, shakeF, [proteinKey,'haferflocken','mandeln', diet==='vegan'?'hafermilch':'magerquark'], 'Protein Shake 2', '16:00');
-  renderMealPlan([shake1,main,shake2], diet, {kcal,proteinG,carbsG,fatG}, true);
+
+  function shakeFoods(i){
+    const foods = [
+      gramsFor(proteinKey, shakeP/FOOD_DB[proteinKey].p*100),
+      gramsFor(i===1?'banane':'beeren', shakeC/(i===1?FOOD_DB.banane.c:FOOD_DB.beeren.c)*100)
+    ];
+    let cur=sumFoods(foods);
+    if (shakeF-cur.fat > 1) foods.push(gramsFor('mandeln',(shakeF-cur.fat)/FOOD_DB.mandeln.f*100));
+    return foods.filter(f=>f.grams>0);
+  }
+
+  const mainFoods = composeMeal(mainP, mainC, mainF, diet, 0, 1);
+  const mealList = [
+    { name:'Protein Shake 1', time:'08:00', tag:'🥤', foods:shakeFoods(1) },
+    { name:'Hauptmahlzeit', time:'13:00 oder 19:00', tag:'🍽️', foods:mainFoods, highlight:true },
+    { name:'Protein Shake 2', time:'16:00', tag:'🥤', foods:shakeFoods(2) }
+  ];
+  renderMealPlan(mealList, diet, {kcal, proteinG, carbsG, fatG}, true);
 }
-function renderMealPlan(mealList, diet, target, fasten=false){
-  const day=totals(mealList.flatMap(m=>m.foods));
-  const dietLabel = {meat:'🥩 Fleisch',vegetarian:'🥦 Vegetarisch',vegan:'🌱 Vegan'}[diet] || 'Plan';
-  const diff = Math.round(day.cal - target.kcal);
-  const summary = `<div class="plan-summary">
-    <strong>Plan-Abgleich:</strong> Ziel ${fmt(target.kcal)} kcal · Plan ca. ${fmt(day.cal)} kcal (${diff>=0?'+':''}${diff} kcal). 
-    Makros Plan: <strong>${Math.round(day.p)}g P</strong> · <strong>${Math.round(day.c)}g C</strong> · <strong>${Math.round(day.fat)}g F</strong>. 
-    Die Portionen werden pro gewählter Mahlzeitenanzahl neu berechnet.
+
+function renderMealPlan(mealList, diet, targets, isFasten=false){
+  const totals = mealList.reduce((a,m)=>{
+    const t=sumFoods(m.foods);
+    a.p+=t.p; a.c+=t.c; a.fat+=t.fat; a.cal+=t.cal; return a;
+  },{p:0,c:0,fat:0,cal:0});
+
+  const summary = `<div style="margin-bottom:16px;padding:12px 20px;background:rgba(201,168,76,0.08);border:1px solid var(--gold-dim);border-radius:4px;font-size:13px;color:var(--text);line-height:1.6;">
+    Ziel: <strong>${targets.proteinG}g P</strong> · <strong>${targets.carbsG}g C</strong> · <strong>${targets.fatG}g F</strong> · <strong>${targets.kcal} kcal</strong><br>
+    Plan-Summe: <strong>${Math.round(totals.p)}g P</strong> · <strong>${Math.round(totals.c)}g C</strong> · <strong>${Math.round(totals.fat)}g F</strong> · <strong>${Math.round(totals.cal)} kcal</strong>
   </div>`;
-  const html = mealList.map((meal,idx)=>{
-    const t=totals(meal.foods);
-    const foodRows=meal.foods.map(fd=>`
+
+  const html = mealList.map((meal, idx)=>{
+    const t=sumFoods(meal.foods);
+    const border = meal.highlight ? `border-left:3px solid var(--gold);` : `border-left:3px solid var(--border2);`;
+    const rows = meal.foods.map(fd=>`
       <div class="meal-food">
         <span class="food-n">${fd.name} <span style="color:var(--muted);font-size:12px;">${fd.grams}g</span></span>
         <span class="food-macros">
-          <span class="macro-pill p">${Math.round(fd.p)}g P</span>
-          <span class="macro-pill c">${Math.round(fd.c)}g C</span>
-          <span class="macro-pill f">${Math.round(fd.fat)}g F</span>
+          <span class="macro-pill p">${round1(fd.p)}g P</span>
+          <span class="macro-pill c">${round1(fd.c)}g C</span>
+          <span class="macro-pill f">${round1(fd.fat)}g F</span>
           <span class="macro-pill k">${fd.cal} kcal</span>
         </span>
       </div>`).join('');
-    const border = fasten && idx===1 ? 'border-left:3px solid var(--gold);' : '';
     return `<div class="meal-card" style="${border}">
       <div class="meal-head">
-        <div><div class="meal-name">${fasten&&idx!==1?'🥤':'🍽️'} ${meal.name}</div><div class="meal-time">⏱ ${meal.time} Uhr</div></div>
-        <div class="meal-stats"><strong>~${fmt(t.cal)} kcal</strong><span style="font-size:11px;color:var(--muted);">${Math.round(t.p)}g P · ${Math.round(t.c)}g C · ${Math.round(t.fat)}g F</span></div>
+        <div><div class="meal-name">${meal.tag} ${meal.name}</div><div class="meal-time">⏱ ${meal.time} Uhr</div></div>
+        <div class="meal-stats"><strong>~${Math.round(t.cal)} kcal</strong><span style="font-size:11px;color:var(--muted);">${Math.round(t.p)}g P · ${Math.round(t.c)}g C · ${Math.round(t.fat)}g F</span></div>
       </div>
-      <div class="meal-foods">${foodRows}</div>
-      <div class="meal-total"><span>${dietLabel}</span><span><strong>${Math.round(t.p)}g</strong> P · <strong>${Math.round(t.c)}g</strong> C · <strong>${Math.round(t.fat)}g</strong> F · <strong>${fmt(t.cal)} kcal</strong></span></div>
+      <div class="meal-foods">${rows}</div>
+      <div class="meal-total"><span>${isFasten?'⚡ Protein Fasten':mealLabel(diet)}</span><span><strong>${Math.round(t.p)}g</strong> P · <strong>${Math.round(t.c)}g</strong> C · <strong>${Math.round(t.fat)}g</strong> F · <strong>${Math.round(t.cal)} kcal</strong></span></div>
     </div>`;
   }).join('');
-  $('mealPlan').innerHTML = summary + html;
+
+  document.getElementById('mealPlan').innerHTML = summary + html;
   generateShoppingList(mealList);
 }
+
+// ══ SHOPPING LIST ══
+let lastMealPlanData = null;
+
 function generateShoppingList(mealList) {
-  const totalsMap = {};
+  const totals = {};
   mealList.forEach(meal => meal.foods.forEach(f => {
-    if(!totalsMap[f.k]) totalsMap[f.k]={name:f.name,grams:0,cat:f.cat};
-    totalsMap[f.k].grams += Math.round(f.grams*7);
+    const key = f.k || f.name;
+    if (!totals[key]) totals[key] = { name:f.name, grams:0, cat:(FOOD_DB[f.k]||{}).cat || 'Sonstiges' };
+    totals[key].grams += Math.round(f.grams*7);
   }));
-  const order=['Protein','Milchprodukte & Protein','Kohlenhydrate','Gemüse & Früchte','Fette & Nüsse','Sonstiges'];
-  const sorted={};
-  Object.values(totalsMap).forEach(item=>{
-    const cat=item.cat||'Sonstiges';
+
+  const catColors = {
+    'Protein':'#e05c5c','Milchprodukte & Protein':'#5b9bd5','Kohlenhydrate':'#C9A84C',
+    'Gemüse & Früchte':'#5cb85c','Fette & Nüsse':'#c878e0','Sonstiges':'#888'
+  };
+  const sorted = {};
+  Object.values(totals).forEach(item => {
+    const cat=item.cat || 'Sonstiges';
     if(!sorted[cat]) sorted[cat]=[];
     sorted[cat].push(item);
   });
-  const catColors={'Protein':'#e05c5c','Milchprodukte & Protein':'#5b9bd5','Kohlenhydrate':'#C9A84C','Gemüse & Früchte':'#5cb85c','Fette & Nüsse':'#c878e0','Sonstiges':'#888'};
+
   let html='';
-  order.forEach(cat=>{
-    const items=sorted[cat]; if(!items?.length) return;
-    html+=`<div class="shop-cat"><div class="shop-cat-head" style="border-left:3px solid ${catColors[cat]};">${cat}</div><div class="shop-items">`;
-    items.sort((a,b)=>a.name.localeCompare(b.name,'de')).forEach(item=>{
-      const kg=item.grams>=1000?(item.grams/1000).toFixed(1)+' kg':item.grams+'g';
-      html+=`<div class="shop-item"><div class="shop-check" onclick="this.classList.toggle('checked')"></div><span class="shop-name">${item.name}</span><span class="shop-qty">${kg}</span></div>`;
-    });
-    html+='</div></div>';
-  });
-  $('shoppingList').innerHTML=html;
-  lastMealPlanData={sorted,catColors,order};
-}
-function printShoppingList() {
-  if (!lastMealPlanData) return;
-  const {sorted,order}=lastMealPlanData;
-  let rows='';
-  order.forEach(cat=>{
-    const items=sorted[cat]; if(!items?.length) return;
-    rows+=`<tr><td colspan="3" style="background:#f5f5f5;font-weight:700;padding:8px 12px;border-top:2px solid #ddd;">${cat}</td></tr>`;
+  Object.keys(catColors).forEach(cat=>{
+    const items=sorted[cat]; if(!items||!items.length) return;
+    html += `<div class="shop-cat"><div class="shop-cat-head" style="border-left:3px solid ${catColors[cat]};">${cat}</div><div class="shop-items">`;
     items.forEach(item=>{
-      const kg=item.grams>=1000?(item.grams/1000).toFixed(1)+' kg':item.grams+'g';
-      rows+=`<tr><td style="padding:7px 12px;border-bottom:1px solid #eee;width:28px;"><div style="width:16px;height:16px;border:2px solid #999;border-radius:3px;display:inline-block;"></div></td><td style="padding:7px 12px;border-bottom:1px solid #eee;">${item.name}</td><td style="padding:7px 12px;border-bottom:1px solid #eee;text-align:right;font-weight:600;">${kg}</td></tr>`;
+      const qty=item.grams>=1000?(item.grams/1000).toFixed(1)+' kg':item.grams+'g';
+      html += `<div class="shop-item"><div class="shop-check" onclick="this.classList.toggle('checked')"></div><span class="shop-name">${item.name}</span><span class="shop-qty">${qty}</span></div>`;
     });
+    html += `</div></div>`;
   });
-  const win=window.open('','_blank');
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MDG Elite – Einkaufsliste</title><style>body{font-family:Arial,sans-serif;max-width:650px;margin:40px auto;color:#111;}h1{font-size:28px;letter-spacing:4px;color:#C9A84C;margin-bottom:4px;}.subtitle{font-size:13px;color:#888;margin-bottom:24px;}table{width:100%;border-collapse:collapse;}@media print{body{margin:20px;}button{display:none!important;}.no-print{display:none!important;}}</style></head><body><h1>MDG ELITE</h1><div class="subtitle">Einkaufsliste für 7 Tage · Erstellt am ${new Date().toLocaleDateString('de-CH')}</div><button onclick="window.print()" class="no-print" style="margin-bottom:20px;padding:10px 24px;background:#C9A84C;color:#000;border:none;font-weight:700;font-size:14px;cursor:pointer;border-radius:4px;">🖨️ Drucken</button><table>${rows}</table><p style="margin-top:24px;font-size:11px;color:#aaa;">mdgelite.com · Alle Mengen für 7 Tage berechnet</p></body></html>`);
-  win.document.close();
-  setTimeout(()=>win.print(),500);
+
+  document.getElementById('shoppingList').innerHTML = html;
+  lastMealPlanData = { sorted, catColors };
 }
 
-// ══ OPENFOODFACTS NÄHRWERTRECHNER ══
-async function searchNutrition(query) {
-  const q=query.trim();
-  if (q.length < 2) { $('nwResults').innerHTML=''; return; }
-  if (nwAbortController) nwAbortController.abort();
-  nwAbortController = new AbortController();
-  $('nwResults').innerHTML = `<p style="color:var(--muted);font-size:14px;padding:12px;">Suche in OpenFoodFacts...</p>`;
+function printShoppingList() {
+  if (!lastMealPlanData) return;
+  const { sorted, catColors } = lastMealPlanData;
+  let rows='';
+  Object.keys(catColors).forEach(cat=>{
+    const items=sorted[cat]; if(!items||!items.length) return;
+    rows += `<tr><td colspan="3" style="background:#f5f5f5;font-weight:700;padding:8px 12px;border-top:2px solid #ddd;">${cat}</td></tr>`;
+    items.forEach(item=>{
+      const qty=item.grams>=1000?(item.grams/1000).toFixed(1)+' kg':item.grams+'g';
+      rows += `<tr><td style="padding:7px 12px;border-bottom:1px solid #eee;width:28px;"><div style="width:16px;height:16px;border:2px solid #999;border-radius:3px;display:inline-block;"></div></td><td style="padding:7px 12px;border-bottom:1px solid #eee;">${item.name}</td><td style="padding:7px 12px;border-bottom:1px solid #eee;text-align:right;font-weight:600;">${qty}</td></tr>`;
+    });
+  });
+
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MDG Elite – Einkaufsliste</title><style>body{font-family:Arial,sans-serif;max-width:600px;margin:40px auto;color:#111;}h1{font-size:28px;letter-spacing:4px;color:#C9A84C;margin-bottom:4px;}.subtitle{font-size:13px;color:#888;margin-bottom:24px;}table{width:100%;border-collapse:collapse;}@media print{body{margin:20px;}button{display:none!important;}.no-print{display:none!important;}}</style></head><body><h1>MDG ELITE</h1><div class="subtitle">Einkaufsliste für 7 Tage · Erstellt am ${new Date().toLocaleDateString('de-CH')}</div><button onclick="window.print()" class="no-print" style="margin-bottom:20px;padding:10px 24px;background:#C9A84C;color:#000;border:none;font-weight:700;font-size:14px;cursor:pointer;border-radius:4px;">🖨️ Drucken</button><table>${rows}</table><p style="margin-top:24px;font-size:11px;color:#aaa;">mdgelite.com · Alle Mengen für 7 Tage berechnet</p></body></html>`);
+  win.document.close();
+  setTimeout(() => win.print(), 500);
+}
+
+// ══ CONTACT ══
+const EMAILJS_CONFIG = {
+  publicKey: 'DEIN_EMAILJS_PUBLIC_KEY',
+  serviceId: 'DEIN_EMAILJS_SERVICE_ID',
+  templateId: 'DEIN_EMAILJS_TEMPLATE_ID'
+};
+
+try {
+  if (window.emailjs && !EMAILJS_CONFIG.publicKey.includes('DEIN_')) {
+    emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey });
+  }
+} catch(e) {}
+
+async function sendContact(){
+  const fn=document.getElementById('fname').value.trim();
+  const ln=document.getElementById('lname').value.trim();
+  const em=document.getElementById('femail').value.trim();
+  const sub=document.getElementById('fsubject').value;
+  const msg=document.getElementById('fmessage').value.trim();
+  if(!fn||!em||!sub||!msg){showToast('⚠ Bitte alle Pflichtfelder ausfüllen');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){showToast('⚠ Bitte gültige E-Mail eingeben');return;}
+  if (EMAILJS_CONFIG.publicKey.includes('DEIN_') || EMAILJS_CONFIG.serviceId.includes('DEIN_') || EMAILJS_CONFIG.templateId.includes('DEIN_')) {
+    showToast('⚠ EmailJS IDs in der Datei eintragen');
+    return;
+  }
+
+  const btn = document.querySelector('.btn-submit');
+  const oldText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'WIRD GESENDET...';
   try {
-    const url=`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=30&fields=product_name,brands,nutriments,image_front_small_url,image_front_url,code`;
-    const res=await fetch(url,{signal:nwAbortController.signal});
-    const data=await res.json();
-    const products=(data.products||[]).map(p=>{
-      const n=p.nutriments||{};
-      return {
-        name:p.product_name||'Unbenanntes Produkt',
-        brand:p.brands||'',
-        kcal:Number(n['energy-kcal_100g'] ?? n['energy-kcal'] ?? 0),
-        p:Number(n.proteins_100g ?? 0),
-        c:Number(n.carbohydrates_100g ?? 0),
-        f:Number(n.fat_100g ?? 0),
-        img:p.image_front_small_url||p.image_front_url||'',
-        code:p.code||''
-      };
-    }).filter(x=>x.name && (x.kcal || x.p || x.c || x.f)).slice(0,20);
-    if(!products.length){ $('nwResults').innerHTML=`<p style="color:var(--muted);font-size:14px;padding:12px;">Kein Lebensmittel gefunden. Probiere Markenname oder allgemeinere Begriffe.</p>`; return; }
-    window._nwProducts=products;
-    $('nwResults').innerHTML=products.map((f,i)=>`
-      <div class="nw-result-item" onclick="selectNW(${i})">
-        <span>
-          <span class="nw-result-name">${escapeHtml(f.name)}</span>
-          <div class="nw-result-brand">${escapeHtml(f.brand || 'OpenFoodFacts')}</div>
-        </span>
-        <span class="nw-result-kcal">${Math.round(f.kcal)} kcal/100g</span>
-      </div>`).join('');
-  } catch(e) {
-    if(e.name!=='AbortError') $('nwResults').innerHTML=`<p style="color:#e05c5c;font-size:14px;padding:12px;">OpenFoodFacts konnte nicht geladen werden. Internet/CORS prüfen.</p>`;
+    await emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, {
+      from_name: `${fn} ${ln}`.trim(),
+      from_email: em,
+      reply_to: em,
+      subject: sub,
+      message: msg
+    });
+    document.getElementById('contactForm').style.display='none';
+    document.getElementById('formSuccess').style.display='block';
+    showToast('✓ Nachricht gesendet');
+  } catch(err) {
+    console.error(err);
+    showToast('⚠ Versand fehlgeschlagen – EmailJS prüfen');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = oldText;
   }
 }
+
+// ══ TOAST ══
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+// ══ NÄHRWERTRECHNER ══
+let nwSelected = null;
+let nwSearchTimer = null;
+
+function normalizeOFFProduct(p) {
+  const n = p.nutriments || {};
+  const kcal = Number(n['energy-kcal_100g'] ?? (n['energy-kj_100g'] ? n['energy-kj_100g'] / 4.184 : 0));
+  return {
+    name: p.product_name || p.generic_name || 'Unbekanntes Produkt',
+    brand: p.brands || '',
+    image: p.image_front_small_url || '',
+    kcal: round1(kcal || 0),
+    p: round1(Number(n.proteins_100g || 0)),
+    c: round1(Number(n.carbohydrates_100g || 0)),
+    f: round1(Number(n.fat_100g || 0)),
+    source: 'OpenFoodFacts'
+  };
+}
+
+function searchNutrition(query) {
+  clearTimeout(nwSearchTimer);
+  if (!query || query.trim().length < 2) {
+    document.getElementById('nwResults').innerHTML='';
+    return;
+  }
+  document.getElementById('nwResults').innerHTML = `<div class="nw-status">Suche in OpenFoodFacts...</div>`;
+  nwSearchTimer = setTimeout(() => searchOpenFoodFacts(query.trim()), 350);
+}
+
+async function searchOpenFoodFacts(query) {
+  try {
+    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=30&fields=product_name,generic_name,brands,nutriments,image_front_small_url`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('API Fehler');
+    const data = await res.json();
+    const products = (data.products || [])
+      .map(normalizeOFFProduct)
+      .filter(f => f.name && (f.kcal || f.p || f.c || f.f))
+      .slice(0, 20);
+
+    if (!products.length) {
+      document.getElementById('nwResults').innerHTML = `<div class="nw-status">Kein passendes Lebensmittel gefunden. Versuche eine andere Schreibweise oder Marke.</div>`;
+      return;
+    }
+
+    window._nwResults = products;
+    document.getElementById('nwResults').innerHTML = products.map((f,i) => `
+      <div class="nw-result-item" onclick="selectNW(${i})">
+        <div class="nw-result-left">
+          ${f.image ? `<img class="nw-result-img" src="${f.image}" alt="">` : `<div class="nw-result-img"></div>`}
+          <div style="min-width:0;">
+            <div class="nw-result-name">${escapeHtml(f.name)}</div>
+            <div class="nw-result-sub">${escapeHtml(f.brand || 'OpenFoodFacts')}</div>
+          </div>
+        </div>
+        <span class="nw-result-kcal">${f.kcal || 0} kcal/100g</span>
+      </div>`).join('');
+  } catch(err) {
+    document.getElementById('nwResults').innerHTML = `<div class="nw-status">OpenFoodFacts konnte nicht geladen werden. Prüfe deine Internetverbindung.</div>`;
+  }
+}
+
 function selectNW(index) {
-  nwSelected = window._nwProducts[index];
-  $('nwSearch').value = nwSelected.name;
-  $('nwResults').innerHTML = '';
+  nwSelected = window._nwResults[index];
+  document.getElementById('nwSearch').value = nwSelected.name;
+  document.getElementById('nwResults').innerHTML = '';
   updateNutritionCalc();
 }
-function setGrams(g) { $('nwGrams').value = g; updateNutritionCalc(); }
+
+function setGrams(g) {
+  document.getElementById('nwGrams').value = g;
+  updateNutritionCalc();
+}
+
 function updateNutritionCalc() {
   if (!nwSelected) return;
-  const g = parseFloat($('nwGrams').value) || 100;
+  const g = parseFloat(document.getElementById('nwGrams').value) || 100;
   const f = nwSelected;
-  const calc = v => Math.round(v * g / 100 * 10) / 10;
-  $('nwSelected').style.display = 'block';
-  $('nwSelected').innerHTML = `
+  const calc = v => Math.round((Number(v) || 0) * g / 100 * 10) / 10;
+  document.getElementById('nwSelected').style.display = 'block';
+  document.getElementById('nwSelected').innerHTML = `
     <div class="nw-card">
-      ${f.img ? `<img src="${f.img}" alt="" style="float:right;width:72px;height:72px;object-fit:cover;border-radius:6px;margin-left:12px;border:1px solid var(--border);">` : ''}
       <div class="nw-name">${escapeHtml(f.name)}</div>
       <div class="nw-per">Nährwerte für ${g}g ${f.brand ? '· '+escapeHtml(f.brand) : ''}</div>
       <div class="nw-macros">
@@ -1370,76 +1523,66 @@ function updateNutritionCalc() {
         <div class="nw-macro carb"><div class="nw-macro-val">${calc(f.c)}g</div><div class="nw-macro-label">Carbs</div></div>
         <div class="nw-macro fat"><div class="nw-macro-val">${calc(f.f)}g</div><div class="nw-macro-label">Fett</div></div>
       </div>
-      <div class="nw-source">Quelle: OpenFoodFacts. Werte können je nach Produktdatenqualität abweichen.</div>
+      <div class="nw-source">Quelle: OpenFoodFacts. Werte können je nach Produkt/Eintrag abweichen.</div>
     </div>`;
 }
 
-// ══ EMAILJS KONTAKT ══
-async function sendContact(){
-  const fn=$('fname').value.trim(), ln=$('lname').value.trim(), em=$('femail').value.trim(), sub=$('fsubject').value, msg=$('fmessage').value.trim();
-  if(!fn||!em||!sub||!msg){showToast('⚠ Bitte alle Pflichtfelder ausfüllen');return;}
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){showToast('⚠ Bitte gültige E-Mail eingeben');return;}
-  if (EMAILJS_PUBLIC_KEY.startsWith('DEIN_') || EMAILJS_SERVICE_ID.startsWith('DEIN_') || EMAILJS_TEMPLATE_ID.startsWith('DEIN_')) {
-    showToast('⚠ EmailJS noch nicht konfiguriert');
-    $('contactForm').insertAdjacentHTML('afterbegin', `<div class="config-warning">EmailJS ist vorbereitet, aber PUBLIC_KEY, SERVICE_ID und TEMPLATE_ID müssen in der index.html ersetzt werden.</div>`);
-    return;
-  }
-  const btn=document.querySelector('.btn-submit');
-  const old=btn.textContent;
-  btn.disabled=true; btn.textContent='SENDE...';
-  try {
-    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-      from_name: `${fn} ${ln}`.trim(),
-      from_email: em,
-      reply_to: em,
-      subject: sub,
-      message: msg
-    });
-    $('contactForm').style.display='none';
-    $('formSuccess').style.display='block';
-  } catch(e) {
-    console.error(e);
-    showToast('⚠ Senden fehlgeschlagen. EmailJS Einstellungen prüfen.');
-  } finally {
-    btn.disabled=false; btn.textContent=old;
-  }
+function escapeHtml(str){
+  return String(str || '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]));
 }
 
-// ══ CHEAT MEALS MIT BILDERN ══
-const imgBase='https://images.unsplash.com/';
+// ══ CHEAT MEALS ══
 const cheatMeals = [
-  {cat:'burger',img:'photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80',name:'Cheeseburger',portion:'1 Stück ~220g',kcal:620,p:34,c:42,f:35},
-  {cat:'burger',img:'photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80',name:'Double Bacon Burger',portion:'1 Stück ~330g',kcal:980,p:55,c:48,f:62},
-  {cat:'fast-food',img:'photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=80',name:'Pommes gross',portion:'1 Portion ~180g',kcal:560,p:7,c:72,f:28},
-  {cat:'fast-food',img:'photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&w=600&q=80',name:'Chicken Nuggets',portion:'12 Stück ~240g',kcal:720,p:42,c:45,f:40},
-  {cat:'pizza',img:'photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80',name:'Pizza Margherita',portion:'1 Pizza ~350g',kcal:850,p:36,c:112,f:28},
-  {cat:'pizza',img:'photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80',name:'Pizza Salami',portion:'1 Pizza ~380g',kcal:1050,p:45,c:105,f:48},
-  {cat:'pasta',img:'photo-1621996346565-e3dbc353d2e5?auto=format&fit=crop&w=600&q=80',name:'Spaghetti Carbonara',portion:'1 Teller ~420g',kcal:880,p:34,c:92,f:38},
-  {cat:'pasta',img:'photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=600&q=80',name:'Lasagne',portion:'1 Portion ~400g',kcal:760,p:42,c:62,f:36},
-  {cat:'dessert',img:'photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=600&q=80',name:'Schoko-Kuchen',portion:'1 Stück ~140g',kcal:520,p:7,c:58,f:29},
-  {cat:'dessert',img:'photo-1488477181946-6428a0291777?auto=format&fit=crop&w=600&q=80',name:'Cheesecake',portion:'1 Stück ~150g',kcal:470,p:9,c:44,f:29},
-  {cat:'dessert',img:'photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=600&q=80',name:'Ben & Jerry’s',portion:'½ Becher ~230ml',kcal:540,p:8,c:62,f:28},
-  {cat:'bbq',img:'photo-1529193591184-b1d58069ecdd?auto=format&fit=crop&w=600&q=80',name:'BBQ Ribs',portion:'1 Portion ~350g',kcal:950,p:62,c:28,f:64},
-  {cat:'bbq',img:'photo-1558030006-450675393462?auto=format&fit=crop&w=600&q=80',name:'Brisket Sandwich',portion:'1 Stück ~300g',kcal:820,p:48,c:58,f:42},
-  {cat:'schweiz',img:'photo-1633436374961-09b92742047b?auto=format&fit=crop&w=600&q=80',name:'Rösti mit Käse',portion:'1 Teller ~350g',kcal:780,p:24,c:72,f:42},
-  {cat:'schweiz',img:'photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=600&q=80',name:'Cordon Bleu mit Pommes',portion:'1 Teller ~500g',kcal:1250,p:62,c:78,f:72},
-  {cat:'asiatisch',img:'photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=600&q=80',name:'Ramen',portion:'1 Schüssel ~550g',kcal:720,p:34,c:82,f:28},
-  {cat:'asiatisch',img:'photo-1512058564366-18510be2db19?auto=format&fit=crop&w=600&q=80',name:'Fried Rice',portion:'1 Teller ~400g',kcal:760,p:28,c:96,f:28},
-  {cat:'mexican',img:'photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=600&q=80',name:'Burrito',portion:'1 Stück ~380g',kcal:850,p:42,c:92,f:34},
-  {cat:'mexican',img:'photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=600&q=80',name:'Nachos mit Käse',portion:'1 Teller ~250g',kcal:880,p:26,c:82,f:50},
-  {cat:'getraenke',img:'photo-1544145945-f90425340c7e?auto=format&fit=crop&w=600&q=80',name:'Milkshake',portion:'1 Becher ~400ml',kcal:620,p:14,c:82,f:26},
-  {cat:'getraenke',img:'photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=600&q=80',name:'Softdrink',portion:'500ml',kcal:210,p:0,c:53,f:0}
+  {cat:'burger',img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80',name:'Cheeseburger',portion:'1 Burger ~220g',kcal:620,p:33,c:45,f:34},
+  {cat:'burger',img:'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80',name:'Double Burger Menü',portion:'Burger + Pommes',kcal:1180,p:52,c:105,f:58},
+  {cat:'fast-food',img:'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=600&q=80',name:'Pommes Frites gross',portion:'1 Portion ~180g',kcal:560,p:7,c:72,f:27},
+  {cat:'fast-food',img:'https://images.unsplash.com/photo-1612392062631-94dd858cba88?auto=format&fit=crop&w=600&q=80',name:'Chicken Nuggets',portion:'9 Stück',kcal:430,p:24,c:28,f:25},
+  {cat:'pizza',img:'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=600&q=80',name:'Pizza Margherita',portion:'1 Pizza ~350g',kcal:850,p:34,c:110,f:28},
+  {cat:'pizza',img:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80',name:'Pizza Salami',portion:'1 Pizza ~380g',kcal:1050,p:45,c:105,f:50},
+  {cat:'pasta',img:'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=600&q=80',name:'Spaghetti Carbonara',portion:'1 Teller ~420g',kcal:920,p:38,c:92,f:43},
+  {cat:'pasta',img:'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=600&q=80',name:'Lasagne',portion:'1 Portion ~400g',kcal:760,p:42,c:62,f:38},
+  {cat:'dessert',img:'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80',name:'Schokoladenkuchen',portion:'1 Stück ~140g',kcal:520,p:7,c:62,f:28},
+  {cat:'dessert',img:'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=600&q=80',name:'Eisbecher',portion:'1 Becher ~250g',kcal:650,p:10,c:82,f:30},
+  {cat:'suess',img:'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80',name:'Brownie',portion:'1 Stück ~90g',kcal:410,p:5,c:48,f:22},
+  {cat:'suess',img:'https://images.unsplash.com/photo-1587132137056-bfbf0166836e?auto=format&fit=crop&w=600&q=80',name:'Donut',portion:'1 Stück ~75g',kcal:330,p:5,c:38,f:17},
+  {cat:'snacks',img:'https://images.unsplash.com/photo-1566478989037-eec170784d0b?auto=format&fit=crop&w=600&q=80',name:'Chips',portion:'1 Tüte ~175g',kcal:930,p:10,c:90,f:58},
+  {cat:'snacks',img:'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?auto=format&fit=crop&w=600&q=80',name:'Nachos mit Käse',portion:'1 Portion ~250g',kcal:780,p:22,c:78,f:42},
+  {cat:'bbq',img:'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?auto=format&fit=crop&w=600&q=80',name:'BBQ Ribs',portion:'1 Portion ~450g',kcal:1150,p:72,c:35,f:78},
+  {cat:'bbq',img:'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=600&q=80',name:'Pulled Pork Sandwich',portion:'1 Sandwich ~300g',kcal:760,p:42,c:62,f:36},
+  {cat:'schweiz',img:'https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=600&q=80',name:'Cordon Bleu mit Pommes',portion:'1 Teller',kcal:1250,p:65,c:85,f:68},
+  {cat:'schweiz',img:'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=600&q=80',name:'Rösti mit Käse',portion:'1 Portion ~350g',kcal:820,p:28,c:78,f:45},
+  {cat:'asiatisch',img:'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=600&q=80',name:'Sushi Mix',portion:'16 Stück',kcal:720,p:38,c:105,f:14},
+  {cat:'asiatisch',img:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=600&q=80',name:'Ramen',portion:'1 Bowl',kcal:790,p:35,c:92,f:30},
+  {cat:'mexican',img:'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=600&q=80',name:'Burrito',portion:'1 Stück ~350g',kcal:850,p:42,c:95,f:32},
+  {cat:'mexican',img:'https://images.unsplash.com/photo-1613514785940-daed07799d9b?auto=format&fit=crop&w=600&q=80',name:'Tacos',portion:'3 Stück',kcal:690,p:34,c:66,f:32},
+  {cat:'getraenke',img:'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=600&q=80',name:'Milchshake',portion:'500ml',kcal:720,p:18,c:105,f:24},
+  {cat:'getraenke',img:'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=600&q=80',name:'Softdrink',portion:'500ml',kcal:210,p:0,c:53,f:0}
 ];
+
+const cheatCatLabels = {
+  alle:'Alle', burger:'Burger', 'fast-food':'Fast Food', pizza:'Pizza', pasta:'Pasta',
+  dessert:'Dessert', suess:'Süsses', snacks:'Snacks', bbq:'BBQ', schweiz:'Schweizer Klassiker',
+  asiatisch:'Asiatisch', mexican:'Mexican', getraenke:'Getränke'
+};
+
+function buildCheatFilters() {
+  const wrap = document.getElementById('cheatFilter');
+  if (!wrap) return;
+  const cats = ['alle','burger','fast-food','pizza','pasta','dessert','suess','snacks','bbq','schweiz','asiatisch','mexican','getraenke'];
+  wrap.innerHTML = cats.map((cat,i)=>`<button class="cheat-filter-btn ${i===0?'active':''}" onclick="filterCheat('${cat}',this)">${cheatCatLabels[cat]}</button>`).join('');
+}
+
 function buildCheatGrid(cat='alle') {
   window._cheatBuilt = true;
   const filtered = cat === 'alle' ? cheatMeals : cheatMeals.filter(c => c.cat === cat);
-  $('cheatGrid').innerHTML = filtered.map(c => `
+  document.getElementById('cheatGrid').innerHTML = filtered.map(c => `
     <div class="cheat-card" data-cat="${c.cat}">
-      <img class="cheat-img" src="${imgBase+c.img}" alt="${escapeHtml(c.name)}" loading="lazy">
+      <span class="cheat-img"><img src="${c.img}" alt="${escapeHtml(c.name)}" loading="lazy"></span>
       <div class="cheat-info">
-        <div class="cheat-name">${escapeHtml(c.name)}</div>
+        <div class="cheat-cat">${cheatCatLabels[c.cat] || c.cat}</div>
+        <div class="cheat-name">${c.name}</div>
         <div class="cheat-kcal">${c.kcal} kcal</div>
-        <div class="cheat-portion">${escapeHtml(c.portion)}</div>
+        <div class="cheat-portion">${c.portion}</div>
         <div class="cheat-pills">
           <span class="cheat-pill p">${c.p}g P</span>
           <span class="cheat-pill c">${c.c}g C</span>
@@ -1448,6 +1591,7 @@ function buildCheatGrid(cat='alle') {
       </div>
     </div>`).join('');
 }
+
 function filterCheat(cat, btn) {
   document.querySelectorAll('.cheat-filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -1456,6 +1600,7 @@ function filterCheat(cat, btn) {
 
 // ══ INIT ══
 loadSaved();
+buildCheatFilters();
 </script>
 </body>
 </html>
