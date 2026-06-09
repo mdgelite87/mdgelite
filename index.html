@@ -689,6 +689,12 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
           <div class="bd-row"><span class="lbl">Kalorienziel</span><span class="val" id="targetVal">—</span></div>
           <div class="bd-row"><span class="lbl">Wöchentlicher Effekt</span><span class="val" id="weeklyVal">—</span></div>
         </div>
+        <div id="planAdminIntroBox" style="margin:0 0 24px;padding:22px 24px;background:rgba(201,168,76,0.06);border:1px solid var(--gold-dim);border-radius:4px;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:var(--gold);margin-bottom:10px;">Hinweis zum Ernährungsplan</div>
+          <div id="planAdminIntroText" data-editable style="font-size:14px;color:var(--muted);line-height:1.7;min-height:70px;">
+            Hier kannst du im Admin-Modus einen eigenen Hinweis vor dem Ernährungsplan einfügen, z.B. Disclaimer, Coaching-Hinweis, Zubereitungstipps oder eine Erklärung zur Verwendung der Rohgewichte.
+          </div>
+        </div>
         <div class="sec-head"><span class="sec-num">PLAN</span><span class="sec-title">Beispiel-Ernährungsplan</span><div class="sec-line"></div></div>
         <div id="mealPlan"></div>
         <div class="disclaimer"><strong>⚠ Hinweis:</strong> Schätzwerte auf Basis Mifflin-St Jeor / Katch-McArdle. Kein Ersatz für Fachberatung.</div>
@@ -2485,6 +2491,272 @@ function filterCheat(cat, btn) {
   btn.classList.add('active');
   buildCheatGrid(cat);
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MDG ELITE – RECHNER QUALITY PATCH
+   - korrigierte Roh-/Standard-Nährwerte pro 100g
+   - keine Eiklar-only-Gerichte, sondern Ei-Mix mit Vollei + Eiklar
+   - vegetarische/vegane Pools strikt getrennt
+   - Summenzeile "Mahlzeit gesamt" statt "Fleisch/Fisch"
+   - erneute Kalibrierung auf Zielkalorien über KH-Rohgewichte
+   ═══════════════════════════════════════════════════════════════════════ */
+
+(function mdgEliteMealQualityPatch(){
+  if (typeof FOOD_DB === 'undefined') return;
+
+  const correctedFoods = {
+    // Proteinquellen: Roh-/Standardwerte pro 100g, sofern nicht anders benannt.
+    huhn:{name:'Hühnerbrust (roh)',p:23.1,c:0,f:1.2,kcal:110,cat:'Protein',tags:['protein','meat','lean','lunch','dinner']},
+    pute:{name:'Putenbrust (roh)',p:24,c:0,f:1.3,kcal:110,cat:'Protein',tags:['protein','meat','lean','lunch','dinner']},
+    rind:{name:'Rindssteak mager (roh)',p:21.5,c:0,f:4.5,kcal:126,cat:'Protein',tags:['protein','meat','lunch','dinner']},
+    rindhack5:{name:'Rinderhack 5% Fett (roh)',p:21,c:0,f:5,kcal:129,cat:'Protein',tags:['protein','meat','lunch','dinner']},
+    kalb:{name:'Kalbsfilet mager (roh)',p:21.5,c:0,f:2.5,kcal:110,cat:'Protein',tags:['protein','meat','lunch','dinner']},
+    schweinefilet:{name:'Schweinefilet mager (roh)',p:22,c:0,f:3.5,kcal:120,cat:'Protein',tags:['protein','meat','lunch','dinner']},
+    lachs:{name:'Lachs (roh)',p:20,c:0,f:13,kcal:208,cat:'Protein',tags:['protein','fish','fatty','lunch','dinner']},
+    kabeljau:{name:'Kabeljau (roh)',p:18,c:0,f:0.7,kcal:82,cat:'Protein',tags:['protein','fish','lean','lunch','dinner']},
+    thunfisch:{name:'Thunfisch in Wasser, abgetropft',p:25,c:0,f:1,kcal:110,cat:'Protein',tags:['protein','fish','lean','lunch','dinner','snack']},
+    garnelen:{name:'Garnelen (roh)',p:20,c:0.2,f:1,kcal:90,cat:'Protein',tags:['protein','fish','lean','lunch','dinner']},
+    forelle:{name:'Forelle (roh)',p:20,c:0,f:6,kcal:140,cat:'Protein',tags:['protein','fish','lunch','dinner']},
+
+    eier:{name:'Vollei',p:12.6,c:0.7,f:10.6,kcal:143,cat:'Protein',tags:['protein','breakfast','savory']},
+    eiklar:{name:'Eiklar',p:10.9,c:0.7,f:0.2,kcal:52,cat:'Protein',tags:['protein','lean','breakfast','savory']},
+    eimix:{name:'Ei-Mix aus Vollei + Eiklar',p:11.5,c:0.6,f:3.5,kcal:83,cat:'Protein',tags:['protein','breakfast','savory']},
+
+    magerquark:{name:'Magerquark 0.2%',p:12,c:4,f:0.2,kcal:66,cat:'Milchprodukte & Protein',tags:['protein','dairy','breakfast','snack','sweet']},
+    skyr:{name:'Skyr / High Protein Joghurt',p:11,c:4,f:0.2,kcal:64,cat:'Milchprodukte & Protein',tags:['protein','dairy','breakfast','snack','sweet']},
+    huettenkaese:{name:'Hüttenkäse light',p:12,c:3,f:1.5,kcal:75,cat:'Milchprodukte & Protein',tags:['protein','dairy','snack','savory']},
+    mozzarella_light:{name:'Mozzarella light',p:20,c:2,f:9,kcal:170,cat:'Milchprodukte & Protein',tags:['protein','dairy','snack','savory']},
+    whey:{name:'Whey Protein',p:66.7,c:8,f:5,kcal:344,cat:'Milchprodukte & Protein',tags:['protein','shake','sweet']},
+
+    tofu:{name:'Tofu fest',p:15,c:2,f:8,kcal:135,cat:'Protein',tags:['protein','veggie','vegan','lunch','dinner']},
+    tempeh:{name:'Tempeh',p:19,c:9,f:11,kcal:193,cat:'Protein',tags:['protein','veggie','vegan','lunch','dinner']},
+    seitan:{name:'Seitan',p:25,c:4,f:2,kcal:140,cat:'Protein',tags:['protein','veggie','vegan','lean','lunch','dinner']},
+    linsen:{name:'Linsen (trocken)',p:24,c:52,f:1.5,kcal:340,cat:'Protein',pack:500,tags:['protein','carb','veggie','vegan','lunch','dinner','raw']},
+    bohnen:{name:'Kidneybohnen (trocken)',p:22,c:60,f:1.4,kcal:337,cat:'Protein',pack:500,tags:['protein','carb','veggie','vegan','lunch','dinner','raw']},
+    vegwhey:{name:'Veganes Proteinpulver',p:78,c:7,f:5,kcal:365,cat:'Milchprodukte & Protein',tags:['protein','shake','vegan','sweet']},
+
+    // Kohlenhydrate: Roh-/Einkaufsgewicht, wo relevant.
+    haferflocken:{name:'Haferflocken',p:13,c:58,f:7,kcal:370,cat:'Kohlenhydrate',pack:500,tags:['carb','breakfast','sweet','raw']},
+    reis:{name:'Reis (roh)',p:7,c:79,f:0.7,kcal:360,cat:'Kohlenhydrate',pack:1000,tags:['carb','lunch','dinner','raw']},
+    basmati:{name:'Basmati Reis (roh)',p:7.5,c:78,f:0.7,kcal:355,cat:'Kohlenhydrate',pack:1000,tags:['carb','lunch','dinner','raw']},
+    vollkornreis:{name:'Vollkornreis (roh)',p:7.5,c:76,f:2.2,kcal:360,cat:'Kohlenhydrate',pack:1000,tags:['carb','lunch','dinner','raw']},
+    kartoffeln:{name:'Kartoffeln (roh)',p:2,c:17,f:0.1,kcal:77,cat:'Kohlenhydrate',pack:2500,tags:['carb','lunch','dinner','raw']},
+    suesskartoffel:{name:'Süsskartoffeln (roh)',p:1.6,c:20,f:0.1,kcal:86,cat:'Kohlenhydrate',pack:1000,tags:['carb','lunch','dinner','raw']},
+    quinoa:{name:'Quinoa (roh)',p:14,c:64,f:6,kcal:368,cat:'Kohlenhydrate',pack:500,tags:['carb','lunch','dinner','raw']},
+    vollkornpasta:{name:'Vollkornpasta (roh)',p:13,c:67,f:2.5,kcal:350,cat:'Kohlenhydrate',pack:500,tags:['carb','lunch','dinner','raw']},
+    couscous:{name:'Couscous (roh)',p:12.8,c:77,f:0.6,kcal:376,cat:'Kohlenhydrate',pack:500,tags:['carb','lunch','dinner','raw']},
+    bulgur:{name:'Bulgur (roh)',p:12,c:76,f:1.3,kcal:342,cat:'Kohlenhydrate',pack:500,tags:['carb','lunch','dinner','raw']},
+    vollkornbrot:{name:'Vollkornbrot',p:9,c:43,f:3.5,kcal:240,cat:'Kohlenhydrate',pack:500,tags:['carb','breakfast','snack','savory']},
+    roggenbrot:{name:'Roggenbrot',p:8.5,c:42,f:1.2,kcal:220,cat:'Kohlenhydrate',pack:500,tags:['carb','breakfast','snack','savory']},
+    wrap:{name:'Vollkorn-Wrap',p:8,c:48,f:7,kcal:285,cat:'Kohlenhydrate',pack:360,tags:['carb','snack','savory']},
+    reiswaffeln:{name:'Reiswaffeln',p:8,c:80,f:3,kcal:380,cat:'Kohlenhydrate',pack:130,tags:['carb','snack']},
+    banane:{name:'Banane',p:1.1,c:23,f:0.3,kcal:89,cat:'Gemüse & Früchte',pack:1000,tags:['carb','fruit','sweet','snack']},
+    apfel:{name:'Apfel',p:0.3,c:14,f:0.2,kcal:52,cat:'Gemüse & Früchte',pack:1000,tags:['carb','fruit','sweet','snack']},
+    beeren:{name:'Beerenmix',p:0.7,c:12,f:0.3,kcal:57,cat:'Gemüse & Früchte',pack:500,tags:['carb','fruit','sweet']},
+    gemuese:{name:'Gemischtes Gemüse',p:2.5,c:7,f:0.4,kcal:40,cat:'Gemüse & Früchte',pack:1000,tags:['veg','lunch','dinner']},
+    brokkoli:{name:'Brokkoli',p:2.8,c:5,f:0.4,kcal:34,cat:'Gemüse & Früchte',pack:500,tags:['veg','lunch','dinner']},
+    spinat:{name:'Spinat',p:2.9,c:3.6,f:0.4,kcal:23,cat:'Gemüse & Früchte',pack:450,tags:['veg','breakfast','lunch','dinner']},
+    salat:{name:'Grüner Salat',p:1.3,c:2.9,f:0.2,kcal:17,cat:'Gemüse & Früchte',pack:250,tags:['veg','lunch','dinner']},
+
+    // Fettquellen.
+    olivenoel:{name:'Olivenöl',p:0,c:0,f:100,kcal:884,cat:'Fette & Nüsse',pack:500,tags:['fat','oil']},
+    rapsoel:{name:'Rapsöl',p:0,c:0,f:100,kcal:884,cat:'Fette & Nüsse',pack:500,tags:['fat','oil']},
+    avocado:{name:'Avocado',p:2,c:9,f:15,kcal:160,cat:'Fette & Nüsse',pack:2,tags:['fat','lunch','dinner','snack']},
+    mandeln:{name:'Mandeln',p:21,c:6,f:50,kcal:579,cat:'Fette & Nüsse',pack:200,tags:['fat','sweet','snack']},
+    walnuesse:{name:'Walnüsse',p:15,c:14,f:65,kcal:654,cat:'Fette & Nüsse',pack:200,tags:['fat','sweet','snack']},
+    cashews:{name:'Cashews',p:18,c:30,f:44,kcal:553,cat:'Fette & Nüsse',pack:200,tags:['fat','snack']},
+    chia:{name:'Chia Samen',p:17,c:42,f:31,kcal:486,cat:'Fette & Nüsse',pack:250,tags:['fat','sweet','breakfast']},
+    leinsamen:{name:'Leinsamen',p:18,c:29,f:42,kcal:534,cat:'Fette & Nüsse',pack:250,tags:['fat','sweet','breakfast']},
+    kuerbiskerne:{name:'Kürbiskerne',p:30,c:11,f:49,kcal:560,cat:'Fette & Nüsse',pack:200,tags:['fat','savory','snack']},
+    erdnussbutter:{name:'Erdnussbutter',p:25,c:20,f:50,kcal:588,cat:'Fette & Nüsse',pack:350,tags:['fat','sweet','snack']},
+    tahini:{name:'Tahini',p:17,c:21,f:54,kcal:595,cat:'Fette & Nüsse',pack:300,tags:['fat','savory']},
+    oliven:{name:'Oliven',p:1,c:6,f:11,kcal:145,cat:'Fette & Nüsse',pack:200,tags:['fat','savory']},
+    kokosmilch_light:{name:'Kokosmilch light',p:1.5,c:3,f:7,kcal:80,cat:'Fette & Nüsse',pack:400,tags:['fat','dinner']},
+    mandelmilch:{name:'Mandelmilch ungesüsst',p:0.5,c:0.5,f:1.1,kcal:13,cat:'Sonstiges',pack:1000,tags:['liquid','sweet','vegan']},
+    hafermilch:{name:'Hafermilch',p:1,c:9,f:1.5,kcal:45,cat:'Sonstiges',pack:1000,tags:['liquid','sweet','vegan']}
+  };
+
+  Object.keys(correctedFoods).forEach(k => {
+    FOOD_DB[k] = Object.assign({}, FOOD_DB[k] || {}, correctedFoods[k]);
+  });
+
+  // Eiklar-only-Vorlagen entschärfen: Ei-Mix enthält Vollei + Eiklar und ist für Besucher realistischer.
+  if (typeof MEAL_BLUEPRINTS !== 'undefined') {
+    Object.keys(MEAL_BLUEPRINTS).forEach(pool => {
+      MEAL_BLUEPRINTS[pool].forEach(bp => {
+        bp.keys = (bp.keys || []).map(k => k === 'eiklar' ? 'eimix' : k);
+        bp.title = (bp.title || '').replace(/Eiklar/g, 'Ei-Mix').replace(/Eiklar-/g, 'Ei-Mix-');
+        bp.note = (bp.note || '').replace(/Eiklar/g, 'Vollei + Eiklar');
+      });
+    });
+
+    // Kuratierte salzige Frühstücke explizit überschreiben, damit kein reines Eiklar-Frühstück entsteht.
+    MEAL_BLUEPRINTS.breakfast_savory = [
+      {title:'Ei-Mix-Omelett mit Vollkornbrot', keys:['eimix','vollkornbrot','olivenoel'], extras:[['spinat',80]], note:'Omelett aus Vollei + Eiklar, dazu Brot und Spinat'},
+      {title:'Putenbrust-Brot mit Gemüse', keys:['pute','vollkornbrot','olivenoel'], extras:[['spinat',60]], note:'herzhaftes Frühstück mit roher Putenbrust als Berechnungsbasis'},
+      {title:'Hüttenkäse-Brot Teller', keys:['huettenkaese','roggenbrot','avocado'], extras:[['salat',60]], note:'herzhaft, sättigend und gut vorbereitbar'}
+    ];
+    MEAL_BLUEPRINTS.breakfast_savory_vegetarian = [
+      {title:'Ei-Mix-Omelett mit Vollkornbrot', keys:['eimix','vollkornbrot','olivenoel'], extras:[['spinat',90]], note:'Omelett aus Vollei + Eiklar, dazu Brot und Spinat'},
+      {title:'Hüttenkäse-Roggenbrot', keys:['huettenkaese','roggenbrot','avocado'], extras:[['salat',70]], note:'schnelles herzhaftes Frühstück'},
+      {title:'Ei-Mix-Kartoffel-Teller', keys:['eimix','kartoffeln','rapsoel'], extras:[['spinat',90]], note:'deftiger Teller mit Kartoffeln als Rohgewicht'}
+    ];
+    MEAL_BLUEPRINTS.breakfast_savory_vegan = [
+      {title:'Tofu Scramble Brot', keys:['tofu','vollkornbrot','olivenoel'], extras:[['spinat',120]], note:'salziges veganes Frühstück'},
+      {title:'Seitan-Roggenbrot Teller', keys:['seitan','roggenbrot','avocado'], extras:[['salat',80]], note:'herzhaft und proteinreich'},
+      {title:'Tempeh-Kartoffel-Hash', keys:['tempeh','kartoffeln','rapsoel'], extras:[['spinat',100]], note:'deftiger veganer Start'}
+    ];
+  }
+
+  // Labels niemals als "Fleisch/Fisch" in der Mahlzeitensumme ausgeben.
+  window.mealLabel = function(){ return 'Mahlzeit gesamt'; };
+  try { mealLabel = function(){ return 'Mahlzeit gesamt'; }; } catch(e) {}
+
+  // Strenge Pool-Auswahl: Veganer/Vegetarier bekommen nur passende Rezeptpools.
+  window.getBlueprintPool = function(kind, diet, prefs){
+    const addFrom = (keys) => keys.flatMap(k => MEAL_BLUEPRINTS[k] || []);
+    const suffix = diet === 'vegan' ? '_vegan' : diet === 'vegetarian' ? '_vegetarian' : '';
+
+    if(kind.endsWith('_mixed')){
+      const base = kind.replace('_mixed','');
+      const specific = addFrom([base+'_sweet'+suffix, base+'_savory'+suffix]);
+      if (specific.length) return specific;
+      if (diet === 'meat') return addFrom([base+'_sweet', base+'_savory']);
+      return [];
+    }
+
+    const specific = suffix ? (MEAL_BLUEPRINTS[kind+suffix] || []) : [];
+    if (specific.length) return specific;
+    if (diet === 'meat') return MEAL_BLUEPRINTS[kind] || [];
+    return [];
+  };
+  try { getBlueprintPool = window.getBlueprintPool; } catch(e) {}
+
+  // Verbesserte Abneigungsfilterung, aber ohne Rückfall auf verbotene Lebensmittel.
+  window.filterBlueprints = function(list, prefs){
+    const filtered = (list||[]).filter(bp => !bp.keys.concat((bp.extras||[]).map(e=>e[0])).some(k=>foodMatchesDislike(k,prefs)));
+    return filtered.length ? filtered : [];
+  };
+  try { filterBlueprints = window.filterBlueprints; } catch(e) {}
+
+  // Makro-Suche: keine absurden Mengen, niedrigere Toleranz und besseres Strafmaß.
+  window.scoreDish = function(foods, targetP, targetC, targetF, bp){
+    const t=sumFoods(foods);
+    const kcalTarget=macroKcal(targetP,targetC,targetF);
+    let score =
+      Math.abs(t.p-targetP)*25 +
+      Math.abs(t.fat-targetF)*45 +
+      Math.abs(t.c-targetC)*12 +
+      Math.abs(t.cal-kcalTarget)*2;
+
+    if(t.fat > targetF + 1.5) score += Math.pow(t.fat-targetF,2)*120;
+    if(t.p < targetP - 2.5) score += Math.pow(targetP-t.p,2)*90;
+    if(t.cal > kcalTarget + 25) score += Math.pow(t.cal-kcalTarget,2)*0.6;
+    if((bp.keys||[]).includes('lachs') && targetF < 15) score += 500;
+    if(foods.some(f => f.grams > 450 && !['kartoffeln','suesskartoffel','gemuese','brokkoli','spinat','salat'].includes(f.k))) score += 400;
+    return score;
+  };
+  try { scoreDish = window.scoreDish; } catch(e) {}
+
+  // Bessere Tageskalibrierung: nur KH-Rohgewichte anpassen, nicht Protein-/Fettquellen.
+  window.calibrateCurrentPlan = function(){
+    const targets=window._currentTargets;
+    if(!targets || !window._mealTemplates) return;
+
+    const carbKeys=['reis','basmati','vollkornreis','kartoffeln','suesskartoffel','quinoa','vollkornpasta','couscous','bulgur','vollkornbrot','roggenbrot','wrap','haferflocken','banane','apfel','beeren'];
+    const currentBefore=getActiveMealList().reduce((a,m)=>{const t=sumFoods(m.foods);a.p+=t.p;a.c+=t.c;a.fat+=t.fat;a.cal+=t.cal;return a;},{p:0,c:0,fat:0,cal:0});
+    const kcalDiff = targets.kcal - currentBefore.cal;
+    if(Math.abs(kcalDiff) <= 8) return;
+
+    let best=null;
+    for(let mi=window._mealTemplates.length-1; mi>=0; mi--){
+      const alt=window._mealTemplates[mi].alts[window._mealAltIdx[mi]||0];
+      if(!alt || (window._mealTemplates[mi].kind||'')==='shake') continue;
+      for(const food of alt.foods){
+        if(!carbKeys.includes(food.k)) continue;
+        const db=FOOD_DB[food.k]; if(!db || !db.kcal) continue;
+        const addG = Math.round(kcalDiff/(db.kcal/100));
+        const newG = food.grams + addG;
+        if(newG < 0 || newG > 900) continue;
+        const priority = ['reis','basmati','vollkornreis','kartoffeln','suesskartoffel','vollkornpasta','couscous','bulgur','quinoa'].includes(food.k) ? 2 : 1;
+        const candidate={food,addG,newG,priority};
+        if(!best || candidate.priority > best.priority) best=candidate;
+      }
+      if(best && best.priority===2) break;
+    }
+    if(best){
+      Object.assign(best.food, gramsFor(best.food.k, best.newG));
+    }
+  };
+  try { calibrateCurrentPlan = window.calibrateCurrentPlan; } catch(e) {}
+
+  // Render mit korrekter Summenzeile und Hinweis zu Durchschnittswerten.
+  window.renderMealPlan = function(templates, diet, targets, isFasten=false, prefs=null){
+    const mealList = getActiveMealList();
+    const totals = mealList.reduce((a,m)=>{const t=sumFoods(m.foods);a.p+=t.p; a.c+=t.c; a.fat+=t.fat; a.cal+=t.cal; return a;},{p:0,c:0,fat:0,cal:0});
+    const kcalDiff = Math.round(totals.cal-targets.kcal);
+    const ok = Math.abs(kcalDiff)<=25 && Math.abs(totals.p-targets.proteinG)<=8 && Math.abs(totals.fat-targets.fatG)<=5;
+    const summary = `<div style="margin-bottom:16px;padding:12px 20px;background:rgba(201,168,76,0.08);border:1px solid var(--gold-dim);border-radius:4px;font-size:13px;color:var(--text);line-height:1.6;">
+      Ziel: <strong>${targets.proteinG}g P</strong> · <strong>${targets.carbsG}g C</strong> · <strong>${targets.fatG}g F</strong> · <strong>${targets.kcal} kcal</strong><br>
+      Aktuelle Auswahl: <strong>${Math.round(totals.p)}g P</strong> · <strong>${Math.round(totals.c)}g C</strong> · <strong>${Math.round(totals.fat)}g F</strong> · <strong>${Math.round(totals.cal)} kcal</strong> <span class="${ok?'macro-ok':'macro-warn'}">(${kcalDiff>0?'+':''}${kcalDiff} kcal)</span><br>
+      <span style="color:var(--muted);font-size:12px;">${isFasten?'Proteinfasten: 2 Whey-Proteinshakes ersetzen 2 Mahlzeiten; jeder Shake liefert ca. 33% deines Tagesproteins.':'Protein, Fett und Kohlenhydrate werden gleichmässig pro Mahlzeit verteilt. Kalibriert wird ausschliesslich über Kohlenhydratquellen.'}</span><br>
+      <span style="color:var(--muted);font-size:11px;">Nährwerte sind geprüfte Durchschnittswerte pro 100g. Fleisch/Fisch, Reis, Pasta, Kartoffeln, Couscous, Bulgur, Quinoa und Hülsenfrüchte werden als Roh-/Einkaufsgewicht berechnet.</span>
+    </div>`;
+
+    const html = mealList.map((meal, idx)=>{
+      const t=sumFoods(meal.foods);
+      const mt=meal.target||{};
+      const border = meal.highlight ? `border-left:3px solid var(--gold);` : `border-left:3px solid var(--border2);`;
+      const altBtns = (templates[idx].alts || []).length > 1 ? (templates[idx].alts || []).map((alt, ai)=>`<button class="alt-btn ${window._mealAltIdx[idx]===ai?'active':''}" onclick="setMealAlt(${idx},${ai})"><span class="meal-option-title">${escapeHtml(alt.label)}</span></button>`).join('') : '';
+      const rows = meal.foods.map(fd=>`
+        <div class="meal-food">
+          <span class="food-n">${fd.name} <span style="color:var(--muted);font-size:12px;">${fd.grams}g</span></span>
+          <span class="food-macros">
+            <span class="macro-pill p">${round1(fd.p)}g P</span>
+            <span class="macro-pill c">${round1(fd.c)}g C</span>
+            <span class="macro-pill f">${round1(fd.fat)}g F</span>
+            <span class="macro-pill k">${fd.cal} kcal</span>
+          </span>
+        </div>`).join('');
+      return `<div class="meal-card" style="${border}">
+        <div class="meal-head">
+          <div><div class="meal-name">${meal.tag} ${meal.name}</div><div class="meal-time">⏱ ${meal.time} Uhr</div></div>
+          <div class="meal-stats"><strong>~${Math.round(t.cal)} kcal</strong><span style="font-size:11px;color:var(--muted);">${Math.round(t.p)}g P · ${Math.round(t.c)}g C · ${Math.round(t.fat)}g F</span></div>
+        </div>
+        ${altBtns ? `<div style="display:flex;gap:6px;padding:10px 20px;border-bottom:1px solid var(--border2);">${altBtns}</div>` : ''}
+        <div style="padding:10px 20px;border-bottom:1px solid var(--border2);">
+          <div class="meal-option-title">${escapeHtml(meal.altLabel || '')}</div>
+          <div class="meal-quality-note">${escapeHtml(meal.altNote || '')} Ziel pro Mahlzeit: ${Math.round(mt.p||0)}g P · ${Math.round(mt.c||0)}g C · ${Math.round(mt.f||0)}g F.</div>
+        </div>
+        <div class="meal-foods">${rows}</div>
+        <div class="meal-total"><span>Mahlzeit gesamt</span><span><strong>${Math.round(t.p)}g</strong> P · <strong>${Math.round(t.c)}g</strong> C · <strong>${Math.round(t.fat)}g</strong> F · <strong>${Math.round(t.cal)} kcal</strong></span></div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('mealPlan').innerHTML = summary + html;
+    generateShoppingList(mealList);
+  };
+  try { renderMealPlan = window.renderMealPlan; } catch(e) {}
+
+  // Einkaufsliste: Trocken-/Rohgewichte klar kennzeichnen; Packungen aufrunden.
+  const originalPackageRounded = (typeof packageRounded === 'function') ? packageRounded : null;
+  window.packageRounded = function(item){
+    const db = FOOD_DB[item.key] || {};
+    const grams = item.grams;
+    const pack = db.pack || (grams>=1000?1000:100);
+    if(db.pack && db.pack <= 10){
+      const pieces = Math.ceil(grams/150);
+      return `${pieces} Stk.`;
+    }
+    const rounded = Math.ceil(grams/pack)*pack;
+    if(rounded>=1000) return (rounded/1000).toFixed(rounded%1000===0?0:1)+' kg';
+    return rounded+'g';
+  };
+  try { packageRounded = window.packageRounded; } catch(e) {}
+
+})();
+
 
 // ══ INIT ══
 loadSaved();
