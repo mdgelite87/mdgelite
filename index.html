@@ -1619,6 +1619,7 @@ function calculate(){
   const gender=getVal('genderToggle') || 'male';
   const goalDelta=parseFloat(getVal('goalToggle') || 0);
   const protMult=parseFloat(getVal('proteinToggle') || 2.2);
+  const diet = getVal('dietToggle') || 'meat';
   if(!age||!weight||!height){showToast('⚠ Alter, Gewicht und Grösse eingeben');return;}
 
   let bmr,formula;
@@ -1670,9 +1671,7 @@ function calculate(){
   document.getElementById('carbsKcal').textContent=(carbsG*4).toLocaleString('de-CH')+' kcal';
   document.getElementById('fatKcal').textContent=(fatG*9).toLocaleString('de-CH')+' kcal';
 
-  const diet = getVal('dietToggle') || 'meat';
-  const mealsVal = getVal('mealsToggle');
-  const mealsNum = mealsVal === 'fasten' ? 'fasten' : parseInt(mealsVal || '4', 10);
+  const mealsVal = getVal('mealsToggle');  const mealsNum = mealsVal === 'fasten' ? 'fasten' : parseInt(mealsVal || '4', 10);
   const prefs = readPlanPreferences();
   generateMealPlan(target, mealsNum, protG, carbsG, fatG, diet, prefs);
 
