@@ -669,7 +669,7 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
         <div class="form-field" style="margin-top:14px;">
           <label>Lebensmittel, die du nicht magst oder nicht verträgst</label>
           <textarea id="dislikedFoods" placeholder="z.B. Lachs, Eier, Quark, Brokkoli, Thunfisch..." style="min-height:84px;"></textarea>
-          <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;">Diese Lebensmittel werden bei der Planerstellung vermieden. Mehrere Begriffe mit Komma trennen.</p>
+          <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;">Diese Lebensmittel werden bei der Planerstellung vermieden. Mehrere Begriffe mit Komma trennen.</p><p style="font-size:12px;color:var(--muted);margin-top:6px;line-height:1.6;">Reis, Pasta, Couscous, Bulgur, Quinoa und Kartoffeln werden im Plan und in der Einkaufsliste immer als Roh-/Einkaufsgewicht berechnet.</p>
         </div>
       </div>
       <button class="btn-calculate" onclick="calculate()">MEINEN PLAN BERECHNEN →</button>
@@ -1354,7 +1354,7 @@ function toggleStep(el) { el.classList.toggle('done'); }
 
 
 // ══ TOGGLES ══
-['genderToggle','goalToggle','proteinToggle','dietToggle','mealsToggle'].forEach(id=>{
+['genderToggle','goalToggle','proteinToggle','dietToggle','mealsToggle','breakfastPrefToggle','snackPrefToggle','fastenMainTimeToggle'].forEach(id=>{
   document.getElementById(id).querySelectorAll('button').forEach(btn=>{
     btn.addEventListener('click',()=>{
       document.getElementById(id).querySelectorAll('button').forEach(b=>b.classList.remove('active'));
@@ -1404,15 +1404,15 @@ const FOOD_DB = {
 
   // gesunde Kohlenhydratquellen
   haferflocken:{name:'Haferflocken',p:13,c:58,f:7,kcal:370,cat:'Kohlenhydrate',pack:500,tags:['carb','breakfast','sweet']},
-  reis:{name:'Reis gekocht',p:2.7,c:28,f:0.3,kcal:130,cat:'Kohlenhydrate',pack:1000,tags:['carb','lunch','dinner']},
-  basmati:{name:'Basmati Reis gekocht',p:2.7,c:28,f:0.3,kcal:130,cat:'Kohlenhydrate',pack:1000,tags:['carb','lunch','dinner']},
-  vollkornreis:{name:'Vollkornreis gekocht',p:2.6,c:23,f:0.9,kcal:112,cat:'Kohlenhydrate',pack:1000,tags:['carb','lunch','dinner']},
-  kartoffeln:{name:'Kartoffeln gekocht',p:2,c:17,f:0.1,kcal:77,cat:'Kohlenhydrate',pack:2500,tags:['carb','lunch','dinner']},
-  suesskartoffel:{name:'Süsskartoffeln gekocht',p:1.6,c:20,f:0.1,kcal:86,cat:'Kohlenhydrate',pack:1000,tags:['carb','lunch','dinner']},
-  quinoa:{name:'Quinoa gekocht',p:4,c:21,f:2,kcal:120,cat:'Kohlenhydrate',pack:500,tags:['carb','lunch','dinner']},
-  vollkornpasta:{name:'Vollkornpasta gekocht',p:5,c:30,f:1.1,kcal:150,cat:'Kohlenhydrate',pack:500,tags:['carb','lunch','dinner']},
-  couscous:{name:'Couscous gekocht',p:3.8,c:23,f:0.2,kcal:112,cat:'Kohlenhydrate',pack:500,tags:['carb','lunch','dinner']},
-  bulgur:{name:'Bulgur gekocht',p:3.1,c:18.6,f:0.2,kcal:83,cat:'Kohlenhydrate',pack:500,tags:['carb','lunch','dinner']},
+  reis:{name:'Reis (roh)',p:7,c:79,f:0.7,kcal:360,cat:'Kohlenhydrate',pack:1000,tags:['carb','lunch','dinner','raw']},
+  basmati:{name:'Basmati Reis (roh)',p:7.5,c:78,f:0.7,kcal:355,cat:'Kohlenhydrate',pack:1000,tags:['carb','lunch','dinner','raw']},
+  vollkornreis:{name:'Vollkornreis (roh)',p:7.5,c:76,f:2.2,kcal:360,cat:'Kohlenhydrate',pack:1000,tags:['carb','lunch','dinner','raw']},
+  kartoffeln:{name:'Kartoffeln (roh)',p:2,c:17,f:0.1,kcal:77,cat:'Kohlenhydrate',pack:2500,tags:['carb','lunch','dinner','raw']},
+  suesskartoffel:{name:'Süsskartoffeln (roh)',p:1.6,c:20,f:0.1,kcal:86,cat:'Kohlenhydrate',pack:1000,tags:['carb','lunch','dinner','raw']},
+  quinoa:{name:'Quinoa (roh)',p:14,c:64,f:6,kcal:368,cat:'Kohlenhydrate',pack:500,tags:['carb','lunch','dinner','raw']},
+  vollkornpasta:{name:'Vollkornpasta (roh)',p:13,c:67,f:2.5,kcal:350,cat:'Kohlenhydrate',pack:500,tags:['carb','lunch','dinner','raw']},
+  couscous:{name:'Couscous (roh)',p:12.8,c:77,f:0.6,kcal:376,cat:'Kohlenhydrate',pack:500,tags:['carb','lunch','dinner','raw']},
+  bulgur:{name:'Bulgur (roh)',p:12,c:76,f:1.3,kcal:342,cat:'Kohlenhydrate',pack:500,tags:['carb','lunch','dinner','raw']},
   vollkornbrot:{name:'Vollkornbrot',p:9,c:43,f:3.5,kcal:240,cat:'Kohlenhydrate',pack:500,tags:['carb','breakfast','snack','savory']},
   roggenbrot:{name:'Roggenbrot',p:8.5,c:42,f:1.2,kcal:220,cat:'Kohlenhydrate',pack:500,tags:['carb','breakfast','snack','savory']},
   wrap:{name:'Vollkorn-Wrap',p:8,c:48,f:7,kcal:285,cat:'Kohlenhydrate',pack:360,tags:['carb','snack','savory']},
@@ -1483,6 +1483,74 @@ const MEAL_BLUEPRINTS = {
     {title:'Thunfisch-Quinoa-Salat', keys:['thunfisch','quinoa','olivenoel'], extras:[['salat',120]], note:'leicht und salzig-frisch'},
     {title:'Mageres Rind mit Kartoffeln', keys:['rindhack5','kartoffeln','olivenoel'], extras:[['gemuese',140]], note:'deftiger, aber fettkontrollierter Teller'},
     {title:'Kabeljau-Reis-Gemüse', keys:['kabeljau','basmati','rapsoel'], extras:[['spinat',120]], note:'sehr fettarme Abendoption'}
+  ],
+  breakfast_sweet_vegetarian:[
+    {title:'Skyr-Oats mit Beeren', keys:['skyr','haferflocken','mandeln'], extras:[['beeren',90]], note:'vegetarische Protein-Bowl mit Beeren'},
+    {title:'Quark-Bananen-Oats', keys:['magerquark','haferflocken','chia'], extras:[['banane',70]], note:'süss, sättigend und meal-prep-tauglich'},
+    {title:'Whey Protein Porridge', keys:['whey','haferflocken','erdnussbutter'], extras:[['beeren',70]], note:'warmes Frühstück mit Whey Protein'}
+  ],
+  breakfast_savory_vegetarian:[
+    {title:'Eiklar-Spinat-Brot', keys:['eiklar','vollkornbrot','olivenoel'], extras:[['spinat',90]], note:'salzig, fettkontrolliert und proteinreich'},
+    {title:'Hüttenkäse-Roggenbrot', keys:['huettenkaese','roggenbrot','avocado'], extras:[['salat',60]], note:'schnelles herzhaftes Frühstück'},
+    {title:'Ei-Eiklar-Teller', keys:['eiklar','kartoffeln','rapsoel'], extras:[['spinat',80]], note:'deftiger Teller mit Kartoffeln als Rohgewicht gerechnet'}
+  ],
+  snack_sweet_vegetarian:[
+    {title:'Skyr-Beeren-Crunch', keys:['skyr','haferflocken','walnuesse'], extras:[['beeren',80]], note:'süsser Snack mit kontrollierter Fettquelle'},
+    {title:'Quark-Apfel-Chia', keys:['magerquark','apfel','chia'], extras:[], note:'leicht, süss und proteinreich'},
+    {title:'Whey Protein Shake Banane', keys:['whey','banane','mandeln'], extras:[], note:'Whey Protein statt Isolat'}
+  ],
+  snack_savory_vegetarian:[
+    {title:'Hüttenkäse-Wrap', keys:['huettenkaese','wrap','olivenoel'], extras:[['salat',80]], note:'salziger vegetarischer Wrap'},
+    {title:'Mozzarella-Light Brot', keys:['mozzarella_light','vollkornbrot','olivenoel'], extras:[['salat',80]], note:'herzhaft mit leichter Käsequelle'},
+    {title:'Skyr-Dip mit Reiswaffeln', keys:['skyr','reiswaffeln','kuerbiskerne'], extras:[['salat',60]], note:'salziger Dip-Snack mit Crunch'}
+  ],
+  lunch_vegetarian:[
+    {title:'Tofu-Reis-Gemüse Bowl', keys:['tofu','reis','olivenoel'], extras:[['brokkoli',140]], note:'vegetarische Bowl mit Reis als Rohgewicht'},
+    {title:'Seitan-Kartoffel-Teller', keys:['seitan','kartoffeln','rapsoel'], extras:[['gemuese',160]], note:'sehr proteinreich und fettkontrolliert'},
+    {title:'Tempeh-Quinoa-Bowl', keys:['tempeh','quinoa','olivenoel'], extras:[['spinat',120]], note:'kräftige vegetarische Bowl'},
+    {title:'Linsen-Bulgur-Pfanne', keys:['linsen','bulgur','olivenoel'], extras:[['gemuese',160]], note:'pflanzlich, ballaststoffreich und sättigend'},
+    {title:'Eiklar-Kartoffel-Gemüse', keys:['eiklar','kartoffeln','rapsoel'], extras:[['spinat',120]], note:'mageres vegetarisches Gericht'}
+  ],
+  dinner_vegetarian:[
+    {title:'Seitan-Reis-Gemüse', keys:['seitan','basmati','olivenoel'], extras:[['brokkoli',140]], note:'proteinreiches Abendessen'},
+    {title:'Tofu-Süsskartoffel-Bowl', keys:['tofu','suesskartoffel','avocado'], extras:[['gemuese',140]], note:'cremige Bowl mit guter Fettquelle'},
+    {title:'Tempeh-Kartoffel-Pfanne', keys:['tempeh','kartoffeln','rapsoel'], extras:[['spinat',130]], note:'deftig und vegetarisch'},
+    {title:'Hüttenkäse-Quinoa-Salat', keys:['huettenkaese','quinoa','olivenoel'], extras:[['salat',140]], note:'leichtes Abendessen'},
+    {title:'Linsen-Vollkornpasta', keys:['linsen','vollkornpasta','olivenoel'], extras:[['gemuese',140]], note:'vegetarische Pasta mit Hülsenfrüchten'}
+  ],
+  breakfast_sweet_vegan:[
+    {title:'Vegane Protein-Oats', keys:['vegwhey','haferflocken','mandeln'], extras:[['beeren',90]], note:'vegane süsse Bowl mit Proteinpulver'},
+    {title:'Tofu-Beeren-Oats', keys:['tofu','haferflocken','chia'], extras:[['beeren',100]], note:'milde vegane Bowl'},
+    {title:'Protein-Bananen-Porridge', keys:['vegwhey','haferflocken','erdnussbutter'], extras:[['banane',70]], note:'süsses veganes Porridge'}
+  ],
+  breakfast_savory_vegan:[
+    {title:'Tofu Scramble Brot', keys:['tofu','vollkornbrot','olivenoel'], extras:[['spinat',120]], note:'salziges veganes Frühstück'},
+    {title:'Seitan-Roggenbrot Teller', keys:['seitan','roggenbrot','avocado'], extras:[['salat',80]], note:'herzhaft und proteinreich'},
+    {title:'Tempeh-Kartoffel-Hash', keys:['tempeh','kartoffeln','rapsoel'], extras:[['spinat',100]], note:'deftiger veganer Start'}
+  ],
+  snack_sweet_vegan:[
+    {title:'Veganer Proteinshake Banane', keys:['vegwhey','banane','mandeln'], extras:[], note:'veganer Proteinshake als süsser Snack'},
+    {title:'Protein-Beeren-Oats', keys:['vegwhey','haferflocken','chia'], extras:[['beeren',80]], note:'süss und sättigend'},
+    {title:'Apfel-Erdnuss-Protein', keys:['vegwhey','apfel','erdnussbutter'], extras:[], note:'süsser veganer Snack'}
+  ],
+  snack_savory_vegan:[
+    {title:'Seitan-Wrap', keys:['seitan','wrap','olivenoel'], extras:[['salat',100]], note:'herzhafter veganer Snack'},
+    {title:'Tofu-Reiswaffeln', keys:['tofu','reiswaffeln','kuerbiskerne'], extras:[['salat',70]], note:'schnell und salzig'},
+    {title:'Tempeh-Roggenbrot', keys:['tempeh','roggenbrot','olivenoel'], extras:[['spinat',70]], note:'veganer Protein-Snack'}
+  ],
+  lunch_vegan:[
+    {title:'Seitan-Reis-Bowl', keys:['seitan','reis','olivenoel'], extras:[['brokkoli',150]], note:'vegane High-Protein-Bowl mit Reis roh gerechnet'},
+    {title:'Tofu-Kartoffel-Gemüse', keys:['tofu','kartoffeln','rapsoel'], extras:[['gemuese',160]], note:'klassischer veganer Teller'},
+    {title:'Tempeh-Quinoa-Bowl', keys:['tempeh','quinoa','olivenoel'], extras:[['spinat',120]], note:'vollwertige vegane Bowl'},
+    {title:'Linsen-Bulgur-Pfanne', keys:['linsen','bulgur','tahini'], extras:[['gemuese',160]], note:'orientalische vegane Pfanne'},
+    {title:'Seitan-Vollkornpasta', keys:['seitan','vollkornpasta','olivenoel'], extras:[['gemuese',140]], note:'vegane Protein-Pasta'}
+  ],
+  dinner_vegan:[
+    {title:'Tofu-Süsskartoffel-Bowl', keys:['tofu','suesskartoffel','avocado'], extras:[['gemuese',150]], note:'vegane Bowl mit Süsskartoffeln'},
+    {title:'Seitan-Basmati-Gemüse', keys:['seitan','basmati','rapsoel'], extras:[['brokkoli',150]], note:'mageres veganes Abendessen'},
+    {title:'Tempeh-Kartoffel-Pfanne', keys:['tempeh','kartoffeln','olivenoel'], extras:[['spinat',120]], note:'deftig und pflanzlich'},
+    {title:'Bohnen-Quinoa-Salat', keys:['bohnen','quinoa','olivenoel'], extras:[['salat',150]], note:'ballaststoffreiches veganes Abendessen'},
+    {title:'Linsen-Couscous-Bowl', keys:['linsen','couscous','tahini'], extras:[['gemuese',150]], note:'schnelle vegane Bowl'}
   ]
 };
 
@@ -1658,9 +1726,29 @@ function scoreDish(foods, targetP, targetC, targetF, bp){
   return score;
 }
 
-function buildBestOptions(kind, targetP, targetC, targetF, prefs, count=2){
-  const key = kind;
-  const pool = filterBlueprints(MEAL_BLUEPRINTS[key] || [], prefs);
+function getBlueprintPool(kind, diet, prefs){
+  const pools = [];
+  const add = (k)=>{ if(MEAL_BLUEPRINTS[k]) pools.push(...MEAL_BLUEPRINTS[k]); };
+  if(kind.endsWith('_mixed')){
+    const base = kind.replace('_mixed','');
+    add(base+'_sweet'+(diet==='vegetarian'?'_vegetarian':diet==='vegan'?'_vegan':''));
+    add(base+'_savory'+(diet==='vegetarian'?'_vegetarian':diet==='vegan'?'_vegan':''));
+    add(base+'_sweet'); add(base+'_savory');
+  } else {
+    if(diet==='vegetarian') add(kind+'_vegetarian');
+    if(diet==='vegan') add(kind+'_vegan');
+    add(kind);
+  }
+  // Vegan niemals tierische Basis-Pools erzwingen, wenn vegane Vorlagen existieren.
+  if(diet==='vegan'){
+    const veganOnly = pools.filter(bp => bp.keys.every(k => FOOD_DB[k] && (FOOD_DB[k].tags||[]).some(t=>['vegan','veggie','carb','fat','veg','fruit','liquid'].includes(t))));
+    if(veganOnly.length) return veganOnly;
+  }
+  return pools.length ? pools : (MEAL_BLUEPRINTS[kind] || []);
+}
+
+function buildBestOptions(kind, targetP, targetC, targetF, prefs, count=2, diet='meat'){
+  const pool = filterBlueprints(getBlueprintPool(kind, diet, prefs), prefs);
   const options = pool.map(bp=>{
     const foods = buildDishFromBlueprint(bp,targetP,targetC,targetF);
     return {label:bp.title, note:bp.note, foods, score:scoreDish(foods,targetP,targetC,targetF,bp)};
@@ -1668,7 +1756,7 @@ function buildBestOptions(kind, targetP, targetC, targetF, prefs, count=2){
   const out=[];
   const usedNames=new Set();
   for(const opt of options){
-    const base=opt.label.split(' mit ')[0];
+    const base=opt.label.replace(/[-–].*$/,'').split(' mit ')[0].trim();
     if(!usedNames.has(base) || out.length===0){
       out.push(opt); usedNames.add(base);
     }
@@ -1677,23 +1765,29 @@ function buildBestOptions(kind, targetP, targetC, targetF, prefs, count=2){
   return out.length?out:options.slice(0,count);
 }
 
+function prefKind(base, pref){
+  if(pref==='savory') return base+'_savory';
+  if(pref==='mixed') return base+'_mixed';
+  return base+'_sweet';
+}
+
 function selectedMealKinds(meals,prefs){
   if(meals===3) return [
-    {name:'Frühstück',time:'08:00',tag:'🍳',kind:prefs.breakfast==='savory'?'breakfast_savory':'breakfast_sweet'},
+    {name:'Frühstück',time:'08:00',tag:'🍳',kind:prefKind('breakfast', prefs.breakfast)},
     {name:'Mittagessen',time:'13:00',tag:'🥗',kind:'lunch'},
     {name:'Abendessen',time:'19:00',tag:'🍽️',kind:'dinner'}
   ];
   if(meals===5) return [
-    {name:'Frühstück',time:'07:30',tag:'🍳',kind:prefs.breakfast==='savory'?'breakfast_savory':'breakfast_sweet'},
-    {name:'Snack 1',time:'10:30',tag:'🥣',kind:prefs.snack==='savory'?'snack_savory':'snack_sweet'},
+    {name:'Frühstück',time:'07:30',tag:'🍳',kind:prefKind('breakfast', prefs.breakfast)},
+    {name:'Snack 1',time:'10:30',tag:'🥣',kind:prefKind('snack', prefs.snack)},
     {name:'Mittagessen',time:'13:30',tag:'🥗',kind:'lunch'},
-    {name:'Snack 2',time:'16:30',tag:'🥤',kind:prefs.snack==='sweet'?'snack_sweet':'snack_savory'},
+    {name:'Snack 2',time:'16:30',tag:'🥤',kind:prefs.snack==='mixed'?'snack_mixed':(prefs.snack==='sweet'?'snack_sweet':'snack_savory')},
     {name:'Abendessen',time:'20:00',tag:'🍽️',kind:'dinner'}
   ];
   return [
-    {name:'Frühstück',time:'08:00',tag:'🍳',kind:prefs.breakfast==='savory'?'breakfast_savory':'breakfast_sweet'},
+    {name:'Frühstück',time:'08:00',tag:'🍳',kind:prefKind('breakfast', prefs.breakfast)},
     {name:'Mittagessen',time:'12:30',tag:'🥗',kind:'lunch'},
-    {name:'Snack',time:'16:00',tag:'🥣',kind:prefs.snack==='savory'?'snack_savory':'snack_sweet'},
+    {name:'Snack',time:'16:00',tag:'🥣',kind:prefKind('snack', prefs.snack)},
     {name:'Abendessen',time:'19:30',tag:'🍽️',kind:'dinner'}
   ];
 }
@@ -1713,7 +1807,7 @@ function generateMealPlan(kcal, meals, proteinG, carbsG, fatG, diet, prefs) {
   const templates = mealDefs.map((m) => ({
     name:m.name,time:m.time,tag:m.tag,kind:m.kind,
     target:{...per,kcal:macroKcal(per.p,per.c,per.f)},
-    alts:buildBestOptions(m.kind, per.p, per.c, per.f, prefs, 2)
+    alts:buildBestOptions(m.kind, per.p, per.c, per.f, prefs, 2, diet)
   }));
 
   window._mealTemplates = templates;
@@ -1741,7 +1835,7 @@ function generateFastenPlan(kcal, proteinG, carbsG, fatG, diet, prefs) {
   const kind = prefs.fastenMainTime === 'dinner' ? 'dinner' : 'lunch';
   const templates = [
     {name:'Whey Proteinshake 1',time:firstTime,tag:'🥤',kind:'shake',target:{p:shakeTargetP,c:0,f:0,kcal:sumFoods(shakeA).cal},alts:[{label:'Whey Proteinshake',note:'60g Whey liefern ungefähr 40g Protein.',foods:shakeA}]},
-    {name:mainName,time:mainTime,tag:'🍽️',kind,highlight:true,target:{p:mainP,c:mainC,f:mainF,kcal:macroKcal(mainP,mainC,mainF)},alts:buildBestOptions(kind, mainP, mainC, mainF, prefs, 2)},
+    {name:mainName,time:mainTime,tag:'🍽️',kind,highlight:true,target:{p:mainP,c:mainC,f:mainF,kcal:macroKcal(mainP,mainC,mainF)},alts:buildBestOptions(kind, mainP, mainC, mainF, prefs, 2, diet)},
     {name:'Whey Proteinshake 2',time:secondTime,tag:'🥤',kind:'shake',target:{p:shakeTargetP,c:0,f:0,kcal:sumFoods(shakeB).cal},alts:[{label:'Whey Proteinshake',note:'zweiter Proteinshake als Mahlzeitenersatz.',foods:shakeB}]}
   ];
   window._mealTemplates = templates;
@@ -2016,10 +2110,10 @@ const LOCAL_FOOD_DB = [
   {name:'Kidneybohnen gekocht', aliases:'kidney beans haricots rouges', kcal:127,p:8.7,c:23,f:0.5, source:'Standarddatenbank'},
 
   {name:'Haferflocken', aliases:'oats oatmeal avoine', kcal:370,p:13,c:58,f:7, source:'Standarddatenbank'},
-  {name:'Reis gekocht', aliases:'weisser reis rice cooked riz cuit', kcal:130,p:2.7,c:28,f:0.3, source:'Standarddatenbank'},
-  {name:'Reis trocken', aliases:'weisser reis rice raw riz cru', kcal:360,p:7,c:79,f:0.7, source:'Standarddatenbank'},
-  {name:'Basmatireis gekocht', aliases:'basmati rice cooked', kcal:121,p:3,c:25,f:0.4, source:'Standarddatenbank'},
-  {name:'Kartoffeln gekocht', aliases:'potato pomme de terre', kcal:77,p:2,c:17,f:0.1, source:'Standarddatenbank'},
+  {name:'Reis (roh)', aliases:'weisser reis reis trocken rice raw riz cru', kcal:360,p:7,c:79,f:0.7, source:'Standarddatenbank'},
+  
+  {name:'Basmatireis (roh)', aliases:'basmati reis trocken rice raw', kcal:355,p:7.5,c:78,f:0.7, source:'Standarddatenbank'},
+  {name:'Kartoffeln (roh)', aliases:'kartoffel potato pomme de terre roh', kcal:77,p:2,c:17,f:0.1, source:'Standarddatenbank'},
   {name:'Süsskartoffeln', aliases:'sweet potato patate douce', kcal:86,p:1.6,c:20,f:0.1, source:'Standarddatenbank'},
   {name:'Vollkornbrot', aliases:'whole grain bread pain complet', kcal:230,p:9,c:40,f:4, source:'Standarddatenbank'},
   {name:'Toastbrot', aliases:'toast bread pain de mie', kcal:265,p:8,c:49,f:3.5, source:'Standarddatenbank'},
