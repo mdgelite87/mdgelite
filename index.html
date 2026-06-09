@@ -2758,6 +2758,199 @@ function filterCheat(cat, btn) {
 })();
 
 
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MDG ELITE – FINAL MACRO CONSISTENCY PATCH
+   Zweck: Kein Unterschied mehr zwischen angezeigten Makros und Kalorien.
+   Regel: Kalorien im Ernährungsplan werden immer aus Makros berechnet
+   (Protein 4 kcal/g, Kohlenhydrate 4 kcal/g, Fett 9 kcal/g).
+   Zusätzlich wird nach jeder Optionswahl zuerst Protein, dann Fett,
+   dann Kohlenhydrate auf das Tagesziel nachkalibriert.
+   ═══════════════════════════════════════════════════════════════════════ */
+(function mdgEliteMacroConsistencyPatch(){
+  if (typeof FOOD_DB === 'undefined') return;
+
+  const kcalFromMacros = (p,c,f) => Math.round((Number(p)||0)*4 + (Number(c)||0)*4 + (Number(f)||0)*9);
+  window.macroKcal = kcalFromMacros;
+  try { macroKcal = window.macroKcal; } catch(e) {}
+
+  // Datenbank intern konsistent machen: kcal folgt den Makros, damit Summen mathematisch stimmen.
+  Object.keys(FOOD_DB).forEach(k => {
+    const x = FOOD_DB[k];
+    if (!x) return;
+    x.p = Number(x.p)||0;
+    x.c = Number(x.c)||0;
+    x.f = Number(x.f)||0;
+    x.kcal = kcalFromMacros(x.p, x.c, x.f);
+  });
+
+  window.gramsFor = function(key, grams){
+    const f = FOOD_DB[key];
+    const g = Math.max(0, Math.round(Number(grams)||0));
+    if(!f) return {k:key,name:key,grams:g,p:0,c:0,fat:0,cal:0};
+    const p = +(f.p*g/100).toFixed(1);
+    const c = +(f.c*g/100).toFixed(1);
+    const fat = +(f.f*g/100).toFixed(1);
+    return {k:key,name:f.name,grams:g,p,c,fat,cal:kcalFromMacros(p,c,fat),cat:f.cat};
+  };
+  try { gramsFor = window.gramsFor; } catch(e) {}
+
+  window.sumFoods = function(foods){
+    const total = (foods||[]).reduce((a,f)=>{
+      a.p += Number(f.p)||0;
+      a.c += Number(f.c)||0;
+      a.fat += Number(f.fat)||0;
+      return a;
+    },{p:0,c:0,fat:0,cal:0});
+    total.p = +total.p.toFixed(1);
+    total.c = +total.c.toFixed(1);
+    total.fat = +total.fat.toFixed(1);
+    total.cal = kcalFromMacros(total.p,total.c,total.fat);
+    return total;
+  };
+  try { sumFoods = window.sumFoods; } catch(e) {}
+
+  function allSelectedFoods(){
+    const selected=[];
+    if(!window._mealTemplates || !window._mealAltIdx) return selected;
+    window._mealTemplates.forEach((meal, mi)=>{
+      const alt = meal.alts && meal.alts[window._mealAltIdx[mi] || 0];
+      if(!alt || !alt.foods) return;
+      alt.foods.forEach((food, fi)=>selected.push({meal, alt, food, mi, fi}));
+    });
+    return selected;
+  }
+
+  function planTotals(){
+    return allSelectedFoods().reduce((a,x)=>{
+      const f=x.food;
+      a.p += Number(f.p)||0; a.c += Number(f.c)||0; a.fat += Number(f.fat)||0;
+      return a;
+    },{p:0,c:0,fat:0,cal:0});
+  }
+
+  function refreshFood(ref, newG){
+    const rebuilt = gramsFor(ref.food.k, newG);
+    Object.assign(ref.food, rebuilt);
+  }
+
+  function adjustMacro(macro, target, candidates, maxStep=250){
+    let totals = planTotals();
+    let current = macro==='fat' ? totals.fat : totals[macro];
+    let delta = target - current;
+    if(Math.abs(delta) < 0.6) return;
+
+    // Kandidat bevorzugen, der dieses Makro stark liefert und im ausgewählten Plan vorhanden ist.
+    let best = null;
+    let bestPerG = 0;
+    for(const ref of allSelectedFoods()){
+      if(!candidates.includes(ref.food.k)) continue;
+      const db = FOOD_DB[ref.food.k];
+      if(!db) continue;
+      const perG = macro==='fat' ? db.f/100 : db[macro]/100;
+      if(perG > bestPerG){ best = ref; bestPerG = perG; }
+    }
+    if(!best || bestPerG<=0) return;
+    const gramsDelta = Math.max(-maxStep, Math.min(maxStep, Math.round(delta / bestPerG)));
+    refreshFood(best, Math.max(0, best.food.grams + gramsDelta));
+  }
+
+  window.calibrateCurrentPlan = function(){
+    const targets = window._currentTargets;
+    if(!targets || !window._mealTemplates) return;
+
+    const proteinKeys = ['huhn','pute','rind','rindhack5','kalb','schweinefilet','kabeljau','thunfisch','garnelen','seitan','tofu','tempeh','magerquark','skyr','huettenkaese','whey','vegwhey','eimix'];
+    const fatKeys = ['olivenoel','rapsoel','mandeln','walnuesse','cashews','chia','leinsamen','kuerbiskerne','erdnussbutter','tahini','avocado','oliven'];
+    const carbKeys = ['reis','basmati','vollkornreis','kartoffeln','suesskartoffel','quinoa','vollkornpasta','couscous','bulgur','vollkornbrot','roggenbrot','wrap','haferflocken','reiswaffeln','banane','apfel','beeren','linsen','bohnen'];
+
+    // Mehrere kleine Durchläufe, weil Proteinquellen oft minimale Fett-/KH-Anteile enthalten.
+    for(let i=0;i<4;i++){
+      adjustMacro('p', targets.proteinG, proteinKeys, 220);
+      adjustMacro('fat', targets.fatG, fatKeys, 120);
+      adjustMacro('c', targets.carbsG, carbKeys, 260);
+    }
+
+    // Finale Kalorienkorrektur ausschliesslich über KH-Quelle, falls durch Rundung noch Differenz bleibt.
+    let totals = planTotals();
+    totals.cal = kcalFromMacros(totals.p,totals.c,totals.fat);
+    const kcalDiff = targets.kcal - totals.cal;
+    if(Math.abs(kcalDiff) >= 4){
+      const refs = allSelectedFoods().filter(r => carbKeys.includes(r.food.k));
+      let best = refs.find(r => ['reis','basmati','vollkornreis','kartoffeln','suesskartoffel','vollkornpasta','couscous','bulgur','quinoa','haferflocken'].includes(r.food.k)) || refs[0];
+      if(best){
+        const db = FOOD_DB[best.food.k];
+        const kcalPerG = kcalFromMacros(db.p/100, db.c/100, db.f/100);
+        // kcalPerG über Makroformel in Dezimalform genauer berechnen
+        const exactKcalPerG = ((db.p||0)*4 + (db.c||0)*4 + (db.f||0)*9)/100;
+        const addG = Math.round(kcalDiff / exactKcalPerG);
+        refreshFood(best, Math.max(0, best.food.grams + addG));
+      }
+    }
+  };
+  try { calibrateCurrentPlan = window.calibrateCurrentPlan; } catch(e) {}
+
+  // Render erneut überschreiben: alle Kalorienwerte stammen aus Makros; keine irreführende Kategorie in Summenzeile.
+  window.renderMealPlan = function(templates, diet, targets, isFasten=false, prefs=null){
+    const mealList = getActiveMealList();
+    const totals = mealList.reduce((a,m)=>{const t=sumFoods(m.foods);a.p+=t.p; a.c+=t.c; a.fat+=t.fat; return a;},{p:0,c:0,fat:0,cal:0});
+    totals.p=+totals.p.toFixed(1); totals.c=+totals.c.toFixed(1); totals.fat=+totals.fat.toFixed(1); totals.cal=kcalFromMacros(totals.p,totals.c,totals.fat);
+    const kcalDiff = Math.round(totals.cal-targets.kcal);
+    const pDiff = Math.round(totals.p-targets.proteinG);
+    const cDiff = Math.round(totals.c-targets.carbsG);
+    const fDiff = Math.round(totals.fat-targets.fatG);
+    const ok = Math.abs(kcalDiff)<=10 && Math.abs(totals.p-targets.proteinG)<=3 && Math.abs(totals.fat-targets.fatG)<=2 && Math.abs(totals.c-targets.carbsG)<=5;
+    const diffTxt = `Kalorien ${kcalDiff>0?'+':''}${kcalDiff}, P ${pDiff>0?'+':''}${pDiff}g, C ${cDiff>0?'+':''}${cDiff}g, F ${fDiff>0?'+':''}${fDiff}g`;
+
+    const adminInfo = document.getElementById('planAdminText') ? '' : '';
+    const summary = `<div style="margin-bottom:16px;padding:12px 20px;background:rgba(201,168,76,0.08);border:1px solid var(--gold-dim);border-radius:4px;font-size:13px;color:var(--text);line-height:1.6;">
+      Ziel: <strong>${targets.proteinG}g P</strong> · <strong>${targets.carbsG}g C</strong> · <strong>${targets.fatG}g F</strong> · <strong>${targets.kcal} kcal</strong><br>
+      Aktuelle Auswahl: <strong>${Math.round(totals.p)}g P</strong> · <strong>${Math.round(totals.c)}g C</strong> · <strong>${Math.round(totals.fat)}g F</strong> · <strong>${Math.round(totals.cal)} kcal</strong> <span class="${ok?'macro-ok':'macro-warn'}">(${diffTxt})</span><br>
+      <span style="color:var(--muted);font-size:12px;">${isFasten?'Proteinfasten: 2 Whey-Proteinshakes ersetzen 2 Mahlzeiten; jeder Shake liefert ca. 33% deines Tagesproteins.':'Protein, Fett und Kohlenhydrate werden pro Mahlzeit verteilt. Die Tageskalibrierung korrigiert Protein-, Fett- und Kohlenhydratquellen automatisch.'}</span><br>
+      <span style="color:var(--muted);font-size:11px;">Kalorien im Plan werden einheitlich aus Makros berechnet: Protein 4 kcal/g, Kohlenhydrate 4 kcal/g, Fett 9 kcal/g. Roh-/Einkaufsgewicht bei Fleisch/Fisch, Reis, Pasta, Kartoffeln, Couscous, Bulgur, Quinoa und Hülsenfrüchten.</span>
+    </div>`;
+
+    const html = mealList.map((meal, idx)=>{
+      const t=sumFoods(meal.foods);
+      const mt=meal.target||{};
+      const border = meal.highlight ? `border-left:3px solid var(--gold);` : `border-left:3px solid var(--border2);`;
+      const altBtns = (templates[idx].alts || []).length > 1 ? (templates[idx].alts || []).map((alt, ai)=>`<button class="alt-btn ${window._mealAltIdx[idx]===ai?'active':''}" onclick="setMealAlt(${idx},${ai})"><span class="meal-option-title">${escapeHtml(alt.label)}</span></button>`).join('') : '';
+      const rows = meal.foods.map(fd=>{
+        // einzelne Lebensmittel-Kalorien ebenfalls aus ihren Makros aktualisieren
+        fd.cal = kcalFromMacros(fd.p, fd.c, fd.fat);
+        return `<div class="meal-food">
+          <span class="food-n">${fd.name} <span style="color:var(--muted);font-size:12px;">${fd.grams}g</span></span>
+          <span class="food-macros">
+            <span class="macro-pill p">${round1(fd.p)}g P</span>
+            <span class="macro-pill c">${round1(fd.c)}g C</span>
+            <span class="macro-pill f">${round1(fd.fat)}g F</span>
+            <span class="macro-pill k">${fd.cal} kcal</span>
+          </span>
+        </div>`;
+      }).join('');
+      return `<div class="meal-card" style="${border}">
+        <div class="meal-head">
+          <div><div class="meal-name">${meal.tag} ${meal.name}</div><div class="meal-time">⏱ ${meal.time} Uhr</div></div>
+          <div class="meal-stats"><strong>~${Math.round(t.cal)} kcal</strong><span style="font-size:11px;color:var(--muted);">${Math.round(t.p)}g P · ${Math.round(t.c)}g C · ${Math.round(t.fat)}g F</span></div>
+        </div>
+        ${altBtns ? `<div style="display:flex;gap:6px;padding:10px 20px;border-bottom:1px solid var(--border2);">${altBtns}</div>` : ''}
+        <div style="padding:10px 20px;border-bottom:1px solid var(--border2);">
+          <div class="meal-option-title">${escapeHtml(meal.altLabel || '')}</div>
+          <div class="meal-quality-note">${escapeHtml(meal.altNote || '')} Ziel pro Mahlzeit: ${Math.round(mt.p||0)}g P · ${Math.round(mt.c||0)}g C · ${Math.round(mt.f||0)}g F.</div>
+        </div>
+        <div class="meal-foods">${rows}</div>
+        <div class="meal-total"><span>Mahlzeit gesamt</span><span><strong>${Math.round(t.p)}g</strong> P · <strong>${Math.round(t.c)}g</strong> C · <strong>${Math.round(t.fat)}g</strong> F · <strong>${Math.round(t.cal)} kcal</strong></span></div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('mealPlan').innerHTML = summary + html;
+    generateShoppingList(mealList);
+  };
+  try { renderMealPlan = window.renderMealPlan; } catch(e) {}
+
+})();
+
+
 // ══ INIT ══
 loadSaved();
 if (document.getElementById('cheatFilter')) buildCheatFilters();
