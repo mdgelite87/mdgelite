@@ -90,6 +90,8 @@ section{position:relative;z-index:1;}
 .hero-socials{display:flex;gap:16px;margin-top:24px;justify-content:center;align-items:center;}
 .hero-social{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--muted);transition:all 0.2s;}
 .hero-social:hover{transform:translateY(-3px);border-color:var(--gold-dim);color:var(--gold);box-shadow:0 6px 18px rgba(201,168,76,0.18);}
+.hero-social-disabled{opacity:0.4;cursor:not-allowed;}
+.hero-social-disabled:hover{transform:none;border-color:var(--border);color:var(--muted);box-shadow:none;}
 .hero-welcome{max-width:620px;margin:28px auto 0;font-size:16px;line-height:1.8;color:var(--muted);font-weight:300;padding:20px 24px;background:var(--card);border:1px solid var(--border);border-radius:4px;}
 .hero-ctas{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap;justify-content:center;}
 .btn-primary{padding:14px 32px;background:var(--gold);color:var(--black);border:none;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;cursor:pointer;border-radius:2px;transition:all 0.2s;}
@@ -427,12 +429,12 @@ footer a{color:var(--gold);text-decoration:none;}
       <a class="hero-social" href="https://youtube.com/@mdgelite" target="_blank" rel="noopener" aria-label="YouTube">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.08 0 12 0 12s0 3.92.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.8ZM9.6 15.57V8.43L15.82 12 9.6 15.57Z"/></svg>
       </a>
-      <a class="hero-social" href="https://instagram.com/mdgelite" target="_blank" rel="noopener" aria-label="Instagram">
+      <span class="hero-social hero-social-disabled" data-href="https://instagram.com/DEIN_INSTAGRAM_HANDLE" aria-label="Instagram (bald verfügbar)" title="Bald verfügbar">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.72 3.72 0 0 1-1.38-.9 3.72 3.72 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16ZM12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.3-1.46.72-2.12 1.38C1.35 2.67.94 3.35.63 4.14.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.3.79.72 1.46 1.38 2.12.66.66 1.34 1.08 2.12 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56a5.88 5.88 0 0 0 2.12-1.38 5.88 5.88 0 0 0 1.38-2.12c.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.88 5.88 0 0 0-1.38-2.12A5.88 5.88 0 0 0 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0Zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32ZM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm6.41-10.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88Z"/></svg>
-      </a>
-      <a class="hero-social" href="https://tiktok.com/@mdgelite" target="_blank" rel="noopener" aria-label="TikTok">
+      </span>
+      <span class="hero-social hero-social-disabled" data-href="https://tiktok.com/@DEIN_TIKTOK_HANDLE" aria-label="TikTok (bald verfügbar)" title="Bald verfügbar">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.3 0 .59.04.87.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1Z"/></svg>
-      </a>
+      </span>
     </div>
     <div class="hero-welcome" id="heroWelcome" data-editable>
       Willkommen auf meiner Website! Ich bin Marco – Fitness-Athlet, Content Creator und auf dem Weg zur IFBB-Bühne 2027. Hier findest du kostenlose Tools, ehrliche Einblicke in meine Prep und alles rund um Ernährung, Training und Lifestyle.
@@ -1390,6 +1392,7 @@ const FOOD_DB = {
   // 20 hochwertige Proteinquellen für Fleisch/Fischesser + alltagstaugliche Ergänzungen
   huhn:{name:'Hühnerbrust',p:31,c:0,f:3.6,kcal:165,cat:'Protein',tags:['protein','meat','lean','lunch','dinner']},
   pute:{name:'Putenbrust',p:30,c:0,f:2,kcal:145,cat:'Protein',tags:['protein','meat','lean','lunch','dinner']},
+  putenaufschnitt:{name:'Putenbrust-Aufschnitt',p:22,c:1,f:1,kcal:103,cat:'Protein',pack:100,tags:['protein','meat','lean','breakfast','snack','savory']},
   rind:{name:'Rindssteak mager',p:28,c:0,f:5,kcal:158,cat:'Protein',tags:['protein','meat','lunch','dinner']},
   rindhack5:{name:'Rinderhack 5% Fett',p:21,c:0,f:5,kcal:129,cat:'Protein',tags:['protein','meat','lunch','dinner']},
   kalb:{name:'Kalbsfilet mager',p:22,c:0,f:2.8,kcal:112,cat:'Protein',tags:['protein','meat','lunch','dinner']},
@@ -1468,16 +1471,17 @@ const MENU_RESEARCH = {
 // step = Rasterung beim Optimieren. Werte sind auf eine Einzelmahlzeit bezogen.
 const PORTION = {
   // Proteinquellen
-  huhn:{min:80,max:260,step:5},  pute:{min:80,max:260,step:5},  rind:{min:80,max:250,step:5},
+  huhn:{min:80,max:260,step:5},  pute:{min:80,max:260,step:5},  putenaufschnitt:{min:30,max:120,step:5},  rind:{min:80,max:250,step:5},
   rindhack5:{min:80,max:250,step:5}, kalb:{min:80,max:250,step:5}, schweinefilet:{min:80,max:250,step:5},
   lachs:{min:80,max:220,step:5}, kabeljau:{min:90,max:280,step:5}, thunfisch:{min:60,max:200,step:5},
   garnelen:{min:80,max:250,step:5}, forelle:{min:90,max:250,step:5},
   eier:{min:50,max:180,step:10}, eiklar:{min:60,max:300,step:10},
-  magerquark:{min:100,max:350,step:10}, skyr:{min:100,max:350,step:10},
+  magerquark:{min:100,max:400,step:10}, skyr:{min:100,max:400,step:10},
+  eimix:{min:80,max:380,step:10},
   huettenkaese:{min:80,max:200,step:10}, mozzarella_light:{min:40,max:125,step:5},
   whey:{min:25,max:60,step:5}, tofu:{min:100,max:250,step:10}, tempeh:{min:80,max:200,step:5},
   seitan:{min:80,max:220,step:5}, linsen:{min:80,max:250,step:10}, bohnen:{min:80,max:250,step:10},
-  vegwhey:{min:25,max:55,step:5},
+  vegwhey:{min:25,max:60,step:5},
   // Kohlenhydrate (Trockengewicht bei Reis/Pasta etc.)
   haferflocken:{min:30,max:150,step:5}, reis:{min:40,max:150,step:5}, basmati:{min:40,max:150,step:5},
   vollkornreis:{min:40,max:150,step:5}, kartoffeln:{min:120,max:500,step:10},
@@ -1510,7 +1514,7 @@ const MEAL_BLUEPRINTS = {
   breakfast_savory:[
     {title:'Eiklar-Rührei mit Vollkornbrot', keys:['eiklar','vollkornbrot','olivenoel'], extras:[['spinat',70]], note:'salziges Frühstück mit Brot und Gemüse'},
     {title:'Hüttenkäse-Brot Teller', keys:['huettenkaese','roggenbrot','avocado'], extras:[['salat',60]], note:'herzhaft, gut sättigend und gut vorbereitbar'},
-    {title:'Putenbrust-Brot', keys:['pute','vollkornbrot','olivenoel'], extras:[['spinat',40]], note:'sehr proteinreich und fettkontrolliert'}
+    {title:'Putenaufschnitt-Brot', keys:['putenaufschnitt','vollkornbrot','olivenoel'], extras:[['spinat',40]], note:'sehr proteinreich und fettkontrolliert'}
   ],
   snack_sweet:[
     {title:'Whey Shake mit Banane', keys:['whey','banane','mandeln'], extras:[], note:'süsser Shake-Snack; Whey Protein statt Isolat'},
@@ -1520,7 +1524,7 @@ const MEAL_BLUEPRINTS = {
   snack_savory:[
     {title:'Hüttenkäse-Roggenbrot', keys:['huettenkaese','roggenbrot','avocado'], extras:[['salat',50]], note:'salzige Zwischenmahlzeit ohne unnötige Fettspitzen'},
     {title:'Thunfisch-Wrap', keys:['thunfisch','wrap','olivenoel'], extras:[['salat',80]], note:'herzhafter Snack mit Wrap und Salat'},
-    {title:'Putenbrust-Reiswaffeln', keys:['pute','reiswaffeln','mandeln'], extras:[['salat',40]], note:'einfach, schnell und reisefreundlich'}
+    {title:'Putenaufschnitt-Reiswaffeln', keys:['putenaufschnitt','reiswaffeln','mandeln'], extras:[['salat',40]], note:'einfach, schnell und reisefreundlich'}
   ],
   lunch:[
     {title:'Chicken Rice Bowl', keys:['huhn','reis','olivenoel'], extras:[['brokkoli',120]], note:'klassische Fitness-Bowl mit Gemüse'},
@@ -1624,9 +1628,29 @@ function calculate(){
   const tdee=bmr*activity;
   const target=Math.max(900, Math.round(tdee+goalDelta));
   const protG=Math.round(weight*protMult);
-  const fatMult = goalDelta < 0 ? 0.75 : goalDelta === 0 ? 0.9 : 1.0;
-  const fatG=Math.round(weight*fatMult);
-  const carbsG=Math.max(0, Math.round((target-protG*4-fatG*9)/4));
+  let fatMult = goalDelta < 0 ? 0.75 : goalDelta === 0 ? 0.9 : 1.0;
+  let fatG=Math.round(weight*fatMult);
+  let carbsG=Math.round((target-protG*4-fatG*9)/4);
+
+  // Ehrliches Makro-Balancing: Kohlenhydrate dürfen nicht auf ein unrealistisches
+  // Minimum (oder 0) kollabieren, während die angebotenen Gerichte zwangsläufig KH
+  // enthalten. Messungen zeigen: Selbst bei rechnerischem KH-Ziel von 0 liefert ein
+  // realer Plan ~85-170g KH/Tag (Gemüse, Beeren, Brot-/Reis-Grundportionen, Sauce,
+  // bei vegan zusätzlich Hülsenfrüchte/Tofu). Das KH-Ziel wird daher auf diesen real
+  // erreichbaren Boden gehoben, damit angezeigtes Ziel und tatsächlicher Plan
+  // übereinstimmen. Fett wird dafür bis 0.5 g/kg gesenkt; reicht das nicht, wird das
+  // KH-Ziel ehrlich angehoben (Protein bleibt unangetastet).
+  const dietFloor = diet === 'vegan' ? 150 : diet === 'vegetarian' ? 130 : 100;
+  const minCarbsG = Math.max(dietFloor, Math.round(weight*1.1));
+  if(carbsG < minCarbsG){
+    const fatFloorG = Math.round(weight*0.5);
+    while(carbsG < minCarbsG && fatG > fatFloorG){
+      fatG -= 1;
+      carbsG = Math.round((target-protG*4-fatG*9)/4);
+    }
+    if(carbsG < minCarbsG) carbsG = minCarbsG;
+  }
+  carbsG = Math.max(0, carbsG);
 
   const wk=goalDelta*7,wkg=(wk/7700).toFixed(2);
   const wt=wk===0?'Gewicht stabil':wk<0?`Fettabbau ~${Math.abs(wkg)} kg/Woche`:`Gewichtszunahme ~${wkg} kg/Woche`;
@@ -1724,11 +1748,18 @@ function dishError(items, tP, tC, tF){
   return e;
 }
 
+// Kohlenhydratquellen, die dem Gericht den Namen/Charakter geben und daher nicht
+// auf 0g fallen dürfen (z.B. Haferflocken im Porridge, Reis in der Bowl).
+const STAPLE_CARB_KEYS = ['haferflocken','reis','basmati','vollkornreis','kartoffeln','suesskartoffel','quinoa','vollkornpasta','couscous','bulgur','vollkornbrot','roggenbrot','wrap','reiswaffeln'];
+
 // Portionsbeschränkter Optimierer: Protein- und Fettquelle werden im realistischen
 // Bereich gerastert, die KH-Quelle füllt die restlichen Kohlenhydrate auf.
 // So entstehen niemals absurde Mengen (z.B. 380g Hüttenkäse).
-// Passende herzhafte Gerichte erhalten zusätzlich eine fixe Portion Zero Sauce (40g),
-// deren Makros voll in die Optimierung einfliessen.
+// Wichtig: Ist die KH-Quelle ein namensgebender Grundpfeiler (Haferflocken, Reis ...),
+// bleibt sie immer >= ihrer Mindestportion. Passt das nicht zum (niedrigen) KH-Ziel,
+// wird das Gericht über penalty hoch bewertet, sodass stattdessen ein KH-armes
+// Gericht (Eier, Quark, Fleisch+Gemüse) gewählt wird. Kein "Porridge mit 0g Hafer".
+// Passende herzhafte Gerichte erhalten zusätzlich eine fixe Portion Zero Sauce (40g).
 function buildDishFromBlueprint(bp, targetP, targetC, targetF){
   const fixed = [];
   (bp.extras||[]).forEach(([k,g])=>{ const item=gramsFor(k,g); if(item) fixed.push(item); });
@@ -1739,15 +1770,19 @@ function buildDishFromBlueprint(bp, targetP, targetC, targetF){
   if(!pF||!cF||!fF) return consolidateFoods(fixed);
 
   const pP=portionFor(pKey), pF_=portionFor(fKey), pC=portionFor(cKey);
+  const cIsStaple = STAPLE_CARB_KEYS.includes(cKey);
+  // Untergrenze der KH-Quelle: Grundpfeiler nie unter Mindestportion.
+  const cMin = cIsStaple ? pC.min : 0;
   let best=null;
 
   for(let pg=pP.min; pg<=pP.max; pg+=pP.step){
     for(let fg=pF_.min; fg<=pF_.max; fg+=pF_.step){
       const base = fixed.concat([gramsFor(pKey,pg), gramsFor(fKey,fg)]);
       const bm=sumFoods(base);
-      // benötigte KH aus der KH-Quelle, dann auf realistische Portion begrenzen
-      let cg = (targetC-bm.c) / (cF.c/100 || 0.01);
-      cg = clampPortion(cKey, snap(cKey, cg));
+      // benötigte KH aus der KH-Quelle
+      let cgRaw = (targetC-bm.c) / (cF.c/100 || 0.01);
+      let cg = snap(cKey, cgRaw);
+      cg = Math.max(cMin, Math.min(pC.max, cg)); // Grundpfeiler bleibt >= Minimum
       const items=consolidateFoods(base.concat([gramsFor(cKey,cg)]));
       const err=dishError(items,targetP,targetC,targetF);
       if(!best || err<best.err) best={items,err};
@@ -1856,11 +1891,20 @@ function generateMealPlan(kcal, meals, proteinG, carbsG, fatG, diet, prefs) {
 
 function generateFastenPlan(kcal, proteinG, carbsG, fatG, diet, prefs) {
   const powder = diet === 'vegan' ? 'vegwhey' : 'whey';
-  const shakeTargetP = proteinG * 0.33;
-  const wheyPerShake = clampPortion(powder, snap(powder, shakeTargetP / (FOOD_DB[powder].p/100)));
+  const pPer100 = FOOD_DB[powder].p/100;
+  // Beim Proteinfasten ersetzen 2 Shakes 2 Mahlzeiten. Die Hauptmahlzeit kann
+  // realistisch ~65g Protein liefern; der Rest muss über die 2 Shakes kommen.
+  // Wir dimensionieren die Shakes so, dass Shakes + Hauptmahlzeit das Ziel treffen,
+  // deckeln einen Shake aber bei 90g Pulver (~60g Protein) – darüber ist das
+  // Tagesproteinziel mit diesem Fastenformat nicht sinnvoll darstellbar.
+  const mainMealProteinCap = 65;
+  const proteinForShakes = Math.max(proteinG * 0.30, proteinG - mainMealProteinCap);
+  let wheyPerShake = Math.round((proteinForShakes/2) / pPer100 / 5) * 5;
+  wheyPerShake = Math.max(25, Math.min(90, wheyPerShake));
   const shakeA = [gramsFor(powder, wheyPerShake)];
   const shakeB = [gramsFor(powder, wheyPerShake)];
   const shakesM = sumFoods([...shakeA,...shakeB]);
+  const shakeTargetP = shakesM.p/2;
   const mainP = Math.max(0, proteinG - shakesM.p);
   const mainC = Math.max(0, carbsG - shakesM.c);
   const mainF = Math.max(0, fatG - shakesM.fat);
@@ -1996,10 +2040,25 @@ function packageRounded(item){
 
 function generateShoppingList(mealList) {
   const totals = {};
+  // Ein Ei-Mix (Vollei + Eiklar) ist kein kaufbares Produkt. Für die Einkaufsliste
+  // wird er in die real einkaufbaren Bestandteile aufgeteilt: ca. 55% Vollei (Eier)
+  // und 45% Eiklar – so passt die Liste zum tatsächlichen Einkauf.
+  const splitShopFood = (f) => {
+    if (f.k === 'eimix') {
+      return [
+        { k:'eier',   name:(FOOD_DB.eier||{}).name||'Vollei',   grams:Math.round(f.grams*0.55), cat:(FOOD_DB.eier||{}).cat||'Protein' },
+        { k:'eiklar', name:(FOOD_DB.eiklar||{}).name||'Eiklar', grams:Math.round(f.grams*0.45), cat:(FOOD_DB.eiklar||{}).cat||'Protein' }
+      ];
+    }
+    return [{ k:f.k, name:f.name, grams:f.grams, cat:(FOOD_DB[f.k]||{}).cat || 'Sonstiges' }];
+  };
+
   mealList.forEach(meal => meal.foods.forEach(f => {
-    const key = f.k || f.name;
-    if (!totals[key]) totals[key] = { key, name:f.name, grams:0, cat:(FOOD_DB[f.k]||{}).cat || 'Sonstiges' };
-    totals[key].grams += Math.round(f.grams*7);
+    splitShopFood(f).forEach(part => {
+      const key = part.k || part.name;
+      if (!totals[key]) totals[key] = { key, name:part.name, grams:0, cat:part.cat };
+      totals[key].grams += Math.round(part.grams*7);
+    });
   }));
 
   const catColors = {
@@ -2500,6 +2559,7 @@ function filterCheat(cat, btn) {
     // Proteinquellen: Roh-/Standardwerte pro 100g, sofern nicht anders benannt.
     huhn:{name:'Hühnerbrust (roh)',p:23.1,c:0,f:1.2,kcal:110,cat:'Protein',tags:['protein','meat','lean','lunch','dinner']},
     pute:{name:'Putenbrust (roh)',p:24,c:0,f:1.3,kcal:110,cat:'Protein',tags:['protein','meat','lean','lunch','dinner']},
+    putenaufschnitt:{name:'Putenbrust-Aufschnitt',p:22,c:1,f:1,kcal:103,cat:'Protein',pack:100,tags:['protein','meat','lean','breakfast','snack','savory']},
     rind:{name:'Rindssteak mager (roh)',p:21.5,c:0,f:4.5,kcal:126,cat:'Protein',tags:['protein','meat','lunch','dinner']},
     rindhack5:{name:'Rinderhack 5% Fett (roh)',p:21,c:0,f:5,kcal:129,cat:'Protein',tags:['protein','meat','lunch','dinner']},
     kalb:{name:'Kalbsfilet mager (roh)',p:21.5,c:0,f:2.5,kcal:110,cat:'Protein',tags:['protein','meat','lunch','dinner']},
@@ -2510,8 +2570,8 @@ function filterCheat(cat, btn) {
     garnelen:{name:'Garnelen (roh)',p:20,c:0.2,f:1,kcal:90,cat:'Protein',tags:['protein','fish','lean','lunch','dinner']},
     forelle:{name:'Forelle (roh)',p:20,c:0,f:6,kcal:140,cat:'Protein',tags:['protein','fish','lunch','dinner']},
 
-    eier:{name:'Vollei',p:12.6,c:0.7,f:10.6,kcal:143,cat:'Protein',tags:['protein','breakfast','savory']},
-    eiklar:{name:'Eiklar',p:10.9,c:0.7,f:0.2,kcal:52,cat:'Protein',tags:['protein','lean','breakfast','savory']},
+    eier:{name:'Vollei',p:12.6,c:0.7,f:10.6,kcal:143,cat:'Protein',pack:6,tags:['protein','breakfast','savory']},
+    eiklar:{name:'Eiklar (flüssig)',p:10.9,c:0.7,f:0.2,kcal:52,cat:'Protein',pack:500,tags:['protein','lean','breakfast','savory']},
     eimix:{name:'Ei-Mix aus Vollei + Eiklar',p:11.5,c:0.6,f:3.5,kcal:83,cat:'Protein',tags:['protein','breakfast','savory']},
 
     magerquark:{name:'Magerquark 0.2%',p:12,c:4,f:0.2,kcal:66,cat:'Milchprodukte & Protein',tags:['protein','dairy','breakfast','snack','sweet']},
@@ -2585,7 +2645,7 @@ function filterCheat(cat, btn) {
     // Kuratierte salzige Frühstücke explizit überschreiben, damit kein reines Eiklar-Frühstück entsteht.
     MEAL_BLUEPRINTS.breakfast_savory = [
       {title:'Ei-Mix-Omelett mit Vollkornbrot', keys:['eimix','vollkornbrot','olivenoel'], extras:[['spinat',80]], note:'Omelett aus Vollei + Eiklar, dazu Brot und Spinat'},
-      {title:'Putenbrust-Brot mit Gemüse', keys:['pute','vollkornbrot','olivenoel'], extras:[['spinat',60]], note:'herzhaftes Frühstück mit roher Putenbrust als Berechnungsbasis'},
+      {title:'Putenaufschnitt-Brot mit Gemüse', keys:['putenaufschnitt','vollkornbrot','olivenoel'], extras:[['spinat',60]], note:'herzhaftes Frühstück mit Putenbrust-Aufschnitt aufs Brot'},
       {title:'Hüttenkäse-Brot Teller', keys:['huettenkaese','roggenbrot','avocado'], extras:[['salat',60]], note:'herzhaft, sättigend und gut vorbereitbar'}
     ];
     MEAL_BLUEPRINTS.breakfast_savory_vegetarian = [
@@ -2644,6 +2704,18 @@ function filterCheat(cat, btn) {
     if(t.fat > targetF + 1.5) score += Math.pow(t.fat-targetF,2)*120;
     if(t.p < targetP - 2.5) score += Math.pow(targetP-t.p,2)*90;
     if(t.cal > kcalTarget + 25) score += Math.pow(t.cal-kcalTarget,2)*0.6;
+    // KH-Überschuss bei niedrigem KH-Ziel hart bestrafen: verhindert z.B. ein
+    // "Porridge", das 21g C liefert, obwohl das Ziel nahe 0 liegt. So werden
+    // bei Low-Carb-Zielen automatisch KH-arme Gerichte (Eier, Quark, Fleisch) gewählt.
+    if(t.c > targetC + 8) score += Math.pow(t.c-targetC,2)*8;
+    // Gericht, dessen namensgebende KH-Basis faktisch fehlt (auf Minimum gedrückt),
+    // passt nicht zum Ziel -> abwerten, damit ein sinnvolleres Gericht gewinnt.
+    const stapleKeys=['haferflocken','reis','basmati','vollkornreis','kartoffeln','suesskartoffel','quinoa','vollkornpasta','couscous','bulgur','reiswaffeln'];
+    const stapleInBp=(bp.keys||[]).find(k=>stapleKeys.includes(k));
+    if(stapleInBp){
+      const stapleFood=foods.find(f=>f.k===stapleInBp);
+      if(!stapleFood || stapleFood.grams < 25) score += 1500; // Grundpfeiler fehlt praktisch
+    }
     if((bp.keys||[]).includes('lachs') && targetF < 15) score += 500;
     if(foods.some(f => f.grams > 450 && !['kartoffeln','suesskartoffel','gemuese','brokkoli','spinat','salat'].includes(f.k))) score += 400;
     return score;
@@ -2735,6 +2807,12 @@ function filterCheat(cat, btn) {
   window.packageRounded = function(item){
     const db = FOOD_DB[item.key] || {};
     const grams = item.grams;
+    // Eier: in Stück à ca. 55g, aufgerundet auf 6er-Packungen
+    if(item.key === 'eier'){
+      const pieces = Math.ceil(grams/55);
+      const packs = Math.ceil(pieces/6);
+      return `${pieces} Stk. (${packs}×6er)`;
+    }
     const pack = db.pack || (grams>=1000?1000:100);
     if(db.pack && db.pack <= 10){
       const pieces = Math.ceil(grams/150);
@@ -2832,31 +2910,52 @@ function filterCheat(cat, btn) {
     let delta = target - current;
     if(Math.abs(delta) < 0.6) return;
 
-    // Kandidat bevorzugen, der dieses Makro stark liefert und im ausgewählten Plan vorhanden ist.
-    let best = null;
-    let bestPerG = 0;
-    for(const ref of allSelectedFoods()){
-      if(!candidates.includes(ref.food.k)) continue;
-      const db = FOOD_DB[ref.food.k];
-      if(!db) continue;
+    // Alle passenden Quellen im Plan sammeln (nicht nur die stärkste), damit das
+    // Makro über mehrere Mahlzeiten verteilt erreicht wird – innerhalb der
+    // realistischen Portionsgrenzen. So wird ein hohes Proteinziel z.B. über
+    // mehrere Fleisch-/Quarkportionen gedeckt statt durch 1 absurde Portion.
+    const refs = allSelectedFoods().filter(ref => {
+      if((ref.meal && ref.meal.kind) === 'shake') return false; // Fasten-Shakes sind fix dimensioniert
+      if(!candidates.includes(ref.food.k)) return false;
+      const db = FOOD_DB[ref.food.k]; if(!db) return false;
       const perG = macro==='fat' ? db.f/100 : db[macro]/100;
-      if(perG > bestPerG){ best = ref; bestPerG = perG; }
+      return perG > 0.02;
+    });
+    if(!refs.length) return;
+    // nach Makro-Dichte sortieren: erst die stärksten Quellen erhöhen/senken
+    refs.sort((a,b)=>{
+      const da=FOOD_DB[a.food.k], dbb=FOOD_DB[b.food.k];
+      const pa=macro==='fat'?da.f:da[macro], pb=macro==='fat'?dbb.f:dbb[macro];
+      return pb-pa;
+    });
+    let remaining = delta;
+    for(const ref of refs){
+      if(Math.abs(remaining) < 0.6) break;
+      const db = FOOD_DB[ref.food.k];
+      const perG = macro==='fat' ? db.f/100 : db[macro]/100;
+      let gramsDelta = Math.max(-maxStep, Math.min(maxStep, Math.round(remaining / perG)));
+      let newG = ref.food.grams + gramsDelta;
+      if(typeof clampPortion === 'function' && typeof snap === 'function'){
+        newG = clampPortion(ref.food.k, snap(ref.food.k, newG));
+      } else {
+        newG = Math.max(0, newG);
+      }
+      const applied = (newG - ref.food.grams) * perG; // tatsächlich erreichte Makroänderung
+      refreshFood(ref, newG);
+      remaining -= applied;
     }
-    if(!best || bestPerG<=0) return;
-    const gramsDelta = Math.max(-maxStep, Math.min(maxStep, Math.round(delta / bestPerG)));
-    refreshFood(best, Math.max(0, best.food.grams + gramsDelta));
   }
 
   window.calibrateCurrentPlan = function(){
     const targets = window._currentTargets;
     if(!targets || !window._mealTemplates) return;
 
-    const proteinKeys = ['huhn','pute','rind','rindhack5','kalb','schweinefilet','kabeljau','thunfisch','garnelen','seitan','tofu','tempeh','magerquark','skyr','huettenkaese','whey','vegwhey','eimix'];
+    const proteinKeys = ['huhn','pute','putenaufschnitt','rind','rindhack5','kalb','schweinefilet','kabeljau','thunfisch','garnelen','seitan','tofu','tempeh','magerquark','skyr','huettenkaese','whey','vegwhey','eimix'];
     const fatKeys = ['olivenoel','rapsoel','mandeln','walnuesse','cashews','chia','leinsamen','kuerbiskerne','erdnussbutter','tahini','avocado','oliven'];
     const carbKeys = ['reis','basmati','vollkornreis','kartoffeln','suesskartoffel','quinoa','vollkornpasta','couscous','bulgur','vollkornbrot','roggenbrot','wrap','haferflocken','reiswaffeln','banane','apfel','beeren','linsen','bohnen'];
 
     // Mehrere kleine Durchläufe, weil Proteinquellen oft minimale Fett-/KH-Anteile enthalten.
-    for(let i=0;i<4;i++){
+    for(let i=0;i<8;i++){
       adjustMacro('p', targets.proteinG, proteinKeys, 220);
       adjustMacro('fat', targets.fatG, fatKeys, 120);
       adjustMacro('c', targets.carbsG, carbKeys, 260);
@@ -2871,11 +2970,16 @@ function filterCheat(cat, btn) {
       let best = refs.find(r => ['reis','basmati','vollkornreis','kartoffeln','suesskartoffel','vollkornpasta','couscous','bulgur','quinoa','haferflocken'].includes(r.food.k)) || refs[0];
       if(best){
         const db = FOOD_DB[best.food.k];
-        const kcalPerG = kcalFromMacros(db.p/100, db.c/100, db.f/100);
-        // kcalPerG über Makroformel in Dezimalform genauer berechnen
         const exactKcalPerG = ((db.p||0)*4 + (db.c||0)*4 + (db.f||0)*9)/100;
         const addG = Math.round(kcalDiff / exactKcalPerG);
-        refreshFood(best, Math.max(0, best.food.grams + addG));
+        let newG = best.food.grams + addG;
+        // Portionsgrenzen einhalten (kein 602g-Quinoa, keine 0g-Basis)
+        if(typeof clampPortion === 'function' && typeof snap === 'function'){
+          newG = clampPortion(best.food.k, snap(best.food.k, newG));
+        } else {
+          newG = Math.max(0, newG);
+        }
+        refreshFood(best, newG);
       }
     }
   };
@@ -2892,6 +2996,30 @@ function filterCheat(cat, btn) {
     const fDiff = Math.round(totals.fat-targets.fatG);
     const ok = Math.abs(kcalDiff)<=10 && Math.abs(totals.p-targets.proteinG)<=3 && Math.abs(totals.fat-targets.fatG)<=2 && Math.abs(totals.c-targets.carbsG)<=5;
     const diffTxt = `Kalorien ${kcalDiff>0?'+':''}${kcalDiff}, P ${pDiff>0?'+':''}${pDiff}g, C ${cDiff>0?'+':''}${cDiff}g, F ${fDiff>0?'+':''}${fDiff}g`;
+
+    // Ehrliche Machbarkeits-Warnung: Liegt ein Makro trotz Kalibrierung deutlich
+    // daneben, ist die Zielkombination mit dem gewählten Format (Mahlzeitenzahl /
+    // Proteinfasten) realistisch nicht darstellbar. Statt still falsche Zahlen zu
+    // zeigen, bekommt der Nutzer einen klaren Hinweis mit Lösungsvorschlag.
+    let feasibilityNote = '';
+    const proteinShort = (targets.proteinG - totals.p) > 25;
+    const carbsHigh = (totals.c - targets.carbsG) > 35;
+    const carbsLow = (targets.carbsG - totals.c) > 60;
+    const fatShort = (targets.fatG - totals.fat) > 20;
+    if(proteinShort || carbsHigh || carbsLow || fatShort){
+      const tips = [];
+      if(proteinShort){
+        tips.push(isFasten
+          ? `Das Proteinziel von ${targets.proteinG}g lässt sich mit dem Proteinfasten (2 Shakes + 1 Mahlzeit) nicht voll abdecken. Wähle für so viel Protein lieber 4–5 reguläre Mahlzeiten.`
+          : `Das Proteinziel von ${targets.proteinG}g erfordert mehr Mahlzeiten – mit ${mealList.length} Mahlzeiten wird es knapp. Erhöhe die Mahlzeitenzahl, um es realistisch zu verteilen.`);
+      }
+      if(carbsHigh) tips.push(`Dein Kohlenhydratziel liegt unter dem, was die Gerichte mit Gemüse, Beilagen und Sauce real liefern. Etwas mehr Kohlenhydrate sind hier kaum vermeidbar.`);
+      if(carbsLow) tips.push(`Das hohe Kohlenhydratziel von ${targets.carbsG}g passt nicht vollständig in ${mealList.length} Mahlzeiten. Mehr Mahlzeiten schaffen Platz dafür.`);
+      if(fatShort) tips.push(`Das Fettziel wird mit diesem Format nicht ganz erreicht.`);
+      feasibilityNote = `<div style="margin-bottom:16px;padding:12px 20px;background:rgba(224,92,92,0.08);border:1px solid rgba(224,92,92,0.4);border-radius:4px;font-size:13px;color:var(--text);line-height:1.6;">
+        <strong style="color:#e07c7c;">Hinweis zur Machbarkeit:</strong> ${tips.join(' ')}
+      </div>`;
+    }
 
     const adminInfo = document.getElementById('planAdminText') ? '' : '';
     const summary = `<div style="margin-bottom:16px;padding:12px 20px;background:rgba(201,168,76,0.08);border:1px solid var(--gold-dim);border-radius:4px;font-size:13px;color:var(--text);line-height:1.6;">
@@ -2934,7 +3062,7 @@ function filterCheat(cat, btn) {
       </div>`;
     }).join('');
 
-    document.getElementById('mealPlan').innerHTML = summary + html;
+    document.getElementById('mealPlan').innerHTML = feasibilityNote + summary + html;
     generateShoppingList(mealList);
   };
   try { renderMealPlan = window.renderMealPlan; } catch(e) {}
