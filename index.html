@@ -87,6 +87,9 @@ section{position:relative;z-index:1;}
 .hero-eyebrow{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
 .hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,12vw,110px);line-height:0.88;letter-spacing:3px;color:#fff;}
 .hero h1 em{font-style:normal;color:var(--gold);display:block;font-size:clamp(36px,8vw,72px);}
+.hero-socials{display:flex;gap:16px;margin-top:24px;justify-content:center;align-items:center;}
+.hero-social{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--muted);transition:all 0.2s;}
+.hero-social:hover{transform:translateY(-3px);border-color:var(--gold-dim);color:var(--gold);box-shadow:0 6px 18px rgba(201,168,76,0.18);}
 .hero-welcome{max-width:620px;margin:28px auto 0;font-size:16px;line-height:1.8;color:var(--muted);font-weight:300;padding:20px 24px;background:var(--card);border:1px solid var(--border);border-radius:4px;}
 .hero-ctas{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap;justify-content:center;}
 .btn-primary{padding:14px 32px;background:var(--gold);color:var(--black);border:none;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;cursor:pointer;border-radius:2px;transition:all 0.2s;}
@@ -324,8 +327,14 @@ section{position:relative;z-index:1;}
 .form-field input:focus,.form-field textarea:focus,.form-field select:focus{border-color:var(--gold-dim);}
 .form-field textarea{resize:vertical;min-height:140px;}
 .form-field select option{background:var(--card2);}
-.btn-submit{width:100%;padding:18px;background:var(--gold);color:var(--black);border:none;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:4px;cursor:pointer;border-radius:3px;transition:all 0.2s;margin-top:8px;}
+.btn-submit{display:block;width:100%;padding:18px;background:var(--gold);color:var(--black);border:none;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:4px;cursor:pointer;border-radius:3px;transition:all 0.2s;margin-top:8px;text-align:center;text-decoration:none;}
 .btn-submit:hover{background:var(--gold-bright);box-shadow:0 8px 30px rgba(201,168,76,0.3);}
+.contact-card{text-align:center;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:48px 32px;}
+.contact-icon{font-size:44px;color:var(--gold);margin-bottom:18px;}
+.contact-lead{color:var(--muted);font-size:15px;line-height:1.7;margin-bottom:24px;max-width:420px;margin-left:auto;margin-right:auto;}
+.contact-mail{display:inline-block;font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--gold);text-decoration:none;margin-bottom:28px;transition:color 0.2s;word-break:break-word;}
+.contact-mail:hover{color:var(--gold-bright);}
+.contact-btn{max-width:320px;margin-left:auto;margin-right:auto;}
 .form-success{display:none;text-align:center;padding:48px 24px;}
 .form-success .icon{font-size:48px;margin-bottom:16px;}
 .form-success h3{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:3px;color:var(--gold);margin-bottom:8px;}
@@ -370,7 +379,6 @@ footer a{color:var(--gold);text-decoration:none;}
 .macro-warn{color:#e0a84f;}
 
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -415,6 +423,17 @@ footer a{color:var(--gold);text-decoration:none;}
     <input type="file" id="heroImgInput" accept="image/*" onchange="setHeroImg(event)">
     <div class="hero-eyebrow">Marco Di Giovanni</div>
     <h1>MDG<em>ELITE</em></h1>
+    <div class="hero-socials">
+      <a class="hero-social" href="https://youtube.com/@mdgelite" target="_blank" rel="noopener" aria-label="YouTube">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.08 0 12 0 12s0 3.92.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.8ZM9.6 15.57V8.43L15.82 12 9.6 15.57Z"/></svg>
+      </a>
+      <a class="hero-social" href="https://instagram.com/mdgelite" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.72 3.72 0 0 1-1.38-.9 3.72 3.72 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16ZM12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.3-1.46.72-2.12 1.38C1.35 2.67.94 3.35.63 4.14.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.3.79.72 1.46 1.38 2.12.66.66 1.34 1.08 2.12 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56a5.88 5.88 0 0 0 2.12-1.38 5.88 5.88 0 0 0 1.38-2.12c.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.88 5.88 0 0 0-1.38-2.12A5.88 5.88 0 0 0 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0Zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32ZM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm6.41-10.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88Z"/></svg>
+      </a>
+      <a class="hero-social" href="https://tiktok.com/@mdgelite" target="_blank" rel="noopener" aria-label="TikTok">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.3 0 .59.04.87.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1Z"/></svg>
+      </a>
+    </div>
     <div class="hero-welcome" id="heroWelcome" data-editable>
       Willkommen auf meiner Website! Ich bin Marco – Fitness-Athlet, Content Creator und auf dem Weg zur IFBB-Bühne 2027. Hier findest du kostenlose Tools, ehrliche Einblicke in meine Prep und alles rund um Ernährung, Training und Lifestyle.
     </div>
@@ -755,30 +774,16 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
       <p data-editable>Fragen, Kooperationen oder einfach Hallo sagen</p>
     </div>
     <div class="kontakt-wrap">
-      <div id="contactForm">
-        <div class="grid-2" style="margin-bottom:16px;">
-          <div class="form-field"><label>Vorname</label><input type="text" id="fname" placeholder="Marco"></div>
-          <div class="form-field"><label>Nachname</label><input type="text" id="lname" placeholder="Müller"></div>
-        </div>
-        <div class="form-field"><label>E-Mail</label><input type="email" id="femail" placeholder="deine@email.com"></div>
-        <div class="form-field"><label>Betreff</label>
-          <select id="fsubject">
-            <option value="">Bitte wählen...</option>
-            <option>Ernährungsberatung</option>
-            <option>Coaching Anfrage</option>
-            <option>Kooperation / Sponsoring</option>
-            <option>YouTube / Content</option>
-            <option>Allgemeine Frage</option>
-          </select>
-        </div>
-        <div class="form-field"><label>Nachricht</label><textarea id="fmessage" placeholder="Deine Nachricht..."></textarea></div>
-        <button class="btn-submit" onclick="sendContact()">NACHRICHT SENDEN →</button>
+      <div class="contact-card">
+        <div class="contact-icon">✉</div>
+        <p class="contact-lead">Schreib mir direkt eine E-Mail – ich melde mich so schnell wie möglich.</p>
+        <a class="contact-mail" href="mailto:mdgelite87@gmail.com">mdgelite87@gmail.com</a>
+        <a class="btn-submit contact-btn" href="mailto:mdgelite87@gmail.com">E-MAIL SCHREIBEN →</a>
       </div>
-      <div class="form-success" id="formSuccess"><div class="icon">✅</div><h3>GESENDET</h3><p>Danke! Ich melde mich so schnell wie möglich.</p></div>
       <div class="social-links">
-        <a class="social-link" href="https://youtube.com/@mdgelite" target="_blank">▶ YouTube</a>
-        <a class="social-link" href="https://instagram.com/mdgelite" target="_blank">◈ Instagram</a>
-        <a class="social-link" href="mailto:mdgelite87@gmail.com">✉ mdgelite87@gmail.com</a>
+        <a class="social-link" href="https://youtube.com/@mdgelite" target="_blank" rel="noopener">▶ YouTube</a>
+        <a class="social-link" href="https://instagram.com/mdgelite" target="_blank" rel="noopener">◈ Instagram</a>
+        <a class="social-link" href="https://tiktok.com/@mdgelite" target="_blank" rel="noopener">♪ TikTok</a>
       </div>
     </div>
   </div>
@@ -813,10 +818,10 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
     </div>
     <div id="datenschutzContent" data-editable class="kontakt-wrap" style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:28px;line-height:1.8;color:var(--muted);font-size:14px;min-height:520px;">
       <p><strong style="color:var(--text);">Verantwortlich:</strong> MDG Elite / Marco Di Giovanni, Schweiz, E-Mail: <a href="mailto:mdgelite87@gmail.com" style="color:var(--gold);">mdgelite87@gmail.com</a></p>
-      <p style="margin-top:16px;"><strong style="color:var(--text);">Kontaktformular:</strong> Wenn du das Kontaktformular nutzt, werden Name, E-Mail-Adresse, Betreff und Nachricht an den Websitebetreiber übermittelt. Der Versand erfolgt über EmailJS, sobald die EmailJS-Konfiguration in der Datei hinterlegt ist.</p>
+      <p style="margin-top:16px;"><strong style="color:var(--text);">Kontaktaufnahme:</strong> Die Kontaktaufnahme erfolgt direkt per E-Mail an mdgelite87@gmail.com. Dabei werden die von dir übermittelten Angaben (z.B. Name, E-Mail-Adresse und Inhalt deiner Nachricht) ausschliesslich zur Bearbeitung deiner Anfrage verwendet.</p>
       <p style="margin-top:16px;"><strong style="color:var(--text);">Nährwertsuche:</strong> Der Nährwertrechner fragt Produktdaten bei OpenFoodFacts ab. Dabei wird der eingegebene Suchbegriff an OpenFoodFacts übermittelt.</p>
       <p style="margin-top:16px;"><strong style="color:var(--text);">Online-Speicherung:</strong> Admin-Inhalte und Bild-URLs werden zentral in Supabase gespeichert, damit Besucher dieselben Inhalte sehen. Bilddateien werden über Cloudinary gespeichert. Ein lokales Browser-Backup kann zusätzlich verwendet werden.</p>
-      <p style="margin-top:16px;"><strong style="color:var(--text);">Externe Inhalte:</strong> Die Seite kann externe Dienste wie Google Fonts, YouTube, EmailJS, OpenFoodFacts und externe Bildquellen laden. Dabei können technische Daten wie IP-Adresse und Browserinformationen an diese Anbieter übertragen werden.</p>
+      <p style="margin-top:16px;"><strong style="color:var(--text);">Externe Inhalte:</strong> Die Seite kann externe Dienste wie Google Fonts, YouTube, OpenFoodFacts und externe Bildquellen laden. Dabei können technische Daten wie IP-Adresse und Browserinformationen an diese Anbieter übertragen werden.</p>
       <p style="margin-top:16px;font-size:12px;">Hinweis: Dies ist eine technische Basisversion. Vor produktiver Veröffentlichung sollte die Datenschutzerklärung rechtlich geprüft und an Hosting, Tracking, Cookies und Geschäftsmodell angepasst werden.</p>
     </div>
   </div>
@@ -1446,7 +1451,10 @@ const FOOD_DB = {
   oliven:{name:'Oliven',p:1,c:6,f:11,kcal:145,cat:'Fette & Nüsse',pack:200,tags:['fat','savory']},
   kokosmilch_light:{name:'Kokosmilch light',p:1.5,c:3,f:7,kcal:80,cat:'Fette & Nüsse',pack:400,tags:['fat','dinner']},
   mandelmilch:{name:'Mandelmilch ungesüsst',p:0.5,c:0.5,f:1.1,kcal:13,cat:'Sonstiges',pack:1000,tags:['liquid','sweet']},
-  hafermilch:{name:'Hafermilch',p:1,c:9,f:1.5,kcal:45,cat:'Sonstiges',pack:1000,tags:['liquid','sweet']}
+  hafermilch:{name:'Hafermilch',p:1,c:9,f:1.5,kcal:45,cat:'Sonstiges',pack:1000,tags:['liquid','sweet']},
+  // Zero Sauce: Durchschnittswert über More Nutrition & Callowfit Sorten (leicht konservativ).
+  // Reale Werte: ~9–33 kcal/100ml je nach Sorte; hier ~25 kcal/100g als ehrlicher Mittelwert.
+  zerosauce:{name:'Zero Sauce (z.B. More Nutrition / Callowfit)',p:0.5,c:4,f:0.2,kcal:25,cat:'Sonstiges',pack:300,tags:['sauce','savory']}
 };
 
 const MENU_RESEARCH = {
@@ -1454,6 +1462,44 @@ const MENU_RESEARCH = {
   carbs:['Haferflocken','Kartoffeln','Süsskartoffeln','Vollkornreis','Basmati/Reis','Quinoa','Vollkornpasta','Bulgur','Couscous','Vollkornbrot','Roggenbrot','Vollkorn-Wraps','Reiswaffeln','Bananen','Äpfel','Beeren','Linsen','Bohnen','Brokkoli','Spinat/Gemüse'],
   fats:['Olivenöl','Rapsöl','Avocado','Mandeln','Walnüsse','Cashews','Chia Samen','Leinsamen','Kürbiskerne','Erdnussbutter','Tahini','Oliven','Lachs','Forelle','Eier','Tofu','Tempeh','Sojabohnen','Kokosmilch light','Nüsse/Samen-Mix']
 };
+
+// Realistische Portionsgrenzen pro Lebensmittel (in g). Verhindert absurde Mengen
+// wie 380g Hüttenkäse. min = sinnvolle Mindestportion, max = realistische Obergrenze,
+// step = Rasterung beim Optimieren. Werte sind auf eine Einzelmahlzeit bezogen.
+const PORTION = {
+  // Proteinquellen
+  huhn:{min:80,max:260,step:5},  pute:{min:80,max:260,step:5},  rind:{min:80,max:250,step:5},
+  rindhack5:{min:80,max:250,step:5}, kalb:{min:80,max:250,step:5}, schweinefilet:{min:80,max:250,step:5},
+  lachs:{min:80,max:220,step:5}, kabeljau:{min:90,max:280,step:5}, thunfisch:{min:60,max:200,step:5},
+  garnelen:{min:80,max:250,step:5}, forelle:{min:90,max:250,step:5},
+  eier:{min:50,max:180,step:10}, eiklar:{min:60,max:300,step:10},
+  magerquark:{min:100,max:350,step:10}, skyr:{min:100,max:350,step:10},
+  huettenkaese:{min:80,max:200,step:10}, mozzarella_light:{min:40,max:125,step:5},
+  whey:{min:25,max:60,step:5}, tofu:{min:100,max:250,step:10}, tempeh:{min:80,max:200,step:5},
+  seitan:{min:80,max:220,step:5}, linsen:{min:80,max:250,step:10}, bohnen:{min:80,max:250,step:10},
+  vegwhey:{min:25,max:55,step:5},
+  // Kohlenhydrate (Trockengewicht bei Reis/Pasta etc.)
+  haferflocken:{min:30,max:150,step:5}, reis:{min:40,max:150,step:5}, basmati:{min:40,max:150,step:5},
+  vollkornreis:{min:40,max:150,step:5}, kartoffeln:{min:120,max:500,step:10},
+  suesskartoffel:{min:120,max:450,step:10}, quinoa:{min:40,max:140,step:5},
+  vollkornpasta:{min:50,max:160,step:5}, couscous:{min:40,max:140,step:5}, bulgur:{min:40,max:140,step:5},
+  vollkornbrot:{min:40,max:180,step:10}, roggenbrot:{min:40,max:180,step:10}, wrap:{min:60,max:180,step:30},
+  reiswaffeln:{min:15,max:60,step:5}, banane:{min:60,max:160,step:10}, apfel:{min:80,max:200,step:10},
+  beeren:{min:50,max:150,step:10},
+  // Gemüse (fixe, sinnvolle Beilage)
+  gemuese:{min:80,max:250,step:10}, brokkoli:{min:80,max:250,step:10},
+  spinat:{min:40,max:150,step:10}, salat:{min:40,max:150,step:10},
+  // Fette
+  olivenoel:{min:2,max:20,step:1}, rapsoel:{min:2,max:20,step:1}, avocado:{min:20,max:120,step:5},
+  mandeln:{min:5,max:45,step:5}, walnuesse:{min:5,max:40,step:5}, cashews:{min:5,max:45,step:5},
+  chia:{min:5,max:30,step:1}, leinsamen:{min:5,max:30,step:1}, kuerbiskerne:{min:5,max:35,step:2},
+  erdnussbutter:{min:5,max:35,step:1}, tahini:{min:5,max:30,step:1}, oliven:{min:10,max:60,step:5},
+  kokosmilch_light:{min:30,max:150,step:10},
+  // Zero Sauce: realistische Sauciermenge 20–60g (ca. 1–4 EL)
+  zerosauce:{min:20,max:60,step:10}
+};
+function portionFor(key){ return PORTION[key] || {min:20,max:300,step:5}; }
+function clampPortion(key,g){ const p=portionFor(key); return Math.max(p.min, Math.min(p.max, g)); }
 
 const MEAL_BLUEPRINTS = {
   breakfast_sweet:[
@@ -1651,84 +1697,68 @@ function consolidateFoods(foods){
   return [...map.entries()].map(([k,g])=>gramsFor(k,g)).filter(Boolean);
 }
 
-function solveLinear3(A,b){
-  const m=A.map((r,i)=>[r[0],r[1],r[2],b[i]]);
-  for(let col=0; col<3; col++){
-    let pivot=col;
-    for(let r=col+1;r<3;r++) if(Math.abs(m[r][col])>Math.abs(m[pivot][col])) pivot=r;
-    if(Math.abs(m[pivot][col])<1e-9) return null;
-    [m[col],m[pivot]]=[m[pivot],m[col]];
-    const div=m[col][col];
-    for(let c=col;c<4;c++) m[col][c]/=div;
-    for(let r=0;r<3;r++){
-      if(r===col) continue;
-      const factor=m[r][col];
-      for(let c=col;c<4;c++) m[r][c]-=factor*m[col][c];
-    }
-  }
-  return [m[0][3],m[1][3],m[2][3]];
+function snap(key,g){ const p=portionFor(key); return Math.round(g/p.step)*p.step; }
+
+// Entscheidet, ob ein Gericht eine Zero Sauce bekommt. Saucen passen zu herzhaften
+// Gerichten mit sättigender KH-/Bowl-Basis (Reis, Pasta, Kartoffeln, Quinoa, Bulgur,
+// Couscous, Wrap) – also Hauptmahlzeiten und salzige Snacks. Süsse Gerichte (Oats,
+// Quark-Bowls, Shakes) und reine Brot-Frühstücke bleiben ohne Sauce.
+const SAUCE_CARB_KEYS = ['reis','basmati','vollkornreis','kartoffeln','suesskartoffel','quinoa','vollkornpasta','couscous','bulgur','wrap'];
+function blueprintWantsSauce(bp){
+  if(!bp || !bp.keys) return false;
+  // Süsse Bausteine schliessen Sauce aus
+  const sweetMarkers = ['haferflocken','banane','apfel','beeren','whey','vegwhey','magerquark','skyr','chia','erdnussbutter','mandeln','walnuesse'];
+  const allKeys = bp.keys.concat((bp.extras||[]).map(e=>e[0]));
+  const hasSweet = bp.keys.slice(0,1).some(k=>['magerquark','skyr','whey','vegwhey'].includes(k)); // süsse Proteinbasis
+  if(hasSweet) return false;
+  return bp.keys.some(k=>SAUCE_CARB_KEYS.includes(k));
 }
 
+// Bewertet, wie gut eine Lebensmittelliste die Makroziele trifft.
+// Fett-Überschuss und Protein-Defizit werden härter bestraft (für Physique-Prep relevant).
+function dishError(items, tP, tC, tF){
+  const t=sumFoods(items);
+  let e = Math.abs(t.p-tP)*16 + Math.abs(t.c-tC)*8 + Math.abs(t.fat-tF)*22;
+  if(t.fat > tF+2) e += (t.fat-tF)*60;      // Fett möglichst nicht überschreiten
+  if(t.p  < tP-3) e += (tP-t.p)*45;          // Protein möglichst nicht unterschreiten
+  return e;
+}
+
+// Portionsbeschränkter Optimierer: Protein- und Fettquelle werden im realistischen
+// Bereich gerastert, die KH-Quelle füllt die restlichen Kohlenhydrate auf.
+// So entstehen niemals absurde Mengen (z.B. 380g Hüttenkäse).
+// Passende herzhafte Gerichte erhalten zusätzlich eine fixe Portion Zero Sauce (40g),
+// deren Makros voll in die Optimierung einfliessen.
 function buildDishFromBlueprint(bp, targetP, targetC, targetF){
   const fixed = [];
   (bp.extras||[]).forEach(([k,g])=>{ const item=gramsFor(k,g); if(item) fixed.push(item); });
-  const fixedM=sumFoods(fixed);
-  const targets=[
-    Math.max(0,targetP-fixedM.p),
-    Math.max(0,targetC-fixedM.c),
-    Math.max(0,targetF-fixedM.fat)
-  ];
-  const keys=bp.keys;
-  const foods=keys.map(k=>FOOD_DB[k]);
-  let grams=null;
-  if(foods.every(Boolean)){
-    const A=[
-      foods.map(f=>f.p/100),
-      foods.map(f=>f.c/100),
-      foods.map(f=>f.f/100)
-    ];
-    grams=solveLinear3(A, targets);
-  }
-  let items=[];
-  if(grams && grams.every(g=>isFinite(g) && g>=0 && g<2000)){
-    items = fixed.concat(keys.map((k,i)=>gramsFor(k,grams[i])).filter(Boolean));
-  } else {
-    items = fallbackMacroSearch(bp, targetP, targetC, targetF, fixed);
-  }
-  return consolidateFoods(items);
-}
+  if(blueprintWantsSauce(bp)){ const s=gramsFor('zerosauce',40); if(s) fixed.push(s); }
 
-function fallbackMacroSearch(bp, targetP, targetC, targetF, fixed){
   const [pKey,cKey,fKey]=bp.keys;
   const pF=FOOD_DB[pKey], cF=FOOD_DB[cKey], fF=FOOD_DB[fKey];
   if(!pF||!cF||!fF) return consolidateFoods(fixed);
+
+  const pP=portionFor(pKey), pF_=portionFor(fKey), pC=portionFor(cKey);
   let best=null;
-  const fixedM=sumFoods(fixed);
-  const pMax=Math.min(900, Math.max(80, targetP/(pF.p/100||0.01)*1.6));
-  const fMax=fF.f>80 ? Math.min(90, Math.max(8,targetF*1.4)) : Math.min(260, Math.max(30,targetF/(fF.f/100||0.01)*1.5));
-  const cMax=Math.min(900, Math.max(80,targetC/(cF.c/100||0.01)*1.6));
-  for(let pg=0; pg<=pMax; pg+=5){
-    for(let fg=0; fg<=fMax; fg+=2){
-      const pFrom=fixedM.p + pF.p*pg/100 + fF.p*fg/100;
-      const cFrom=fixedM.c + pF.c*pg/100 + fF.c*fg/100;
-      const fFrom=fixedM.fat + pF.f*pg/100 + fF.f*fg/100;
-      const cg=Math.max(0, Math.min(cMax, (targetC-cFrom)/(cF.c/100||0.01)));
-      const items=consolidateFoods(fixed.concat([gramsFor(pKey,pg),gramsFor(cKey,cg),gramsFor(fKey,fg)]));
-      const t=sumFoods(items);
-      const score=Math.pow(t.p-targetP,2)*25 + Math.pow(t.fat-targetF,2)*45 + Math.pow(t.c-targetC,2)*10 + Math.abs(t.cal-macroKcal(targetP,targetC,targetF))*3;
-      if(!best||score<best.score) best={items,score};
+
+  for(let pg=pP.min; pg<=pP.max; pg+=pP.step){
+    for(let fg=pF_.min; fg<=pF_.max; fg+=pF_.step){
+      const base = fixed.concat([gramsFor(pKey,pg), gramsFor(fKey,fg)]);
+      const bm=sumFoods(base);
+      // benötigte KH aus der KH-Quelle, dann auf realistische Portion begrenzen
+      let cg = (targetC-bm.c) / (cF.c/100 || 0.01);
+      cg = clampPortion(cKey, snap(cKey, cg));
+      const items=consolidateFoods(base.concat([gramsFor(cKey,cg)]));
+      const err=dishError(items,targetP,targetC,targetF);
+      if(!best || err<best.err) best={items,err};
     }
   }
-  return best?best.items:consolidateFoods(fixed);
+  return best ? best.items : consolidateFoods(fixed);
 }
 
 function scoreDish(foods, targetP, targetC, targetF, bp){
-  const t=sumFoods(foods);
-  const kcalTarget=macroKcal(targetP,targetC,targetF);
-  let score = Math.abs(t.p-targetP)*18 + Math.abs(t.fat-targetF)*28 + Math.abs(t.c-targetC)*10 + Math.abs(t.cal-kcalTarget)*1.5;
-  if(t.fat > targetF + 2) score += (t.fat-targetF)*120;
-  if(t.p < targetP - 3) score += (targetP-t.p)*80;
-  if((bp.keys||[]).includes('lachs') && targetF < 15) score += 300;
+  let score = dishError(foods, targetP, targetC, targetF);
+  if((bp.keys||[]).includes('lachs') && targetF < 15) score += 300; // fetten Fisch bei knappem Fettziel meiden
   return score;
 }
 
@@ -1827,7 +1857,7 @@ function generateMealPlan(kcal, meals, proteinG, carbsG, fatG, diet, prefs) {
 function generateFastenPlan(kcal, proteinG, carbsG, fatG, diet, prefs) {
   const powder = diet === 'vegan' ? 'vegwhey' : 'whey';
   const shakeTargetP = proteinG * 0.33;
-  const wheyPerShake = shakeTargetP / (FOOD_DB[powder].p/100); // 60g Whey = ca. 40g Protein
+  const wheyPerShake = clampPortion(powder, snap(powder, shakeTargetP / (FOOD_DB[powder].p/100)));
   const shakeA = [gramsFor(powder, wheyPerShake)];
   const shakeB = [gramsFor(powder, wheyPerShake)];
   const shakesM = sumFoods([...shakeA,...shakeB]);
@@ -1863,25 +1893,36 @@ function getActiveMealList(){
 }
 
 function calibrateCurrentPlan(){
-  // Tageskalibrierung: Protein/Fett bleiben aus Rezeptlogik fix; die letzte geeignete KH-Quelle wird angepasst.
+  // Feinkalibrierung: Die Mahlzeiten werden bereits eng am Ziel gebaut.
+  // Hier wird nur die verbleibende KH-Differenz über die KH-Quellen verteilt –
+  // und zwar immer innerhalb der realistischen Portionsgrenzen (kein 380g-Effekt).
   const targets=window._currentTargets;
   if(!targets || !window._mealTemplates) return;
-  const mealIdx = [...window._mealTemplates.keys()].reverse().find(i => (window._mealTemplates[i].kind||'').includes('dinner') || (window._mealTemplates[i].kind||'').includes('lunch'));
-  if(mealIdx==null) return;
-  const alt=window._mealTemplates[mealIdx].alts[window._mealAltIdx[mealIdx]||0];
-  if(!alt) return;
-  const carbKeys=['reis','basmati','vollkornreis','kartoffeln','suesskartoffel','quinoa','vollkornpasta','couscous','bulgur','vollkornbrot','roggenbrot','wrap','haferflocken','banane'];
-  const carbFood=alt.foods.find(f=>carbKeys.includes(f.k));
-  if(!carbFood) return;
-  const current=getActiveMealList().reduce((a,m)=>{const t=sumFoods(m.foods);a.p+=t.p;a.c+=t.c;a.fat+=t.fat;a.cal+=t.cal;return a;},{p:0,c:0,fat:0,cal:0});
-  const remainingKcal = targets.kcal - current.cal;
-  const f=FOOD_DB[carbFood.k];
-  const kcalPerG=f.kcal/100;
-  if(Math.abs(remainingKcal) > 8 && kcalPerG>0){
-    const addG = Math.round(remainingKcal/kcalPerG);
-    const newG = Math.max(0, carbFood.grams + addG);
-    const rebuilt=gramsFor(carbFood.k,newG);
-    Object.assign(carbFood,rebuilt);
+  const carbKeys=['reis','basmati','vollkornreis','kartoffeln','suesskartoffel','quinoa','vollkornpasta','couscous','bulgur','vollkornbrot','roggenbrot','wrap','haferflocken','banane','reiswaffeln'];
+
+  // alle anpassbaren KH-Quellen in der aktuellen Auswahl sammeln
+  const adjustable=[];
+  window._mealTemplates.forEach((tpl,i)=>{
+    const alt=tpl.alts[window._mealAltIdx[i]||0];
+    if(!alt) return;
+    alt.foods.forEach(f=>{ if(carbKeys.includes(f.k)) adjustable.push(f); });
+  });
+  if(!adjustable.length) return;
+
+  // bis zu mehreren Durchläufen, um die KH-Differenz schrittweise zu schliessen
+  for(let pass=0; pass<6; pass++){
+    const cur=getActiveMealList().reduce((a,m)=>{const t=sumFoods(m.foods);a.c+=t.c;return a;},{c:0});
+    let diffC = targets.carbsG - cur.c;          // fehlende/überschüssige KH in g
+    if(Math.abs(diffC) < 2) break;
+    const perFood = diffC / adjustable.length;
+    let changed=false;
+    adjustable.forEach(cf=>{
+      const f=FOOD_DB[cf.k]; if(!f || !f.c) return;
+      const deltaG = perFood / (f.c/100);          // KH-Differenz in Gramm Lebensmittel
+      const newG = clampPortion(cf.k, snap(cf.k, cf.grams + deltaG));
+      if(newG !== cf.grams){ Object.assign(cf, gramsFor(cf.k,newG)); changed=true; }
+    });
+    if(!changed) break;
   }
 }
 
@@ -2006,56 +2047,6 @@ function printShoppingList() {
   win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MDG Elite – Einkaufsliste</title><style>body{font-family:Arial,sans-serif;max-width:600px;margin:40px auto;color:#111;}h1{font-size:28px;letter-spacing:4px;color:#C9A84C;margin-bottom:4px;}.subtitle{font-size:13px;color:#888;margin-bottom:24px;}table{width:100%;border-collapse:collapse;}@media print{body{margin:20px;}button{display:none!important;}.no-print{display:none!important;}}</style></head><body><h1>MDG ELITE</h1><div class="subtitle">Einkaufsliste für 7 Tage · Erstellt am ${new Date().toLocaleDateString('de-CH')}</div><button onclick="window.print()" class="no-print" style="margin-bottom:20px;padding:10px 24px;background:#C9A84C;color:#000;border:none;font-weight:700;font-size:14px;cursor:pointer;border-radius:4px;">🖨️ Drucken</button><table>${rows}</table><p style="margin-top:24px;font-size:11px;color:#aaa;">mdgelite.com · Mengen auf realistische Packungsgrössen aufgerundet</p></body></html>`);
   win.document.close();
   setTimeout(() => win.print(), 500);
-}
-
-// ══ CONTACT ══
-const EMAILJS_CONFIG = {
-  publicKey: 'DEIN_EMAILJS_PUBLIC_KEY',
-  serviceId: 'DEIN_EMAILJS_SERVICE_ID',
-  templateId: 'DEIN_EMAILJS_TEMPLATE_ID'
-};
-
-try {
-  if (window.emailjs && !EMAILJS_CONFIG.publicKey.includes('DEIN_')) {
-    emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey });
-  }
-} catch(e) {}
-
-async function sendContact(){
-  const fn=document.getElementById('fname').value.trim();
-  const ln=document.getElementById('lname').value.trim();
-  const em=document.getElementById('femail').value.trim();
-  const sub=document.getElementById('fsubject').value;
-  const msg=document.getElementById('fmessage').value.trim();
-  if(!fn||!em||!sub||!msg){showToast('⚠ Bitte alle Pflichtfelder ausfüllen');return;}
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){showToast('⚠ Bitte gültige E-Mail eingeben');return;}
-  if (EMAILJS_CONFIG.publicKey.includes('DEIN_') || EMAILJS_CONFIG.serviceId.includes('DEIN_') || EMAILJS_CONFIG.templateId.includes('DEIN_')) {
-    showToast('⚠ EmailJS IDs in der Datei eintragen');
-    return;
-  }
-
-  const btn = document.querySelector('.btn-submit');
-  const oldText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'WIRD GESENDET...';
-  try {
-    await emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, {
-      from_name: `${fn} ${ln}`.trim(),
-      from_email: em,
-      reply_to: em,
-      subject: sub,
-      message: msg
-    });
-    document.getElementById('contactForm').style.display='none';
-    document.getElementById('formSuccess').style.display='block';
-    showToast('✓ Nachricht gesendet');
-  } catch(err) {
-    console.error(err);
-    showToast('⚠ Versand fehlgeschlagen – EmailJS prüfen');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = oldText;
-  }
 }
 
 // ══ TOAST ══
