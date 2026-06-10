@@ -226,6 +226,10 @@ section{position:relative;z-index:1;}
 /* ── STEP ITEM (kept for admin editable compatibility) ── */
 .gram-btn{padding:6px 12px;background:var(--card);border:1px solid var(--border);color:var(--muted);font-size:12px;cursor:pointer;border-radius:2px;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
 .gram-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
+.bk-step{width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;background:var(--card);border:1px solid var(--border);color:var(--text);font-size:15px;line-height:1;cursor:pointer;border-radius:3px;transition:all .15s;padding:0;}
+.bk-step:hover{border-color:var(--gold-dim);color:var(--gold);}
+.bk-step.bk-del{color:var(--muted);}
+.bk-step.bk-del:hover{border-color:#e07c7c;color:#e07c7c;}
 .nw-card{background:var(--card);border:1px solid var(--gold-dim);border-radius:6px;padding:24px;margin-bottom:16px;animation:fadeUp 0.3s ease;}
 .nw-name{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--text);margin-bottom:4px;}
 .nw-per{font-size:12px;color:var(--muted);margin-bottom:16px;}
@@ -416,7 +420,7 @@ footer a{color:var(--gold);text-decoration:none;}
     <a href="#" onclick="showSection('videos');return false;">Videos</a>
     <a href="#" onclick="showSection('bilder');return false;">Bilder</a>
     <a href="#" onclick="showSection('rechner');return false;">Rechner</a>
-    <a href="#" onclick="showSection('naehrwert');return false;">Nährwerte</a>
+    <a href="#" onclick="showSection('naehrwert');return false;">Plan-Baukasten</a>
     <a href="#" onclick="showSection('kontakt');return false;">Kontakt</a>
     <div class="admin-badge" id="adminBadge" onclick="adminLogout()">
       <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
@@ -432,7 +436,7 @@ footer a{color:var(--gold);text-decoration:none;}
   <a href="#" onclick="showSection('videos');toggleMobileMenu();return false;">Videos</a>
   <a href="#" onclick="showSection('bilder');toggleMobileMenu();return false;">Bilder</a>
   <a href="#" onclick="showSection('rechner');toggleMobileMenu();return false;">Rechner</a>
-  <a href="#" onclick="showSection('naehrwert');toggleMobileMenu();return false;">Nährwerte</a>
+  <a href="#" onclick="showSection('naehrwert');toggleMobileMenu();return false;">Plan-Baukasten</a>
   <a href="#" onclick="showSection('kontakt');toggleMobileMenu();return false;">Kontakt</a>
 </div>
 
@@ -762,37 +766,98 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
   </div>
 </section>
 
-<!-- ══ NÄHRWERTRECHNER ══ -->
+<!-- ══ PLAN-BAUKASTEN ══ -->
 <section id="sec-naehrwert" class="page-section">
   <div class="content-wrap">
     <div class="page-header">
-      <div class="eyebrow">Datenbank</div>
-      <h2>NÄHRWERT­RECHNER</h2>
-      <p>Suche nach jedem Lebensmittel und erhalte Kalorien & Makros sofort</p>
+      <div class="eyebrow">Selbst zusammenstellen</div>
+      <h2>PLAN-BAUKASTEN</h2>
+      <p>Gib deine Daten &amp; dein Ziel ein und baue dir deinen Ernährungsplan selbst zusammen</p>
     </div>
-    <div style="max-width:680px;margin:0 auto;">
-      <div style="position:relative;margin-bottom:24px;">
-        <input type="text" id="nwSearch" placeholder="z.B. Banane, Hähnchen, Vollkornbrot..." oninput="searchNutrition(this.value)"
-          style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:3px;padding:16px 20px;font-family:'DM Sans',sans-serif;font-size:16px;color:var(--text);outline:none;transition:border-color 0.2s;"
-          onfocus="this.style.borderColor='var(--gold-dim)'" onblur="this.style.borderColor='var(--border)'">
-        <div style="position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:18px;">🔍</div>
-      </div>
-      <div style="margin-bottom:16px;">
-        <label style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;display:block;margin-bottom:8px;">Portion (g)</label>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <input type="number" id="nwGrams" value="100" min="1" max="2000" oninput="updateNutritionCalc()"
-            style="width:100px;background:var(--card);border:1px solid var(--border);border-radius:3px;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:18px;font-weight:600;color:var(--text);outline:none;-moz-appearance:textfield;">
-          <span style="color:var(--muted);font-size:14px;">Gramm</span>
-          <div style="display:flex;gap:6px;margin-left:8px;">
-            <button onclick="setGrams(50)" class="gram-btn">50g</button>
-            <button onclick="setGrams(100)" class="gram-btn">100g</button>
-            <button onclick="setGrams(150)" class="gram-btn">150g</button>
-            <button onclick="setGrams(200)" class="gram-btn">200g</button>
+    <div class="rechner-wrap">
+      <!-- Schritt 1: Daten & Ziel (eigene IDs, damit der Rechner unberührt bleibt) -->
+      <div class="r-section">
+        <div class="sec-head"><span class="sec-num">01</span><span class="sec-title">Grunddaten</span><div class="sec-line"></div></div>
+        <div class="grid-2" style="margin-bottom:12px;">
+          <div class="field"><label>Alter</label><input type="number" id="bk_age" placeholder="28" min="15" max="80"><span class="field-unit">Jahre</span></div>
+          <div class="field"><label>Körpergewicht</label><input type="number" id="bk_weight" placeholder="80" min="40" max="250" step="0.1"><span class="field-unit">kg</span></div>
+        </div>
+        <div class="grid-2" style="margin-bottom:16px;">
+          <div class="field"><label>Körpergrösse</label><input type="number" id="bk_height" placeholder="178" min="140" max="220"><span class="field-unit">cm</span></div>
+          <div class="field"><label>Körperfett % (optional)</label><input type="number" id="bk_bf" placeholder="15" min="3" max="50" step="0.1"><span class="field-unit">%</span></div>
+        </div>
+        <div class="toggle-wrap">
+          <span class="toggle-label">Geschlecht</span>
+          <div class="toggle-group" id="bk_genderToggle">
+            <button class="active" data-val="male">♂ &nbsp;Mann</button>
+            <button data-val="female">♀ &nbsp;Frau</button>
           </div>
         </div>
       </div>
-      <div id="nwResults"></div>
-      <div id="nwSelected" style="display:none;"></div>
+      <div class="r-section">
+        <div class="sec-head"><span class="sec-num">02</span><span class="sec-title">Aktivitätslevel</span><div class="sec-line"></div></div>
+        <div class="field"><label>Alltagsaktivität (ohne separates Training gerechnet)</label>
+          <select id="bk_activity">
+            <option value="1.2">Sitzend – Home Office, wenig Bewegung (× 1.2)</option>
+            <option value="1.375" selected>Normal aktiv – mind. 10'000 Schritte täglich (× 1.375)</option>
+            <option value="1.55">Aktiv – viel auf den Beinen, 12'000+ Schritte (× 1.55)</option>
+            <option value="1.725">Sehr aktiv – Vereinssport, Ausdauer, 15'000+ Schritte (× 1.725)</option>
+          </select>
+        </div>
+      </div>
+      <div class="r-section">
+        <div class="sec-head"><span class="sec-num">03</span><span class="sec-title">Ziel &amp; Makros</span><div class="sec-line"></div></div>
+        <div class="toggle-wrap"><span class="toggle-label">Gewichtsziel</span>
+          <div class="toggle-group" id="bk_goalToggle">
+            <button data-val="-1000">Schnell abnehmen<small>−1 kg / Woche</small></button>
+            <button data-val="-500">Abnehmen<small>−0.5 kg / Woche</small></button>
+            <button data-val="-300">Langsam abnehmen<small>−0.3 kg / Woche</small></button>
+            <button class="active" data-val="0">Gewicht halten<small>±0 kg</small></button>
+            <button data-val="250">Langsam aufbauen<small>+0.25 kg / Woche</small></button>
+            <button data-val="500">Masse aufbauen<small>+0.5 kg / Woche</small></button>
+          </div>
+        </div>
+        <div class="toggle-wrap"><span class="toggle-label">Protein-Priorität</span>
+          <div class="toggle-group" id="bk_proteinToggle">
+            <button data-val="1.8">Standard<small>1.8 g/kg</small></button>
+            <button class="active" data-val="2.2">Athletisch<small>2.2 g/kg</small></button>
+            <button data-val="2.8">High Protein<small>2.8 g/kg</small></button>
+          </div>
+        </div>
+        <div class="toggle-wrap"><span class="toggle-label">Ernährungsweise</span>
+          <div class="toggle-group" id="bk_dietToggle">
+            <button class="active" data-val="meat">🥩 Fleisch</button>
+            <button data-val="vegetarian">🥦 Vegetarisch</button>
+            <button data-val="vegan">🌱 Vegan</button>
+          </div>
+        </div>
+      </div>
+      <button class="btn-calculate" onclick="bkStart()">ZIEL BERECHNEN &amp; PLAN BAUEN →</button>
+
+      <!-- Schritt 2: Zielanzeige + Baukasten (wird nach bkStart sichtbar) -->
+      <div id="bkBuilder" style="display:none;">
+        <div class="results-divider"></div>
+
+        <!-- Ziel-Bilanz (sticky Live-Anzeige) -->
+        <div id="bkTargetBar" style="position:sticky;top:64px;z-index:40;background:var(--card);border:1px solid var(--gold-dim);border-radius:6px;padding:16px 20px;margin-bottom:24px;box-shadow:0 6px 24px rgba(0,0,0,0.4);">
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:12px;">Dein Tagesziel · Live-Bilanz</div>
+          <div id="bkLiveTotals"></div>
+        </div>
+
+        <div class="sec-head"><span class="sec-num">BAU</span><span class="sec-title">Mahlzeiten zusammenstellen</span><div class="sec-line"></div></div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;">Wähle pro Mahlzeit aus Protein-, Kohlenhydrat- und Fettquellen. Die Portion wird automatisch vorgeschlagen und lässt sich mit <strong style="color:var(--text);">+ / −</strong> anpassen.</p>
+        <div id="bkMeals"></div>
+
+        <!-- Einkaufsliste -->
+        <div id="bkShoppingSection" style="margin-top:32px;display:none;">
+          <div class="sec-head"><span class="sec-num">🛒</span><span class="sec-title">Einkaufsliste für 1 Woche</span><div class="sec-line"></div></div>
+          <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">Alle Lebensmittel für 7 Tage – basierend auf deinem selbst gebauten Plan.</p>
+          <div id="bkShoppingList"></div>
+          <button class="btn-calculate" style="margin-top:16px;font-size:20px;" onclick="bkPrintShoppingList()">🖨️ &nbsp;EINKAUFSLISTE DRUCKEN</button>
+        </div>
+
+        <div class="disclaimer" style="margin-top:24px;"><strong>⚠ Hinweis:</strong> Schätzwerte auf Basis Mifflin-St Jeor / Katch-McArdle. Kein Ersatz für Fachberatung.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -1579,10 +1644,11 @@ function toggleStep(el) { el.classList.toggle('done'); }
 
 
 // ══ TOGGLES ══
-['genderToggle','goalToggle','proteinToggle','dietToggle','mealsToggle','breakfastPrefToggle','snackPrefToggle','fastenMainTimeToggle'].forEach(id=>{
-  document.getElementById(id).querySelectorAll('button').forEach(btn=>{
+['genderToggle','goalToggle','proteinToggle','dietToggle','mealsToggle','breakfastPrefToggle','snackPrefToggle','fastenMainTimeToggle','bk_genderToggle','bk_goalToggle','bk_proteinToggle','bk_dietToggle'].forEach(id=>{
+  const el=document.getElementById(id); if(!el) return;
+  el.querySelectorAll('button').forEach(btn=>{
     btn.addEventListener('click',()=>{
-      document.getElementById(id).querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+      el.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
     });
   });
@@ -3347,12 +3413,6 @@ function filterCheat(cat, btn) {
         if(!trimOrder.includes(r.food.k)) return false;
         const pf = portionFor(r.food.k);
         const isOil = (r.food.k==='olivenoel' || r.food.k==='rapsoel');
-        // Öl nicht unter sein Minimum trimmen, solange die eigene Mahlzeit ihr
-        // Fettziel noch nicht erreicht hat (sonst bleibt die Mahlzeit fettarm).
-        if(isOil && r.alt && r.alt.foods && r.meal && r.meal.target){
-          const mealFat = r.alt.foods.reduce((s,f)=>s+(f.fat||0),0);
-          if(mealFat < (r.meal.target.f||0) - 1) return r.food.grams > pf.min;
-        }
         return r.food.grams > pf.min || (isOil && r.food.grams > 0);
       });
       // Falls nichts mehr trimmbar: Protein antasten. Das Kalorienziel hat Vorrang –
@@ -3377,18 +3437,7 @@ function filterCheat(cat, btn) {
       const pf = portionFor(ref.food.k);
       // Reine Öle dürfen komplett entfernt werden (0g statt am 5g-Minimum kleben),
       // wenn das Budget es verlangt – keine lächerlichen Mini-Fettmengen.
-      // ABER: Nur wenn die EIGENE Mahlzeit ihr Fettziel schon erreicht. Sonst würde
-      // das Öl entfernt, obwohl die Mahlzeit (z.B. 18g F Ziel) noch Fett braucht –
-      // genau der Fall, der zu "Olivenöl 0g" bei unerfülltem Fettziel führte.
-      let oilRemovable = (ref.food.k==='olivenoel' || ref.food.k==='rapsoel');
-      if(oilRemovable && ref.alt && ref.alt.foods && ref.meal && ref.meal.target){
-        const mealFat = ref.alt.foods.reduce((s,f)=>s+(f.fat||0),0);
-        const mealFatTarget = ref.meal.target.f || 0;
-        // Solange die Mahlzeit noch deutlich unter ihrem Fettziel liegt, Öl nicht
-        // auf 0 ziehen – höchstens bis zum Portions-Minimum reduzieren.
-        if(mealFat < mealFatTarget - 1) oilRemovable = false;
-      }
-      const removableOil = oilRemovable;
+      const removableOil = (ref.food.k==='olivenoel' || ref.food.k==='rapsoel');
       let reduceG = Math.max(pf.step, Math.ceil((over/kcalPerG)/pf.step)*pf.step);
       let newG = snap(ref.food.k, ref.food.grams - reduceG);
       newG = removableOil ? Math.max(0, newG) : Math.max(pf.min, newG);
@@ -3469,7 +3518,7 @@ function filterCheat(cat, btn) {
       const mt=meal.target||{};
       const border = meal.highlight ? `border-left:3px solid var(--gold);` : `border-left:3px solid var(--border2);`;
       const altBtns = (templates[idx].alts || []).length > 1 ? (templates[idx].alts || []).map((alt, ai)=>`<button class="alt-btn ${window._mealAltIdx[idx]===ai?'active':''}" onclick="setMealAlt(${idx},${ai})"><span class="meal-option-title">${escapeHtml(alt.label)}</span></button>`).join('') : '';
-      const rows = meal.foods.filter(fd=>fd.grams>0).map(fd=>{
+      const rows = meal.foods.map(fd=>{
         // einzelne Lebensmittel-Kalorien ebenfalls aus ihren Makros aktualisieren
         fd.cal = kcalFromMacros(fd.p, fd.c, fd.fat);
         return `<div class="meal-food">
@@ -3504,6 +3553,244 @@ function filterCheat(cat, btn) {
 
 })();
 
+
+// ══ PLAN-BAUKASTEN (Builder) ══
+(function(){
+  // Eigener State – komplett getrennt vom Rechner.
+  const BK = { target:null, meals:null, diet:'meat' };
+
+  // Mahlzeiten-Gerüst: feste 4 Mahlzeiten mit Default-Makro-Verteilung (Anteile).
+  const BK_MEAL_DEFS = [
+    {key:'breakfast', name:'Frühstück', tag:'🍳', time:'07:30', share:0.25},
+    {key:'lunch',     name:'Mittagessen', tag:'🥗', time:'13:00', share:0.32},
+    {key:'dinner',    name:'Abendessen', tag:'🍽️', time:'19:00', share:0.30},
+    {key:'snack',     name:'Snack', tag:'🥤', time:'16:00', share:0.13}
+  ];
+
+  function bkGetVal(id){ const b=document.querySelector('#'+id+' button.active'); return b ? b.dataset.val : null; }
+
+  // Zielberechnung – nutzt dieselbe Logik wie der Rechner (Mifflin / Katch-McArdle).
+  function bkComputeTarget(){
+    const age=parseFloat(document.getElementById('bk_age').value);
+    const weight=parseFloat(document.getElementById('bk_weight').value);
+    const height=parseFloat(document.getElementById('bk_height').value);
+    const bf=parseFloat(document.getElementById('bk_bf').value);
+    const activity=parseFloat(document.getElementById('bk_activity').value);
+    const gender=bkGetVal('bk_genderToggle') || 'male';
+    const goalDelta=parseFloat(bkGetVal('bk_goalToggle') || 0);
+    const protMult=parseFloat(bkGetVal('bk_proteinToggle') || 2.2);
+    if(!age||!weight||!height){ if(typeof showToast==='function') showToast('⚠ Alter, Gewicht und Grösse eingeben'); return null; }
+
+    let bmr;
+    if(!isNaN(bf)&&bf>0&&bf<50){ bmr=370+21.6*weight*(1-bf/100); }
+    else { bmr = gender==='male' ? 10*weight+6.25*height-5*age+5 : 10*weight+6.25*height-5*age-161; }
+    const tdee=bmr*activity;
+    const kcal=Math.max(900, Math.round(tdee+goalDelta));
+    let protG=Math.round(weight*protMult);
+    let fatMult = goalDelta < 0 ? 0.75 : goalDelta === 0 ? 0.9 : 1.0;
+    let fatG=Math.round(weight*fatMult);
+    let carbsG=Math.round((kcal-protG*4-fatG*9)/4);
+    // gleiche Nachgeben-Logik wie im Rechner (gekürzt): Fett, dann Protein senken.
+    const fatFloorG=Math.round(weight*0.5), protFloorG=Math.round(weight*1.6), minCarbsG=Math.max(40,Math.round(weight*0.5));
+    if(carbsG < minCarbsG){
+      while(carbsG < minCarbsG && fatG > fatFloorG){ fatG-=1; carbsG=Math.round((kcal-protG*4-fatG*9)/4); }
+      if(carbsG < minCarbsG && protG > protFloorG){ protG=Math.max(protFloorG, Math.floor((kcal-minCarbsG*4-fatG*9)/4)); carbsG=Math.round((kcal-protG*4-fatG*9)/4); }
+      carbsG=Math.max(0,carbsG);
+    }
+    return { kcal, proteinG:protG, carbsG, fatG, weight };
+  }
+
+  // Lebensmittel nach Kategorie + Diät filtern. Quelle: bestehende FOOD_DB.
+  // Dairy/Ei-Schlüssel, die nicht über tags['meat'/'fish'] erfasst sind:
+  const BK_DAIRY = ['whey','magerquark','magerquark_vanille','skyr','huettenkaese','mozzarella_light','proteinjoghurt','harzer'];
+  const BK_EGG = ['eier','eiklar','eimix'];
+  function bkFoodsByCat(cat){
+    if(typeof FOOD_DB==='undefined') return [];
+    const diet=BK.diet;
+    const out=[];
+    for(const k in FOOD_DB){
+      const f=FOOD_DB[k]; const tags=f.tags||[];
+      // Diät-Filter
+      if(diet==='vegan'){
+        if(tags.includes('meat')||tags.includes('fish')||tags.includes('dairy')) continue;
+        if(BK_DAIRY.includes(k)||BK_EGG.includes(k)) continue;
+      } else if(diet==='vegetarian'){
+        if(tags.includes('meat')||tags.includes('fish')) continue;
+      }
+      // Kategorie
+      let inCat=false;
+      if(cat==='protein') inCat = tags.includes('protein');
+      else if(cat==='carb') inCat = tags.includes('carb') && !tags.includes('protein');
+      else if(cat==='fat') inCat = tags.includes('fat');
+      if(!inCat) continue;
+      out.push({k, name:f.name});
+    }
+    out.sort((a,b)=>a.name.localeCompare(b.name,'de'));
+    return out;
+  }
+
+  // Auto-Portion: sinnvolle Startmenge aus PORTION (Mitte zwischen min und einem
+  // praktikablen Default), gerundet auf step.
+  function bkAutoGrams(k){
+    const pf=(typeof portionFor==='function') ? portionFor(k) : {min:20,max:300,step:5};
+    let g;
+    // praxisnahe Defaults je nach typischer Portion
+    if(pf.max<=20) g=Math.min(pf.max,10);           // Öle
+    else if(pf.max<=60) g=Math.round((pf.min+pf.max)/2); // Nüsse/Samen
+    else g=Math.min(pf.max, Math.max(pf.min, Math.round((pf.min+pf.max)/2)));
+    if(typeof snap==='function') g=snap(k,g);
+    if(typeof clampPortion==='function') g=clampPortion(k,g);
+    return g;
+  }
+
+  function bkMacrosFor(k, grams){
+    if(typeof gramsFor==='function'){ const r=gramsFor(k,grams); return {p:r.p,c:r.c,fat:r.fat,cal:r.cal,grams:r.grams}; }
+    const f=FOOD_DB[k]; const m=grams/100;
+    const p=+(f.p*m).toFixed(1), c=+(f.c*m).toFixed(1), fat=+(f.f*m).toFixed(1);
+    return {p,c,fat,cal:Math.round(p*4+c*4+fat*9),grams};
+  }
+
+  function bkMealTotals(meal){
+    return meal.items.reduce((a,it)=>{a.p+=it.p;a.c+=it.c;a.fat+=it.fat;a.cal+=it.cal;return a;},{p:0,c:0,fat:0,cal:0});
+  }
+  function bkDayTotals(){
+    return BK.meals.reduce((a,m)=>{const t=bkMealTotals(m);a.p+=t.p;a.c+=t.c;a.fat+=t.fat;a.cal+=t.cal;return a;},{p:0,c:0,fat:0,cal:0});
+  }
+
+  function bar(label, cur, tgt, color){
+    const pct=tgt>0 ? Math.min(100, Math.round(cur/tgt*100)) : 0;
+    const over = cur>tgt*1.05;
+    return '<div style="margin-bottom:8px;">'
+      + '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;">'
+      + '<span style="color:var(--muted);text-transform:uppercase;letter-spacing:1px;">'+label+'</span>'
+      + '<span style="color:'+(over?'#e07c7c':'var(--text)')+';font-weight:600;">'+Math.round(cur)+' / '+Math.round(tgt)+'</span></div>'
+      + '<div style="height:7px;background:var(--border2);border-radius:4px;overflow:hidden;">'
+      + '<div style="height:100%;width:'+pct+'%;background:'+(over?'#e07c7c':color)+';transition:width .25s;"></div></div></div>';
+  }
+
+  function bkRenderTotals(){
+    const t=BK.target, d=bkDayTotals();
+    const kcalPct = t.kcal>0 ? Math.round(d.cal/t.kcal*100) : 0;
+    document.getElementById('bkLiveTotals').innerHTML =
+        '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;">'
+      + '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:30px;letter-spacing:2px;color:#fff;">'+Math.round(d.cal)+'<span style="font-size:16px;color:var(--muted);"> / '+t.kcal+' kcal</span></span>'
+      + '<span style="font-size:13px;color:'+(d.cal>t.kcal*1.05?'#e07c7c':'var(--gold-bright)')+';font-weight:600;">'+kcalPct+'%</span></div>'
+      + bar('Protein', d.p, t.proteinG, 'var(--gold)')
+      + bar('Kohlenhydrate', d.c, t.carbsG, '#5b8fc9')
+      + bar('Fett', d.fat, t.fatG, '#c9a84c');
+  }
+
+  function bkRenderMeals(){
+    const wrap=document.getElementById('bkMeals');
+    wrap.innerHTML = BK.meals.map((meal,mi)=>{
+      const t=bkMealTotals(meal);
+      const rows = meal.items.map((it,ii)=>
+          '<div class="meal-food" style="align-items:center;">'
+        + '<span class="food-n">'+it.name+' <span style="color:var(--muted);font-size:12px;">'+it.grams+'g</span></span>'
+        + '<span class="food-macros" style="align-items:center;gap:6px;">'
+        + '<span class="macro-pill p">'+Math.round(it.p)+'g P</span>'
+        + '<span class="macro-pill c">'+Math.round(it.c)+'g C</span>'
+        + '<span class="macro-pill f">'+Math.round(it.fat)+'g F</span>'
+        + '<span class="macro-pill k">'+it.cal+' kcal</span>'
+        + '<button class="bk-step" onclick="bkAdjust('+mi+','+ii+',-1)">−</button>'
+        + '<button class="bk-step" onclick="bkAdjust('+mi+','+ii+',1)">+</button>'
+        + '<button class="bk-step bk-del" onclick="bkRemove('+mi+','+ii+')">✕</button>'
+        + '</span></div>'
+      ).join('') || '<div style="padding:10px 0;color:var(--muted);font-size:13px;">Noch nichts ausgewählt – füge unten Lebensmittel hinzu.</div>';
+
+      const picker = ['protein','carb','fat'].map(cat=>{
+        const label = cat==='protein'?'Protein':cat==='carb'?'Kohlenhydrate':'Fette';
+        const opts = bkFoodsByCat(cat).map(f=>'<option value="'+f.k+'">'+f.name+'</option>').join('');
+        return '<div style="flex:1;min-width:150px;">'
+          + '<label style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">'+label+'</label>'
+          + '<select id="bkSel_'+mi+'_'+cat+'" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:3px;padding:9px 10px;color:var(--text);font-size:14px;">'
+          + '<option value="">+ '+label+' wählen…</option>'+opts+'</select></div>';
+      }).join('');
+
+      return '<div class="meal-card" style="border-left:3px solid var(--border2);margin-bottom:18px;">'
+        + '<div class="meal-head"><div><div class="meal-name">'+meal.tag+' '+meal.name+'</div><div class="meal-time">⏱ '+meal.time+' Uhr</div></div>'
+        + '<div class="meal-stats"><strong>~'+Math.round(t.cal)+' kcal</strong><span style="font-size:11px;color:var(--muted);">'+Math.round(t.p)+'g P · '+Math.round(t.c)+'g C · '+Math.round(t.fat)+'g F</span></div></div>'
+        + '<div class="meal-foods">'+rows+'</div>'
+        + '<div style="display:flex;gap:10px;flex-wrap:wrap;padding:14px 20px;border-top:1px solid var(--border2);align-items:flex-end;">'
+        + picker
+        + '<button class="btn-outline" style="padding:9px 16px;font-size:13px;white-space:nowrap;" onclick="bkAddFromPickers('+mi+')">+ Hinzufügen</button>'
+        + '</div></div>';
+    }).join('');
+    bkRenderTotals();
+    bkRenderShopping();
+  }
+
+  // ── Aktionen ──
+  window.bkAddFromPickers = function(mi){
+    const cats=['protein','carb','fat']; let added=0;
+    cats.forEach(cat=>{
+      const sel=document.getElementById('bkSel_'+mi+'_'+cat);
+      if(sel && sel.value){
+        const k=sel.value; const g=bkAutoGrams(k); const m=bkMacrosFor(k,g);
+        BK.meals[mi].items.push({k, name:FOOD_DB[k].name, grams:m.grams, p:m.p, c:m.c, fat:m.fat, cal:m.cal});
+        added++;
+      }
+    });
+    if(!added){ if(typeof showToast==='function') showToast('Bitte zuerst ein Lebensmittel wählen'); return; }
+    bkRenderMeals();
+  };
+
+  window.bkAdjust = function(mi,ii,dir){
+    const it=BK.meals[mi].items[ii]; const pf=(typeof portionFor==='function')?portionFor(it.k):{min:5,max:500,step:5};
+    let g=it.grams + dir*pf.step;
+    if(typeof snap==='function') g=snap(it.k,g);
+    g=Math.max(pf.min, Math.min(pf.max, g));
+    const m=bkMacrosFor(it.k,g);
+    Object.assign(it,{grams:m.grams,p:m.p,c:m.c,fat:m.fat,cal:m.cal});
+    bkRenderMeals();
+  };
+
+  window.bkRemove = function(mi,ii){ BK.meals[mi].items.splice(ii,1); bkRenderMeals(); };
+
+  // ── Einkaufsliste (eigene, einfache Aggregation über die gebauten Mahlzeiten) ──
+  function bkRenderShopping(){
+    const sec=document.getElementById('bkShoppingSection');
+    const any=BK.meals.some(m=>m.items.length>0);
+    sec.style.display = any ? 'block' : 'none';
+    if(!any) return;
+    const map={};
+    BK.meals.forEach(m=>m.items.forEach(it=>{ map[it.k]=(map[it.k]||0)+it.grams; }));
+    const rows=Object.keys(map).map(k=>{
+      const f=FOOD_DB[k]; const weekG=map[k]*7;
+      const disp = weekG>=1000 ? (weekG/1000).toFixed(2)+' kg' : Math.round(weekG)+' g';
+      return '<div class="meal-food"><span class="food-n">'+f.name+'</span><span style="color:var(--gold-bright);font-weight:600;">'+disp+'</span></div>';
+    }).join('');
+    document.getElementById('bkShoppingList').innerHTML = '<div class="meal-foods">'+rows+'</div>';
+  }
+
+  window.bkPrintShoppingList = function(){
+    const map={};
+    BK.meals.forEach(m=>m.items.forEach(it=>{ map[it.k]=(map[it.k]||0)+it.grams; }));
+    let html='<h1>Einkaufsliste – 1 Woche (MDG Elite Plan-Baukasten)</h1><table style="width:100%;border-collapse:collapse;">';
+    Object.keys(map).forEach(k=>{
+      const f=FOOD_DB[k]; const weekG=map[k]*7;
+      const disp = weekG>=1000 ? (weekG/1000).toFixed(2)+' kg' : Math.round(weekG)+' g';
+      html+='<tr><td style="padding:6px 0;border-bottom:1px solid #ddd;">'+f.name+'</td><td style="padding:6px 0;border-bottom:1px solid #ddd;text-align:right;font-weight:600;">'+disp+'</td></tr>';
+    });
+    html+='</table>';
+    const w=window.open('','_blank');
+    w.document.write('<html><head><title>Einkaufsliste</title><style>body{font-family:Arial,sans-serif;max-width:600px;margin:40px auto;padding:0 20px;}h1{font-size:20px;}</style></head><body>'+html+'</body></html>');
+    w.document.close(); w.focus(); setTimeout(()=>w.print(),250);
+  };
+
+  // ── Start: Ziel berechnen, Mahlzeiten initialisieren, Builder einblenden ──
+  window.bkStart = function(){
+    const tgt=bkComputeTarget();
+    if(!tgt) return;
+    BK.target=tgt;
+    const d=bkGetVal('bk_dietToggle')||'meat';
+    BK.diet = d==='vegetarian' ? 'vegetarian' : d==='vegan' ? 'vegan' : 'meat';
+    BK.meals = BK_MEAL_DEFS.map(def=>({key:def.key,name:def.name,tag:def.tag,time:def.time,items:[]}));
+    document.getElementById('bkBuilder').style.display='block';
+    bkRenderMeals();
+    setTimeout(()=>document.getElementById('bkBuilder').scrollIntoView({behavior:'smooth',block:'start'}),100);
+  };
+})();
 
 // ══ INIT ══
 loadSaved();
