@@ -1658,9 +1658,9 @@ const FOOD_DB = {
   kokosmilch_light:{name:'Kokosmilch light',p:1.5,c:3,f:7,kcal:80,cat:'Fette & Nüsse',pack:400,tags:['fat','dinner']},
   mandelmilch:{name:'Mandelmilch ungesüsst',p:0.5,c:0.5,f:1.1,kcal:13,cat:'Sonstiges',pack:1000,tags:['liquid','sweet']},
   hafermilch:{name:'Hafermilch',p:1,c:9,f:1.5,kcal:45,cat:'Sonstiges',pack:1000,tags:['liquid','sweet']},
-  // Zero Sauce: Durchschnittswert über More Nutrition & Callowfit Sorten (leicht konservativ).
-  // Reale Werte: ~9–33 kcal/100ml je nach Sorte; hier ~25 kcal/100g als ehrlicher Mittelwert.
-  zerosauce:{name:'Zero Sauce (z.B. More Nutrition / Callowfit)',p:0.5,c:4,f:0.2,kcal:25,cat:'Sonstiges',pack:300,tags:['sauce','savory']}
+  // Zero Sauce: Durchschnittswert über More Nutrition & Callowfit Sorten.
+  // Reale Werte: ~50 kcal/100ml im Schnitt (überwiegend Kohlenhydrate, kaum Fett/Protein).
+  zerosauce:{name:'Zero Sauce (z.B. More Nutrition / Callowfit)',p:0.5,c:11,f:0.2,kcal:50,cat:'Sonstiges',pack:300,tags:['sauce','savory']}
 };
 
 const MENU_RESEARCH = {
@@ -1702,8 +1702,8 @@ const PORTION = {
   chia:{min:5,max:30,step:1}, leinsamen:{min:5,max:30,step:1}, kuerbiskerne:{min:5,max:35,step:2},
   erdnussbutter:{min:5,max:35,step:1}, tahini:{min:5,max:30,step:1}, oliven:{min:10,max:60,step:5},
   kokosmilch_light:{min:30,max:150,step:10},
-  // Zero Sauce: realistische Sauciermenge 20–60g (ca. 1–4 EL)
-  zerosauce:{min:20,max:60,step:10}
+  // Zero Sauce: realistische Sauciermenge 50–70g pro Mahlzeit
+  zerosauce:{min:50,max:70,step:5}
 };
 function portionFor(key){ return PORTION[key] || {min:20,max:300,step:5}; }
 function clampPortion(key,g){ const p=portionFor(key); return Math.max(p.min, Math.min(p.max, g)); }
@@ -1965,11 +1965,11 @@ const STAPLE_FRUIT_KEYS = ['apfel','banane','beeren'];
 // bleibt sie immer >= ihrer Mindestportion. Passt das nicht zum (niedrigen) KH-Ziel,
 // wird das Gericht über penalty hoch bewertet, sodass stattdessen ein KH-armes
 // Gericht (Eier, Quark, Fleisch+Gemüse) gewählt wird. Kein "Porridge mit 0g Hafer".
-// Passende herzhafte Gerichte erhalten zusätzlich eine fixe Portion Zero Sauce (40g).
+// Passende herzhafte Gerichte erhalten zusätzlich eine fixe Portion Zero Sauce (60g).
 function buildDishFromBlueprint(bp, targetP, targetC, targetF){
   const fixed = [];
   (bp.extras||[]).forEach(([k,g])=>{ const item=gramsFor(k,g); if(item) fixed.push(item); });
-  if(blueprintWantsSauce(bp)){ const s=gramsFor('zerosauce',40); if(s) fixed.push(s); }
+  if(blueprintWantsSauce(bp)){ const s=gramsFor('zerosauce',60); if(s) fixed.push(s); }
 
   const [pKey,cKey,fKey]=bp.keys;
   const pF=FOOD_DB[pKey], cF=FOOD_DB[cKey], fF=FOOD_DB[fKey];
