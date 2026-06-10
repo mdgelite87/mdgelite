@@ -3347,6 +3347,12 @@ function filterCheat(cat, btn) {
         if(!trimOrder.includes(r.food.k)) return false;
         const pf = portionFor(r.food.k);
         const isOil = (r.food.k==='olivenoel' || r.food.k==='rapsoel');
+        // Öl nicht unter sein Minimum trimmen, solange die eigene Mahlzeit ihr
+        // Fettziel noch nicht erreicht hat (sonst bleibt die Mahlzeit fettarm).
+        if(isOil && r.alt && r.alt.foods && r.meal && r.meal.target){
+          const mealFat = r.alt.foods.reduce((s,f)=>s+(f.fat||0),0);
+          if(mealFat < (r.meal.target.f||0) - 1) return r.food.grams > pf.min;
+        }
         return r.food.grams > pf.min || (isOil && r.food.grams > 0);
       });
       // Falls nichts mehr trimmbar: Protein antasten. Das Kalorienziel hat Vorrang –
@@ -3371,7 +3377,18 @@ function filterCheat(cat, btn) {
       const pf = portionFor(ref.food.k);
       // Reine Öle dürfen komplett entfernt werden (0g statt am 5g-Minimum kleben),
       // wenn das Budget es verlangt – keine lächerlichen Mini-Fettmengen.
-      const removableOil = (ref.food.k==='olivenoel' || ref.food.k==='rapsoel');
+      // ABER: Nur wenn die EIGENE Mahlzeit ihr Fettziel schon erreicht. Sonst würde
+      // das Öl entfernt, obwohl die Mahlzeit (z.B. 18g F Ziel) noch Fett braucht –
+      // genau der Fall, der zu "Olivenöl 0g" bei unerfülltem Fettziel führte.
+      let oilRemovable = (ref.food.k==='olivenoel' || ref.food.k==='rapsoel');
+      if(oilRemovable && ref.alt && ref.alt.foods && ref.meal && ref.meal.target){
+        const mealFat = ref.alt.foods.reduce((s,f)=>s+(f.fat||0),0);
+        const mealFatTarget = ref.meal.target.f || 0;
+        // Solange die Mahlzeit noch deutlich unter ihrem Fettziel liegt, Öl nicht
+        // auf 0 ziehen – höchstens bis zum Portions-Minimum reduzieren.
+        if(mealFat < mealFatTarget - 1) oilRemovable = false;
+      }
+      const removableOil = oilRemovable;
       let reduceG = Math.max(pf.step, Math.ceil((over/kcalPerG)/pf.step)*pf.step);
       let newG = snap(ref.food.k, ref.food.grams - reduceG);
       newG = removableOil ? Math.max(0, newG) : Math.max(pf.min, newG);
@@ -3452,7 +3469,7 @@ function filterCheat(cat, btn) {
       const mt=meal.target||{};
       const border = meal.highlight ? `border-left:3px solid var(--gold);` : `border-left:3px solid var(--border2);`;
       const altBtns = (templates[idx].alts || []).length > 1 ? (templates[idx].alts || []).map((alt, ai)=>`<button class="alt-btn ${window._mealAltIdx[idx]===ai?'active':''}" onclick="setMealAlt(${idx},${ai})"><span class="meal-option-title">${escapeHtml(alt.label)}</span></button>`).join('') : '';
-      const rows = meal.foods.map(fd=>{
+      const rows = meal.foods.filter(fd=>fd.grams>0).map(fd=>{
         // einzelne Lebensmittel-Kalorien ebenfalls aus ihren Makros aktualisieren
         fd.cal = kcalFromMacros(fd.p, fd.c, fd.fat);
         return `<div class="meal-food">
