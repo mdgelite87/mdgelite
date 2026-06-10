@@ -726,6 +726,7 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
       <div id="results">
         <div class="results-divider"></div>
         <div class="result-hero"><div class="result-label">Täglicher Kalorienbedarf</div><div class="result-kcal" id="kcalDisplay">—</div><div class="result-unit">kcal pro Tag</div><div class="result-badge" id="goalBadge"></div></div>
+        <div id="deficitNote" style="display:none;margin:0 0 20px;padding:14px 18px;background:rgba(201,168,76,0.08);border:1px solid var(--gold-dim);border-radius:6px;color:var(--gold-bright);font-size:13px;line-height:1.6;"></div>
         <div class="macro-row">
           <div class="macro-card p"><div class="mc-label">Protein</div><div class="mc-val" id="proteinG">—</div><div class="mc-unit">Gramm</div><div class="mc-kcal" id="proteinKcal">—</div></div>
           <div class="macro-card c"><div class="mc-label">Kohlenhydrate</div><div class="mc-val" id="carbsG">—</div><div class="mc-unit">Gramm</div><div class="mc-kcal" id="carbsKcal">—</div></div>
@@ -1626,6 +1627,15 @@ const FOOD_DB = {
   linsen:{name:'Linsen gekocht',p:9,c:20,f:0.4,kcal:116,cat:'Protein',tags:['protein','carb','veggie','lunch','dinner']},
   bohnen:{name:'Kidneybohnen gekocht',p:8.7,c:22.8,f:0.5,kcal:127,cat:'Protein',tags:['protein','carb','veggie','lunch','dinner']},
   vegwhey:{name:'Veganes Proteinpulver',p:78,c:7,f:5,kcal:365,cat:'Milchprodukte & Protein',tags:['protein','shake','vegan','sweet']},
+  // ── Zusätzliche magere Proteinquellen (Low-Cal) ──
+  haehnchenaufschnitt:{name:'Hähnchenbrust-Aufschnitt',p:23,c:0.5,f:1.2,kcal:108,cat:'Protein',pack:100,tags:['protein','meat','lean','breakfast','snack','savory']},
+  pangasius:{name:'Pangasius/Tilapia',p:17,c:0,f:2.5,kcal:96,cat:'Protein',tags:['protein','fish','lean','lunch','dinner']},
+  thunfischsteak:{name:'Thunfisch-Steak frisch',p:23,c:0,f:1,kcal:108,cat:'Protein',tags:['protein','fish','lean','lunch','dinner']},
+  magerquark_vanille:{name:'Magerquark Vanille (zuckerfrei)',p:11,c:5,f:0.2,kcal:68,cat:'Milchprodukte & Protein',tags:['protein','dairy','breakfast','snack','sweet']},
+  proteinjoghurt:{name:'Protein-Joghurt 0%',p:10,c:4,f:0.1,kcal:58,cat:'Milchprodukte & Protein',tags:['protein','dairy','breakfast','snack','sweet']},
+  harzer:{name:'Harzer Käse',p:30,c:0,f:0.7,kcal:128,cat:'Milchprodukte & Protein',pack:200,tags:['protein','dairy','snack','savory','lean']},
+  edamame:{name:'Edamame (Sojabohnen)',p:11,c:7,f:5,kcal:120,cat:'Protein',pack:400,tags:['protein','veggie','snack','savory','lean']},
+  raeuchertofu:{name:'Räuchertofu',p:18,c:1,f:9,kcal:160,cat:'Protein',tags:['protein','veggie','snack','savory']},
 
   // gesunde Kohlenhydratquellen
   haferflocken:{name:'Haferflocken',p:13,c:58,f:7,kcal:370,cat:'Kohlenhydrate',pack:500,tags:['carb','breakfast','sweet']},
@@ -1649,6 +1659,17 @@ const FOOD_DB = {
   brokkoli:{name:'Brokkoli',p:2.8,c:5,f:0.4,kcal:34,cat:'Gemüse & Früchte',pack:500,tags:['veg','lunch','dinner']},
   spinat:{name:'Spinat',p:2.9,c:3.6,f:0.4,kcal:23,cat:'Gemüse & Früchte',pack:450,tags:['veg','breakfast','lunch','dinner']},
   salat:{name:'Grüner Salat',p:1.3,c:2.9,f:0.2,kcal:17,cat:'Gemüse & Früchte',pack:250,tags:['veg','lunch','dinner']},
+  // ── Volumen-Gemüse (sehr kalorienarm, hohe Sättigung) ──
+  zucchini:{name:'Zucchini',p:1.2,c:3.1,f:0.3,kcal:20,cat:'Gemüse & Früchte',pack:500,tags:['veg','lunch','dinner','volume']},
+  blumenkohl:{name:'Blumenkohl',p:1.9,c:3,f:0.3,kcal:25,cat:'Gemüse & Früchte',pack:500,tags:['veg','lunch','dinner','volume']},
+  champignons:{name:'Champignons',p:3.1,c:0.3,f:0.3,kcal:22,cat:'Gemüse & Früchte',pack:400,tags:['veg','breakfast','lunch','dinner','volume','savory']},
+  paprika:{name:'Paprika',p:1,c:6,f:0.3,kcal:31,cat:'Gemüse & Früchte',pack:500,tags:['veg','lunch','dinner','snack','volume']},
+  gurke:{name:'Gurke',p:0.7,c:2,f:0.1,kcal:12,cat:'Gemüse & Früchte',pack:400,tags:['veg','snack','volume']},
+  tomaten:{name:'Tomaten',p:0.9,c:3.5,f:0.2,kcal:18,cat:'Gemüse & Früchte',pack:500,tags:['veg','breakfast','snack','volume','savory']},
+  cherrytomaten:{name:'Cherrytomaten',p:0.9,c:3.9,f:0.2,kcal:20,cat:'Gemüse & Früchte',pack:250,tags:['veg','snack','volume','savory']},
+  spargel:{name:'Grüner Spargel',p:2.2,c:2,f:0.2,kcal:20,cat:'Gemüse & Früchte',pack:500,tags:['veg','lunch','dinner','volume']},
+  bohnengruen:{name:'Grüne Bohnen',p:1.8,c:5,f:0.1,kcal:31,cat:'Gemüse & Früchte',pack:500,tags:['veg','lunch','dinner','volume']},
+  karotten:{name:'Karotten',p:0.9,c:7,f:0.2,kcal:36,cat:'Gemüse & Früchte',pack:1000,tags:['veg','snack','lunch','dinner','volume']},
 
   // gesunde Fettquellen
   olivenoel:{name:'Olivenöl',p:0,c:0,f:100,kcal:884,cat:'Fette & Nüsse',pack:500,tags:['fat','oil']},
@@ -1693,6 +1714,9 @@ const PORTION = {
   whey:{min:25,max:60,step:5}, tofu:{min:100,max:250,step:10}, tempeh:{min:80,max:200,step:5},
   seitan:{min:80,max:220,step:5}, linsen:{min:80,max:250,step:10}, bohnen:{min:80,max:250,step:10},
   vegwhey:{min:25,max:60,step:5},
+  haehnchenaufschnitt:{min:30,max:120,step:5}, pangasius:{min:90,max:280,step:5}, thunfischsteak:{min:80,max:220,step:5},
+  magerquark_vanille:{min:100,max:400,step:10}, proteinjoghurt:{min:100,max:400,step:10},
+  harzer:{min:50,max:200,step:10}, edamame:{min:60,max:200,step:10}, raeuchertofu:{min:80,max:200,step:10},
   // Kohlenhydrate (Trockengewicht bei Reis/Pasta etc.)
   haferflocken:{min:30,max:150,step:5}, reis:{min:40,max:150,step:5}, basmati:{min:40,max:150,step:5},
   vollkornreis:{min:40,max:150,step:5}, kartoffeln:{min:120,max:500,step:10},
@@ -1704,6 +1728,10 @@ const PORTION = {
   // Gemüse (fixe, sinnvolle Beilage)
   gemuese:{min:80,max:250,step:10}, brokkoli:{min:80,max:250,step:10},
   spinat:{min:40,max:150,step:10}, salat:{min:40,max:150,step:10},
+  zucchini:{min:80,max:300,step:10}, blumenkohl:{min:80,max:300,step:10}, champignons:{min:60,max:250,step:10},
+  paprika:{min:60,max:250,step:10}, gurke:{min:50,max:300,step:10}, tomaten:{min:60,max:300,step:10},
+  cherrytomaten:{min:50,max:200,step:10}, spargel:{min:100,max:350,step:10}, bohnengruen:{min:80,max:300,step:10},
+  karotten:{min:60,max:250,step:10},
   // Fette
   olivenoel:{min:2,max:20,step:1}, rapsoel:{min:2,max:20,step:1}, avocado:{min:20,max:120,step:5},
   mandeln:{min:5,max:45,step:5}, walnuesse:{min:5,max:40,step:5}, cashews:{min:5,max:45,step:5},
@@ -1725,31 +1753,45 @@ const MEAL_BLUEPRINTS = {
   breakfast_savory:[
     {title:'Eiklar-Rührei mit Vollkornbrot', keys:['eiklar','vollkornbrot','olivenoel'], extras:[['spinat',70]], note:'salziges Frühstück mit Brot und Gemüse'},
     {title:'Hüttenkäse-Brot Teller', keys:['huettenkaese','roggenbrot','avocado'], extras:[['salat',60]], note:'herzhaft, gut sättigend und gut vorbereitbar'},
-    {title:'Putenaufschnitt-Brot', keys:['putenaufschnitt','vollkornbrot','olivenoel'], extras:[['spinat',40]], note:'sehr proteinreich und fettkontrolliert'}
+    {title:'Putenaufschnitt-Brot', keys:['putenaufschnitt','vollkornbrot','olivenoel'], extras:[['spinat',40]], note:'sehr proteinreich und fettkontrolliert'},
+    {title:'Eiklar-Champignon-Pfanne', keys:['eiklar','vollkornbrot','olivenoel'], extras:[['champignons',120],['tomaten',80]], note:'herzhaft, viel Volumen, wenig Kalorien'},
+    {title:'Harzer-Brot mit Tomaten', keys:['harzer','roggenbrot','olivenoel'], extras:[['tomaten',100]], note:'extrem mager und proteinreich (Harzer)'},
+    {title:'Hähnchen-Aufschnitt Bowl', keys:['haehnchenaufschnitt','vollkornbrot','avocado'], extras:[['gurke',100]], note:'leichtes herzhaftes Frühstück'}
   ],
   snack_sweet:[
     {title:'Whey Shake mit Banane', keys:['whey','banane','mandeln'], extras:[], note:'süsser Shake-Snack; Whey Protein statt Isolat'},
     {title:'Skyr mit Beeren', keys:['skyr','haferflocken','walnuesse'], extras:[['beeren',80]], note:'süss, ballaststoffreich und proteinreich'},
-    {title:'Quark-Apfel Bowl', keys:['magerquark','apfel','chia'], extras:[], note:'leichte süsse Zwischenmahlzeit'}
+    {title:'Quark-Apfel Bowl', keys:['magerquark','apfel','chia'], extras:[], note:'leichte süsse Zwischenmahlzeit'},
+    {title:'Protein-Joghurt mit Beeren', keys:['proteinjoghurt','beeren','mandeln'], extras:[], note:'kalorienarm, hoher Proteinanteil'},
+    {title:'Magerquark Vanille pur', keys:['magerquark_vanille','beeren','walnuesse'], extras:[], note:'sehr leichter süsser Snack'}
   ],
   snack_savory:[
     {title:'Hüttenkäse-Roggenbrot', keys:['huettenkaese','roggenbrot','avocado'], extras:[['salat',50]], note:'salzige Zwischenmahlzeit ohne unnötige Fettspitzen'},
     {title:'Thunfisch-Wrap', keys:['thunfisch','wrap','olivenoel'], extras:[['salat',80]], note:'herzhafter Snack mit Wrap und Salat'},
-    {title:'Putenaufschnitt-Reiswaffeln', keys:['putenaufschnitt','reiswaffeln','mandeln'], extras:[['salat',40]], note:'einfach, schnell und reisefreundlich'}
+    {title:'Putenaufschnitt-Reiswaffeln', keys:['putenaufschnitt','reiswaffeln','mandeln'], extras:[['salat',40]], note:'einfach, schnell und reisefreundlich'},
+    {title:'Harzer mit Gurke', keys:['harzer','reiswaffeln','kuerbiskerne'], extras:[['gurke',150]], note:'extrem mager, viel Volumen'},
+    {title:'Thunfisch-Gurken-Snack', keys:['thunfisch','reiswaffeln','olivenoel'], extras:[['gurke',120],['cherrytomaten',80]], note:'proteinreich und kalorienarm'},
+    {title:'Hähnchen-Aufschnitt Gurke', keys:['haehnchenaufschnitt','reiswaffeln','mandeln'], extras:[['paprika',100]], note:'leichter herzhafter Snack'}
   ],
   lunch:[
     {title:'Chicken Rice Bowl', keys:['huhn','reis','olivenoel'], extras:[['brokkoli',120]], note:'klassische Fitness-Bowl mit Gemüse'},
     {title:'Puten-Kartoffel-Teller', keys:['pute','kartoffeln','rapsoel'], extras:[['gemuese',140]], note:'mager, sättigend und sehr gut skalierbar'},
     {title:'Rind-Quinoa-Bowl', keys:['rind','quinoa','olivenoel'], extras:[['spinat',100]], note:'mageres Rind mit Quinoa und Spinat'},
     {title:'Kabeljau-Süsskartoffel', keys:['kabeljau','suesskartoffel','avocado'], extras:[['brokkoli',120]], note:'leichter Fisch mit Süsskartoffeln'},
-    {title:'Garnelen-Vollkornpasta', keys:['garnelen','vollkornpasta','olivenoel'], extras:[['gemuese',120]], note:'mediterran und proteinreich'}
+    {title:'Garnelen-Vollkornpasta', keys:['garnelen','vollkornpasta','olivenoel'], extras:[['gemuese',120]], note:'mediterran und proteinreich'},
+    {title:'Hähnchen-Gemüsepfanne XL', keys:['huhn','reis','olivenoel'], extras:[['zucchini',150],['paprika',120]], note:'viel Volumen-Gemüse, hohe Sättigung bei wenig Kalorien'},
+    {title:'Pute-Blumenkohlreis', keys:['pute','blumenkohl','olivenoel'], extras:[['champignons',120]], note:'Low-Carb Volumen-Teller mit Blumenkohlreis'},
+    {title:'Pangasius-Kartoffel-Gemüse', keys:['pangasius','kartoffeln','rapsoel'], extras:[['bohnengruen',150]], note:'sehr magerer Fisch, viel Gemüse'}
   ],
   dinner:[
     {title:'Lachs-Kartoffel-Gemüse', keys:['lachs','kartoffeln','olivenoel'], extras:[['brokkoli',120]], note:'fettreicher Fisch; nur wenn Fettziel es zulässt'},
     {title:'Hähnchen-Süsskartoffel', keys:['huhn','suesskartoffel','avocado'], extras:[['gemuese',140]], note:'abendliches Gericht mit hochwertigen Carbs'},
     {title:'Thunfisch-Quinoa-Salat', keys:['thunfisch','quinoa','olivenoel'], extras:[['salat',120]], note:'leicht und salzig-frisch'},
     {title:'Mageres Rind mit Kartoffeln', keys:['rindhack5','kartoffeln','olivenoel'], extras:[['gemuese',140]], note:'deftiger, aber fettkontrollierter Teller'},
-    {title:'Kabeljau-Reis-Gemüse', keys:['kabeljau','basmati','rapsoel'], extras:[['spinat',120]], note:'sehr fettarme Abendoption'}
+    {title:'Kabeljau-Reis-Gemüse', keys:['kabeljau','basmati','rapsoel'], extras:[['spinat',120]], note:'sehr fettarme Abendoption'},
+    {title:'Hähnchen-Zucchini-Pfanne', keys:['huhn','kartoffeln','olivenoel'], extras:[['zucchini',150],['champignons',120]], note:'kalorienarmes Volumen-Abendessen'},
+    {title:'Pangasius-Gemüse XL', keys:['pangasius','suesskartoffel','rapsoel'], extras:[['spargel',150],['cherrytomaten',100]], note:'extrem mager, viel Volumen'},
+    {title:'Puten-Blumenkohl-Teller', keys:['pute','blumenkohl','avocado'], extras:[['bohnengruen',150]], note:'Low-Carb Abend mit Volumen-Gemüse'}
   ],
   breakfast_sweet_vegetarian:[
     {title:'Skyr-Oats mit Beeren', keys:['skyr','haferflocken','mandeln'], extras:[['beeren',90]], note:'vegetarische Protein-Bowl mit Beeren'},
@@ -1759,17 +1801,22 @@ const MEAL_BLUEPRINTS = {
   breakfast_savory_vegetarian:[
     {title:'Eiklar-Spinat-Brot', keys:['eiklar','vollkornbrot','olivenoel'], extras:[['spinat',90]], note:'salzig, fettkontrolliert und proteinreich'},
     {title:'Hüttenkäse-Roggenbrot', keys:['huettenkaese','roggenbrot','avocado'], extras:[['salat',60]], note:'schnelles herzhaftes Frühstück'},
-    {title:'Ei-Eiklar-Teller', keys:['eiklar','kartoffeln','rapsoel'], extras:[['spinat',80]], note:'deftiger Teller mit Kartoffeln als Rohgewicht gerechnet'}
+    {title:'Ei-Eiklar-Teller', keys:['eiklar','kartoffeln','rapsoel'], extras:[['spinat',80]], note:'deftiger Teller mit Kartoffeln als Rohgewicht gerechnet'},
+    {title:'Harzer-Brot mit Tomaten', keys:['harzer','roggenbrot','olivenoel'], extras:[['tomaten',100]], note:'extrem mager und proteinreich (Harzer)'},
+    {title:'Eiklar-Champignon-Pfanne', keys:['eiklar','vollkornbrot','olivenoel'], extras:[['champignons',120],['tomaten',80]], note:'herzhaft, viel Volumen, wenig Kalorien'}
   ],
   snack_sweet_vegetarian:[
     {title:'Skyr-Beeren-Crunch', keys:['skyr','haferflocken','walnuesse'], extras:[['beeren',80]], note:'süsser Snack mit kontrollierter Fettquelle'},
     {title:'Quark-Apfel-Chia', keys:['magerquark','apfel','chia'], extras:[], note:'leicht, süss und proteinreich'},
-    {title:'Whey Protein Shake Banane', keys:['whey','banane','mandeln'], extras:[], note:'Whey Protein statt Isolat'}
+    {title:'Whey Protein Shake Banane', keys:['whey','banane','mandeln'], extras:[], note:'Whey Protein statt Isolat'},
+    {title:'Protein-Joghurt mit Beeren', keys:['proteinjoghurt','beeren','mandeln'], extras:[], note:'kalorienarm, hoher Proteinanteil'}
   ],
   snack_savory_vegetarian:[
     {title:'Hüttenkäse-Wrap', keys:['huettenkaese','wrap','olivenoel'], extras:[['salat',80]], note:'salziger vegetarischer Wrap'},
     {title:'Mozzarella-Light Brot', keys:['mozzarella_light','vollkornbrot','olivenoel'], extras:[['salat',80]], note:'herzhaft mit leichter Käsequelle'},
-    {title:'Skyr-Dip mit Reiswaffeln', keys:['skyr','reiswaffeln','kuerbiskerne'], extras:[['salat',60]], note:'salziger Dip-Snack mit Crunch'}
+    {title:'Skyr-Dip mit Reiswaffeln', keys:['skyr','reiswaffeln','kuerbiskerne'], extras:[['salat',60]], note:'salziger Dip-Snack mit Crunch'},
+    {title:'Harzer mit Gurke', keys:['harzer','reiswaffeln','kuerbiskerne'], extras:[['gurke',150]], note:'extrem mager, viel Volumen'},
+    {title:'Hüttenkäse-Gemüsesticks', keys:['huettenkaese','reiswaffeln','mandeln'], extras:[['paprika',100],['gurke',100]], note:'kalorienarm mit viel Gemüse'}
   ],
   lunch_vegetarian:[
     {title:'Tofu-Reis-Gemüse Bowl', keys:['tofu','reis','olivenoel'], extras:[['brokkoli',140]], note:'vegetarische Bowl mit Reis als Rohgewicht'},
@@ -1839,30 +1886,79 @@ function calculate(){
 
   const tdee=bmr*activity;
   const target=Math.max(900, Math.round(tdee+goalDelta));
-  const protG=Math.round(weight*protMult);
+  let protG=Math.round(weight*protMult);
   let fatMult = goalDelta < 0 ? 0.75 : goalDelta === 0 ? 0.9 : 1.0;
   let fatG=Math.round(weight*fatMult);
   let carbsG=Math.round((target-protG*4-fatG*9)/4);
 
-  // Ehrliches Makro-Balancing: Kohlenhydrate dürfen nicht auf ein unrealistisches
-  // Minimum (oder 0) kollabieren, während die angebotenen Gerichte zwangsläufig KH
-  // enthalten. Messungen zeigen: Selbst bei rechnerischem KH-Ziel von 0 liefert ein
-  // realer Plan ~85-170g KH/Tag (Gemüse, Beeren, Brot-/Reis-Grundportionen, Sauce,
-  // bei vegan zusätzlich Hülsenfrüchte/Tofu). Das KH-Ziel wird daher auf diesen real
-  // erreichbaren Boden gehoben, damit angezeigtes Ziel und tatsächlicher Plan
-  // übereinstimmen. Fett wird dafür bis 0.5 g/kg gesenkt; reicht das nicht, wird das
-  // KH-Ziel ehrlich angehoben (Protein bleibt unangetastet).
-  const dietFloor = diet === 'vegan' ? 150 : diet === 'vegetarian' ? 130 : 100;
-  const minCarbsG = Math.max(dietFloor, Math.round(weight*1.1));
+  // GRUNDREGEL: Das Kalorienziel ist fix und wird NIE angehoben. Wer zum Abnehmen
+  // 1113 kcal essen soll, bekommt einen Plan mit exakt 1113 kcal.
+  // Passt die gewünschte Makroverteilung nicht ins Budget, wird so nachgegeben:
+  //   1) Fett runter bis Minimum (0.5 g/kg)
+  //   2) Protein runter bis Minimum 1.6 g/kg (Muskelerhalt im Defizit)
+  //   3) Der Rest des Budgets geht auf Kohlenhydrate (und ggf. wieder etwas Fett),
+  //      damit KH nicht auf 0 kollabieren.
+  // So bleiben angezeigte Makros == Plan == Kalorienziel, ohne unrealistische 0g-KH.
+  const fatFloorG = Math.round(weight*0.5);
+  const protFloorG = Math.round(weight*1.6);   // Muskelerhalt-Untergrenze
+  const minCarbsG = Math.max(40, Math.round(weight*0.5)); // realistischer KH-Boden
+
+  let deficitNote = '';
+  let proteinReduced = false;
+
+  // Schritt 1+2: Wenn die Makros das Budget sprengen (KH < KH-Boden), erst Fett,
+  // dann Protein senken – aber Protein nie unter 1.6 g/kg.
   if(carbsG < minCarbsG){
-    const fatFloorG = Math.round(weight*0.5);
+    // a) Fett senken bis Minimum
     while(carbsG < minCarbsG && fatG > fatFloorG){
       fatG -= 1;
-      carbsG = Math.round((target-protG*4-fatG*9)/4);
+      carbsG = Math.round((target - protG*4 - fatG*9)/4);
     }
-    if(carbsG < minCarbsG) carbsG = minCarbsG;
+    // b) reicht nicht: Protein senken bis 1.6 g/kg, KH füllt auf den Boden auf
+    if(carbsG < minCarbsG && protG > protFloorG){
+      const origProtG = protG;
+      // Ziel: carbsG == minCarbsG  ->  protG = (target - minCarbsG*4 - fatG*9)/4
+      protG = Math.max(protFloorG, Math.floor((target - minCarbsG*4 - fatG*9)/4));
+      carbsG = Math.round((target - protG*4 - fatG*9)/4);
+      proteinReduced = protG < origProtG;
+    }
+    carbsG = Math.max(0, carbsG);
   }
-  carbsG = Math.max(0, carbsG);
+
+  // Schritt 3: Exakt aufs Kalorienziel bringen. target bleibt unverändert.
+  // Reihenfolge der Restkorrektur: zuerst KH, dann (falls KH am Boden) Fett,
+  // erst ganz zuletzt – und nur wenn unvermeidbar – Protein bis 1.6 g/kg.
+  let macroKcal_ = protG*4 + carbsG*4 + fatG*9;
+  if(macroKcal_ !== target){
+    // a) über KH ausgleichen
+    carbsG = Math.round((target - protG*4 - fatG*9)/4);
+    if(carbsG < 0){
+      carbsG = 0;
+      // b) Rest über Fett (bis Minimum)
+      let need = protG*4 + fatG*9 - target; // kcal über Ziel
+      while(need > 0 && fatG > fatFloorG){ fatG -= 1; need -= 9; }
+      // c) wenn immer noch über Ziel: Protein bis Floor senken
+      if(protG*4 + fatG*9 > target && protG > protFloorG){
+        protG = Math.max(protFloorG, Math.floor((target - fatG*9)/4));
+        proteinReduced = true;
+      }
+      carbsG = Math.max(0, Math.round((target - protG*4 - fatG*9)/4));
+    }
+  }
+
+  const notes = [];
+  if(proteinReduced){
+    const wunschProt = Math.round(weight*protMult);
+    notes.push(`Dein gewähltes Defizit lässt bei ${target.toLocaleString('de-CH')} kcal nicht ${wunschProt} g Protein zu. Damit das Kalorienziel exakt eingehalten wird, wurde das Protein auf ${protG} g angepasst (Muskelerhalt-Minimum 1.6 g/kg). Für mehr Protein: ein kleineres Defizit wählen (z.B. „Abnehmen“ statt „Schnell abnehmen“).`);
+  }
+  // Gesundheits-Warnung bei sehr niedrigem Kalorienziel: Der Plan wird trotzdem
+  // erstellt, aber unter 1200 kcal ist es gesünder, das Defizit teilweise über
+  // mehr Bewegung statt allein über extreme Kalorienrestriktion zu erreichen.
+  if(target < 1200){
+    notes.push(`⚠ Dein Kalorienziel liegt unter 1200 kcal. Der Plan funktioniert, aber so tiefe Zufuhr ist auf Dauer schwer durchzuhalten und kann Muskelabbau, Müdigkeit und Nährstofflücken begünstigen. Gesünder: einen Teil des Defizits über mehr Bewegung holen – z.B. tägliche Schritte (Ziel ~8'000–10'000) oder 2–3 Cardio-Einheiten pro Woche – statt es allein über das Essen zu erzwingen. So darfst du mehr essen und hältst eher durch.`);
+  }
+  deficitNote = notes.join('\n\n');
+  window._deficitNote = deficitNote;
 
   const wk=goalDelta*7,wkg=(wk/7700).toFixed(2);
   const wt=wk===0?'Gewicht stabil':wk<0?`Fettabbau ~${Math.abs(wkg)} kg/Woche`:`Gewichtszunahme ~${wkg} kg/Woche`;
@@ -1870,6 +1966,14 @@ function calculate(){
 
   document.getElementById('kcalDisplay').textContent=target.toLocaleString('de-CH');
   document.getElementById('goalBadge').textContent=gl[String(goalDelta)]||'';
+  const dn=document.getElementById('deficitNote');
+  if(dn){
+    if(deficitNote){
+      const parts = deficitNote.split('\n\n');
+      dn.innerHTML = parts.map((t,i)=>`<p style="margin:0 0 ${i===parts.length-1?'0':'10px'};">${t}</p>`).join('');
+      dn.style.display='block';
+    } else { dn.style.display='none'; }
+  }
   document.getElementById('formulaUsed').textContent=formula;
   document.getElementById('bmrVal').textContent=Math.round(bmr).toLocaleString('de-CH')+' kcal';
   document.getElementById('tdeeVal').textContent=Math.round(tdee).toLocaleString('de-CH')+' kcal';
@@ -2057,23 +2161,26 @@ function prefKind(base, pref){
 }
 
 function selectedMealKinds(meals,prefs){
+  // weight = relativer Kalorien-/KH-/Fett-Anteil der Mahlzeit am Tag.
+  // Frühstück & Snacks leichter, Haupt­mahlzeiten schwerer – realistische Verteilung,
+  // statt jeder Mahlzeit dieselbe Last aufzuzwingen (das sprengte enge Defizite).
   if(meals===3) return [
-    {name:'Frühstück',time:'08:00',tag:'🍳',kind:prefKind('breakfast', prefs.breakfast)},
-    {name:'Mittagessen',time:'13:00',tag:'🥗',kind:'lunch'},
-    {name:'Abendessen',time:'19:00',tag:'🍽️',kind:'dinner'}
+    {name:'Frühstück',time:'08:00',tag:'🍳',kind:prefKind('breakfast', prefs.breakfast),weight:0.27},
+    {name:'Mittagessen',time:'13:00',tag:'🥗',kind:'lunch',weight:0.40},
+    {name:'Abendessen',time:'19:00',tag:'🍽️',kind:'dinner',weight:0.33}
   ];
   if(meals===5) return [
-    {name:'Frühstück',time:'07:30',tag:'🍳',kind:prefKind('breakfast', prefs.breakfast)},
-    {name:'Snack 1',time:'10:30',tag:'🥣',kind:prefKind('snack', prefs.snack)},
-    {name:'Mittagessen',time:'13:30',tag:'🥗',kind:'lunch'},
-    {name:'Snack 2',time:'16:30',tag:'🥤',kind:prefs.snack==='mixed'?'snack_mixed':(prefs.snack==='sweet'?'snack_sweet':'snack_savory')},
-    {name:'Abendessen',time:'20:00',tag:'🍽️',kind:'dinner'}
+    {name:'Frühstück',time:'07:30',tag:'🍳',kind:prefKind('breakfast', prefs.breakfast),weight:0.22},
+    {name:'Snack 1',time:'10:30',tag:'🥣',kind:prefKind('snack', prefs.snack),weight:0.12},
+    {name:'Mittagessen',time:'13:30',tag:'🥗',kind:'lunch',weight:0.30},
+    {name:'Snack 2',time:'16:30',tag:'🥤',kind:prefs.snack==='mixed'?'snack_mixed':(prefs.snack==='sweet'?'snack_sweet':'snack_savory'),weight:0.12},
+    {name:'Abendessen',time:'20:00',tag:'🍽️',kind:'dinner',weight:0.24}
   ];
   return [
-    {name:'Frühstück',time:'08:00',tag:'🍳',kind:prefKind('breakfast', prefs.breakfast)},
-    {name:'Mittagessen',time:'12:30',tag:'🥗',kind:'lunch'},
-    {name:'Snack',time:'16:00',tag:'🥣',kind:prefKind('snack', prefs.snack)},
-    {name:'Abendessen',time:'19:30',tag:'🍽️',kind:'dinner'}
+    {name:'Frühstück',time:'08:00',tag:'🍳',kind:prefKind('breakfast', prefs.breakfast),weight:0.25},
+    {name:'Mittagessen',time:'12:30',tag:'🥗',kind:'lunch',weight:0.33},
+    {name:'Snack',time:'16:00',tag:'🥣',kind:prefKind('snack', prefs.snack),weight:0.14},
+    {name:'Abendessen',time:'19:30',tag:'🍽️',kind:'dinner',weight:0.28}
   ];
 }
 
@@ -2088,12 +2195,23 @@ function generateMealPlan(kcal, meals, proteinG, carbsG, fatG, diet, prefs) {
   }
 
   const mealDefs = selectedMealKinds(meals, prefs);
-  const per = equalTargets(proteinG, carbsG, fatG, mealDefs.length);
-  const templates = mealDefs.map((m) => ({
-    name:m.name,time:m.time,tag:m.tag,kind:m.kind,
-    target:{...per,kcal:macroKcal(per.p,per.c,per.f)},
-    alts:buildBestOptions(m.kind, per.p, per.c, per.f, prefs, 2, diet)
-  }));
+  // Smarte Verteilung: Protein wird relativ gleichmässig über den Tag gelegt
+  // (Sättigung/Muskelschutz), Kohlenhydrate und Fett folgen dem Mahlzeit-Gewicht.
+  // So darf ein Frühstück z.B. ~300 kcal haben und das Mittagessen mehr.
+  const weights = mealDefs.map(m => m.weight || (1/mealDefs.length));
+  const wSum = weights.reduce((a,b)=>a+b,0) || 1;
+  const templates = mealDefs.map((m, i) => {
+    const w = weights[i] / wSum;
+    // Protein: 60% gleichmässig, 40% nach Gewicht – glättet Spitzen, hält aber Sättigung.
+    const pPer = proteinG * (0.6/mealDefs.length + 0.4*w);
+    const cPer = carbsG * w;
+    const fPer = fatG * w;
+    return {
+      name:m.name,time:m.time,tag:m.tag,kind:m.kind,weight:w,
+      target:{p:pPer,c:cPer,f:fPer,kcal:macroKcal(pPer,cPer,fPer)},
+      alts:buildBestOptions(m.kind, pPer, cPer, fPer, prefs, 2, diet)
+    };
+  });
 
   window._mealTemplates = templates;
   window._mealAltIdx = templates.map(() => 0);
@@ -3164,21 +3282,100 @@ function filterCheat(cat, btn) {
     const targets = window._currentTargets;
     if(!targets || !window._mealTemplates) return;
 
-    const proteinKeys = ['huhn','pute','putenaufschnitt','rind','rindhack5','kalb','schweinefilet','kabeljau','thunfisch','garnelen','seitan','tofu','tempeh','magerquark','skyr','huettenkaese','whey','vegwhey','eimix'];
+    const proteinKeys = ['huhn','pute','putenaufschnitt','haehnchenaufschnitt','rind','rindhack5','kalb','schweinefilet','kabeljau','thunfisch','thunfischsteak','pangasius','garnelen','seitan','tofu','raeuchertofu','tempeh','magerquark','magerquark_vanille','skyr','proteinjoghurt','huettenkaese','harzer','whey','vegwhey','eimix','eiklar','edamame'];
     const fatKeys = ['olivenoel','rapsoel','mandeln','walnuesse','cashews','chia','leinsamen','kuerbiskerne','erdnussbutter','tahini','avocado','oliven'];
     const carbKeys = ['reis','basmati','vollkornreis','kartoffeln','suesskartoffel','quinoa','vollkornpasta','couscous','bulgur','vollkornbrot','roggenbrot','wrap','haferflocken','reiswaffeln','banane','apfel','beeren','linsen','bohnen'];
+    // Volumen-Gemüse: sehr kalorienarm, wird zum Auffüllen/Sättigen genutzt, nicht zur Makro-Steuerung.
 
-    // Mehrere kleine Durchläufe, weil Proteinquellen oft minimale Fett-/KH-Anteile enthalten.
-    for(let i=0;i<8;i++){
-      adjustMacro('p', targets.proteinG, proteinKeys, 220);
+    const proteinTol = 0.15; // Protein darf ±15% schwanken für realistische Teller
+    const pLow = targets.proteinG * (1 - proteinTol);
+    const pHigh = targets.proteinG * (1 + proteinTol);
+
+    // 1) Grobausrichtung: Fett und KH ans Ziel; Protein nur in die Toleranzspanne ziehen.
+    for(let i=0;i<6;i++){
+      // Protein nur korrigieren, wenn es ausserhalb der ±15%-Spanne liegt
+      let pNow = planTotals().p;
+      if(pNow < pLow) adjustMacro('p', pLow, proteinKeys, 200);
+      else if(pNow > pHigh) adjustMacro('p', pHigh, proteinKeys, 200);
       adjustMacro('fat', targets.fatG, fatKeys, 120);
       adjustMacro('c', targets.carbsG, carbKeys, 260);
     }
 
-    // Finale Kalorienkorrektur ausschliesslich über KH-Quelle, falls durch Rundung noch Differenz bleibt.
+    // 2) KALORIEN-PRIORITÄT: Die Gesamtkalorien müssen treffen. Reicht KH-Anpassung
+    //    nicht (z.B. KH schon am Minimum), wird zusätzlich Fett als Hebel genutzt –
+    //    Protein bleibt geschützt, solange es in der Toleranz liegt.
+    for(let pass=0; pass<4; pass++){
+      let totals = planTotals();
+      let kcalDiff = targets.kcal - kcalFromMacros(totals.p,totals.c,totals.fat);
+      if(Math.abs(kcalDiff) < 8) break;
+
+      // a) zuerst über KH ausgleichen (4 kcal/g)
+      const carbTargetG = Math.max(0, totals.c + kcalDiff/4);
+      adjustMacro('c', carbTargetG, carbKeys, 300);
+
+      totals = planTotals();
+      kcalDiff = targets.kcal - kcalFromMacros(totals.p,totals.c,totals.fat);
+      if(Math.abs(kcalDiff) < 8) break;
+
+      // b) Rest über Fett (9 kcal/g) – nach unten bis Portion-Minimum, nach oben moderat
+      const fatTargetG = Math.max(0, totals.fat + kcalDiff/9);
+      adjustMacro('fat', fatTargetG, fatKeys, 60);
+
+      // c) falls Kalorien immer noch zu hoch UND Protein über Soll: Protein bis pLow senken
+      totals = planTotals();
+      kcalDiff = targets.kcal - kcalFromMacros(totals.p,totals.c,totals.fat);
+      if(kcalDiff < -8 && totals.p > pLow){
+        adjustMacro('p', pLow, proteinKeys, 150);
+      }
+    }
+
+    // 2b) HARTE KALORIEN-ENDKLAMMER: Liegt der Plan trotz Makro-Anpassung noch
+    //     über dem fixen Budget (typisch bei sehr engen Zielen wegen Mindest-
+    //     portionen), werden gezielt die kalorienreichsten reduzierbaren Portionen
+    //     schrittweise Richtung Minimum gezogen, bis das Budget sitzt. Reihenfolge:
+    //     erst KH/Fett/Volumen-Gemüse, Protein nur bis zur ±15%-Untergrenze.
+    const volumeKeys = ['gemuese','brokkoli','spinat','salat','zucchini','blumenkohl','champignons','paprika','gurke','tomaten','cherrytomaten','spargel','bohnengruen','karotten'];
+    const trimOrder = [...carbKeys, ...fatKeys, ...volumeKeys]; // Protein separat, geschützt
+    for(let guard=0; guard<300; guard++){
+      let totals = planTotals();
+      let over = kcalFromMacros(totals.p,totals.c,totals.fat) - targets.kcal;
+      if(over <= 6) break;
+      // Kandidaten: reduzierbare Portionen über ihrem Minimum, nach kcal/g sortiert (teuerste zuerst)
+      let refs = allSelectedFoods().filter(r=>{
+        if((r.meal && r.meal.kind)==='shake') return false;
+        if(!trimOrder.includes(r.food.k)) return false;
+        const pf = portionFor(r.food.k);
+        return r.food.grams > pf.min;
+      });
+      // Falls nichts mehr trimmbar: Protein antasten. Das Kalorienziel hat Vorrang –
+      // notfalls bis zu den Portionsminima (der Hinweis informiert über die Anpassung).
+      if(!refs.length){
+        refs = allSelectedFoods().filter(r=>{
+          if((r.meal && r.meal.kind)==='shake') return false;
+          if(!proteinKeys.includes(r.food.k)) return false;
+          const pf = portionFor(r.food.k);
+          return r.food.grams > pf.min;
+        });
+        if(!refs.length) break; // wirklich alles am Minimum – winzige Restdifferenz bleibt
+      }
+      refs.sort((a,b)=>{
+        const da=FOOD_DB[a.food.k], db=FOOD_DB[b.food.k];
+        const ka=(da.p*4+da.c*4+da.f*9), kb=(db.p*4+db.c*4+db.f*9);
+        return kb-ka;
+      });
+      const ref = refs[0];
+      const db = FOOD_DB[ref.food.k];
+      const kcalPerG = (db.p*4+db.c*4+db.f*9)/100;
+      const pf = portionFor(ref.food.k);
+      let reduceG = Math.max(pf.step, Math.ceil((over/kcalPerG)/pf.step)*pf.step);
+      let newG = Math.max(pf.min, snap(ref.food.k, ref.food.grams - reduceG));
+      if(newG >= ref.food.grams){ newG = Math.max(pf.min, ref.food.grams - pf.step); }
+      refreshFood(ref, newG);
+    }
+
+    // 3) Feinkorrektur der Restdifferenz über die stärkste KH-Quelle (Rundung).
     let totals = planTotals();
-    totals.cal = kcalFromMacros(totals.p,totals.c,totals.fat);
-    const kcalDiff = targets.kcal - totals.cal;
+    const kcalDiff = targets.kcal - kcalFromMacros(totals.p,totals.c,totals.fat);
     if(Math.abs(kcalDiff) >= 4){
       const refs = allSelectedFoods().filter(r => carbKeys.includes(r.food.k));
       let best = refs.find(r => ['reis','basmati','vollkornreis','kartoffeln','suesskartoffel','vollkornpasta','couscous','bulgur','quinoa','haferflocken'].includes(r.food.k)) || refs[0];
@@ -3187,7 +3384,6 @@ function filterCheat(cat, btn) {
         const exactKcalPerG = ((db.p||0)*4 + (db.c||0)*4 + (db.f||0)*9)/100;
         const addG = Math.round(kcalDiff / exactKcalPerG);
         let newG = best.food.grams + addG;
-        // Portionsgrenzen einhalten (kein 602g-Quinoa, keine 0g-Basis)
         if(typeof clampPortion === 'function' && typeof snap === 'function'){
           newG = clampPortion(best.food.k, snap(best.food.k, newG));
         } else {
