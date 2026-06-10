@@ -149,6 +149,21 @@ section{position:relative;z-index:1;}
 .gallery-add.admin-only{display:none!important;}
 .admin-mode .gallery-add.admin-only{display:flex!important;}
 #galleryInput{display:none;}
+/* ── GALLERY KATEGORIEN ── */
+.gallery-filter{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
+.gallery-filter-btn{padding:8px 16px;background:var(--card);border:1px solid var(--border);color:var(--muted);font-size:12px;letter-spacing:1px;cursor:pointer;border-radius:20px;transition:all 0.2s;font-family:'DM Sans',sans-serif;font-weight:500;}
+.gallery-filter-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
+.gallery-filter-btn.active{background:var(--gold);color:var(--black);border-color:var(--gold);font-weight:700;}
+.gallery-subfilter{display:none;flex-wrap:wrap;gap:6px;margin-bottom:18px;padding:12px;background:var(--card);border:1px solid var(--border2);border-radius:6px;}
+.gallery-subfilter.visible{display:flex;}
+.gallery-subfilter-btn{padding:6px 12px;background:var(--card2);border:1px solid var(--border);color:var(--muted);font-size:11px;letter-spacing:0.5px;cursor:pointer;border-radius:16px;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+.gallery-subfilter-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
+.gallery-subfilter-btn.active{background:var(--gold-dim);color:var(--gold-bright);border-color:var(--gold);font-weight:600;}
+.gallery-group-head{grid-column:1/-1;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--gold);margin:18px 0 2px;padding-bottom:8px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:10px;}
+.gallery-group-head:first-child{margin-top:0;}
+.gallery-group-head .cnt{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:1px;color:var(--muted);font-weight:500;}
+.gallery-cat-badge{position:absolute;bottom:8px;left:8px;background:rgba(8,8,8,0.82);backdrop-filter:blur(4px);color:var(--gold-bright);font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:4px 8px;border-radius:3px;font-weight:600;pointer-events:none;max-width:calc(100% - 16px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.gallery-cat-select{background:var(--card2);border:1px solid var(--border);border-radius:3px;padding:14px 18px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none;margin-bottom:16px;width:100%;}
 .lightbox{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.95);align-items:center;justify-content:center;}
 .lightbox.open{display:flex;}
 .lightbox img{max-width:90vw;max-height:90vh;object-fit:contain;border-radius:4px;}
@@ -443,6 +458,10 @@ footer a{color:var(--gold);text-decoration:none;}
       <button class="btn-primary" onclick="showSection('rechner')">RECHNER STARTEN</button>
       <button class="btn-outline" onclick="showSection('videos')">VIDEOS ANSEHEN</button>
     </div>
+    <div class="hero-ctas" style="margin-top:12px;">
+      <button class="btn-outline" onclick="showSection('uebermich')">ÜBER MICH</button>
+      <button class="btn-outline" onclick="showSection('bilder')">FOTOS</button>
+    </div>
     <div class="hero-stats">
       <div class="stat"><div class="stat-val" id="stat1" data-editable>-22kg</div><div class="stat-label" id="stat1l" data-editable>Transformation</div></div>
       <div class="stat"><div class="stat-val" id="stat2" data-editable>8.4%</div><div class="stat-label" id="stat2l" data-editable>Körperfett</div></div>
@@ -530,8 +549,10 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
       <h2 data-editable>BILDER</h2>
       <p data-editable>Transformation, Wettkampf-Prep und hinter den Kulissen</p>
     </div>
+    <div class="gallery-filter" id="galleryFilter"></div>
+    <div class="gallery-subfilter" id="gallerySubfilter"></div>
     <div class="gallery-grid" id="galleryGrid">
-      <div class="gallery-add admin-only" onclick="adminOnly(()=>document.getElementById('galleryInput').click())">
+      <div class="gallery-add admin-only" onclick="adminOnly(()=>openGalleryUpload())">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         <span>Bilder hinzufügen</span>
       </div>
@@ -887,6 +908,22 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
   </div>
 </div>
 
+<!-- ══ GALLERY UPLOAD MODAL ══ -->
+<div class="modal-overlay" id="addGalleryModal">
+  <div class="modal" style="max-width:520px;">
+    <button class="modal-close" onclick="closeModal('addGalleryModal')">×</button>
+    <h3>BILDER HINZUFÜGEN</h3>
+    <p>Kategorie wählen, dann die Bilder auswählen.</p>
+    <label>Kategorie</label>
+    <select id="galleryUploadCat" class="gallery-cat-select" onchange="onGalleryUploadCatChange()"></select>
+    <div id="galleryUploadMonthWrap" style="display:none;">
+      <label>Monat (Transformation)</label>
+      <select id="galleryUploadMonth" class="gallery-cat-select"></select>
+    </div>
+    <button class="btn-primary" style="width:100%;padding:16px;font-size:18px;letter-spacing:3px;" onclick="document.getElementById('galleryInput').click()">📷 &nbsp;BILDER AUSWÄHLEN</button>
+  </div>
+</div>
+
 <!-- ══ STATS MODAL ══ -->
 <div class="modal-overlay" id="statsModal">
   <div class="modal" style="max-width:480px;">
@@ -985,8 +1022,45 @@ function applyEditableContent(content){
   });
 }
 
+// ══ GALLERY ══
+// Kategorien für die Bildergalerie. 'months' = Transformation wird zusätzlich
+// nach Monat (Juni 25 – Juni 26) gruppiert/gefiltert.
+const GALLERY_TRANSFORM_MONTHS = [
+  {id:'2025-06', label:'Juni 25'},   {id:'2025-07', label:'Juli 25'},
+  {id:'2025-08', label:'August 25'}, {id:'2025-09', label:'September 25'},
+  {id:'2025-10', label:'Oktober 25'},{id:'2025-11', label:'November 25'},
+  {id:'2025-12', label:'Dezember 25'},{id:'2026-01', label:'Januar 26'},
+  {id:'2026-02', label:'Februar 26'},{id:'2026-03', label:'März 26'},
+  {id:'2026-04', label:'April 26'},  {id:'2026-05', label:'Mai 26'},
+  {id:'2026-06', label:'Juni 26'}
+];
+const GALLERY_CATEGORIES = [
+  {id:'transformation', label:'Transformation', months:true},
+  {id:'gym',            label:'Gym Pics'},
+  {id:'fibo2026',       label:'FIBO 2026'},
+  {id:'rimini2026',     label:'Rimini Wellness 2026'},
+  {id:'food',           label:'Food & Rezepte'}
+];
+const GALLERY_DEFAULT_CAT = 'transformation';
+let galleryActiveCat = 'all';
+let galleryActiveMonth = 'all';
+
+function galleryCatLabel(id){ const c=GALLERY_CATEGORIES.find(c=>c.id===id); return c?c.label:'Sonstiges'; }
+function galleryMonthLabel(id){ const m=GALLERY_TRANSFORM_MONTHS.find(m=>m.id===id); return m?m.label:''; }
+
+// Normalisiert einen gespeicherten Eintrag (alt = nur String-URL, neu = {src,cat,month})
+function normalizeGalleryEntry(entry){
+  if(typeof entry === 'string') return {src:entry, cat:GALLERY_DEFAULT_CAT, month:''};
+  if(entry && entry.src) return {src:entry.src, cat:entry.cat||GALLERY_DEFAULT_CAT, month:entry.month||''};
+  return null;
+}
+
 function getGallerySources(){
-  return Array.from(document.querySelectorAll('#galleryGrid .gallery-item img')).map(img => img.src);
+  return Array.from(document.querySelectorAll('#galleryGrid .gallery-item')).map(el => ({
+    src: el.querySelector('img').src,
+    cat: el.dataset.cat || GALLERY_DEFAULT_CAT,
+    month: el.dataset.month || ''
+  }));
 }
 
 function loadLocalBackup(){
@@ -1137,7 +1211,12 @@ async function loadSaved() {
   if (siteState.images?.aboutAfter) renderAboutImg('after', siteState.images.aboutAfter);
 
   document.querySelectorAll('#galleryGrid .gallery-item').forEach(el => el.remove());
-  (siteState.gallery || []).forEach(src => addGalleryItem(src, false));
+  (siteState.gallery || []).forEach(entry => {
+    const e = normalizeGalleryEntry(entry);
+    if(e) addGalleryItem(e.src, false, e.cat, e.month);
+  });
+  buildGalleryFilter();
+  renderGalleryFilter();
   checkGalleryEmpty();
 }
 
@@ -1299,21 +1378,44 @@ function filterVideos(cat) {
 }
 
 // ══ GALLERY ══
-function addGalleryItem(src, persist = true) {
+function addGalleryItem(src, persist = true, cat = GALLERY_DEFAULT_CAT, month = '') {
   const grid = document.getElementById('galleryGrid');
   document.getElementById('galleryEmpty').style.display = 'none';
   const item = document.createElement('div');
   item.className = 'gallery-item';
-  item.innerHTML = `<img src="${src}" alt=""><button class="gallery-delete" onclick="event.stopPropagation();this.parentElement.remove();saveGalleryToStorage();checkGalleryEmpty()">×</button>`;
+  item.dataset.cat = cat || GALLERY_DEFAULT_CAT;
+  item.dataset.month = month || '';
+  let badge = galleryCatLabel(item.dataset.cat);
+  if(item.dataset.cat === 'transformation' && item.dataset.month) badge += ' · ' + galleryMonthLabel(item.dataset.month);
+  item.innerHTML = `<img src="${src}" alt=""><span class="gallery-cat-badge">${escapeHtml(badge)}</span><button class="gallery-delete" onclick="event.stopPropagation();this.parentElement.remove();saveGalleryToStorage();renderGalleryFilter();checkGalleryEmpty()">×</button>`;
   item.querySelector('img').onclick = () => openLightbox(src);
   const addCard = grid.querySelector('.gallery-add');
   grid.insertBefore(item, addCard || grid.firstChild);
   if (persist) saveGalleryToStorage();
 }
 
+// Baut die Upload-Auswahl (Kategorie + Monat) im Modal auf.
+function openGalleryUpload(){
+  const catSel = document.getElementById('galleryUploadCat');
+  catSel.innerHTML = GALLERY_CATEGORIES.map(c=>`<option value="${c.id}">${c.label}</option>`).join('');
+  const monthSel = document.getElementById('galleryUploadMonth');
+  monthSel.innerHTML = GALLERY_TRANSFORM_MONTHS.map(m=>`<option value="${m.id}">${m.label}</option>`).join('');
+  // Vorauswahl an aktuell gewählten Filter koppeln
+  if(galleryActiveCat !== 'all') catSel.value = galleryActiveCat;
+  if(galleryActiveMonth !== 'all') monthSel.value = galleryActiveMonth;
+  onGalleryUploadCatChange();
+  openModal('addGalleryModal');
+}
+function onGalleryUploadCatChange(){
+  const cat = document.getElementById('galleryUploadCat').value;
+  document.getElementById('galleryUploadMonthWrap').style.display = (cat === 'transformation') ? 'block' : 'none';
+}
+
 async function addGalleryImages(e) {
   if (!isAdmin) return;
   const files = Array.from(e.target.files);
+  const cat = document.getElementById('galleryUploadCat')?.value || GALLERY_DEFAULT_CAT;
+  const month = (cat === 'transformation') ? (document.getElementById('galleryUploadMonth')?.value || '') : '';
   let added = 0;
   const useCloud = cloudinaryReady();
   showToast(useCloud ? 'Bilder werden hochgeladen...' : 'Bilder werden vorbereitet...');
@@ -1322,15 +1424,23 @@ async function addGalleryImages(e) {
       const url = useCloud
         ? await uploadToCloudinary(file)
         : await resizeImageToDataURL(file, 1600, 0.82);
-      addGalleryItem(url, false);
+      addGalleryItem(url, false, cat, month);
       added++;
     } catch(err) { console.warn(err); }
   }
   await saveGalleryToStorage();
+  buildGalleryFilter();
+  // Nach dem Upload direkt auf die betreffende Kategorie filtern
+  galleryActiveCat = cat;
+  galleryActiveMonth = month || 'all';
+  renderGalleryFilter();
   checkGalleryEmpty();
+  closeModal('addGalleryModal');
+  let label = galleryCatLabel(cat);
+  if(cat==='transformation' && month) label += ' · ' + galleryMonthLabel(month);
   showToast(useCloud
-    ? `✓ ${added} Bild(er) online gespeichert`
-    : `✓ ${added} Bild(er) lokal gespeichert`);
+    ? `✓ ${added} Bild(er) → ${label}`
+    : `✓ ${added} Bild(er) lokal → ${label}`);
   e.target.value = '';
 }
 
@@ -1339,9 +1449,102 @@ async function saveGalleryToStorage() {
   await saveSiteState(false);
 }
 
+// ── Filterleiste (Hauptkategorien) ──
+function buildGalleryFilter(){
+  const bar = document.getElementById('galleryFilter');
+  if(!bar) return;
+  const counts = {};
+  document.querySelectorAll('#galleryGrid .gallery-item').forEach(el=>{
+    const c = el.dataset.cat || GALLERY_DEFAULT_CAT;
+    counts[c] = (counts[c]||0)+1;
+  });
+  const total = document.querySelectorAll('#galleryGrid .gallery-item').length;
+  let html = `<button class="gallery-filter-btn" data-cat="all" onclick="setGalleryFilter('all')">Alle <span style="opacity:.6">(${total})</span></button>`;
+  html += GALLERY_CATEGORIES.map(c=>{
+    const n = counts[c.id]||0;
+    return `<button class="gallery-filter-btn" data-cat="${c.id}" onclick="setGalleryFilter('${c.id}')">${c.label} <span style="opacity:.6">(${n})</span></button>`;
+  }).join('');
+  bar.innerHTML = html;
+}
+
+function setGalleryFilter(cat){
+  galleryActiveCat = cat;
+  galleryActiveMonth = 'all';
+  renderGalleryFilter();
+}
+
+// ── Monats-Unterfilter (nur für Transformation) ──
+function renderSubFilter(){
+  const sub = document.getElementById('gallerySubfilter');
+  if(!sub) return;
+  if(galleryActiveCat !== 'transformation'){ sub.classList.remove('visible'); sub.innerHTML=''; return; }
+  const counts = {};
+  document.querySelectorAll('#galleryGrid .gallery-item[data-cat="transformation"]').forEach(el=>{
+    const m = el.dataset.month || '';
+    if(m) counts[m] = (counts[m]||0)+1;
+  });
+  const total = document.querySelectorAll('#galleryGrid .gallery-item[data-cat="transformation"]').length;
+  let html = `<button class="gallery-subfilter-btn ${galleryActiveMonth==='all'?'active':''}" onclick="setGalleryMonth('all')">Alle Monate (${total})</button>`;
+  html += GALLERY_TRANSFORM_MONTHS.map(m=>{
+    const n = counts[m.id]||0;
+    return `<button class="gallery-subfilter-btn ${galleryActiveMonth===m.id?'active':''}" onclick="setGalleryMonth('${m.id}')">${m.label}${n?` (${n})`:''}</button>`;
+  }).join('');
+  sub.innerHTML = html;
+  sub.classList.add('visible');
+}
+function setGalleryMonth(m){ galleryActiveMonth = m; renderGalleryFilter(); }
+
+// ── Sichtbarkeit + Gruppen-Überschriften anwenden ──
+function renderGalleryFilter(){
+  // aktive Hauptkategorie markieren
+  document.querySelectorAll('#galleryFilter .gallery-filter-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.cat === galleryActiveCat);
+  });
+  renderSubFilter();
+
+  const grid = document.getElementById('galleryGrid');
+  // alte Gruppen-Überschriften entfernen
+  grid.querySelectorAll('.gallery-group-head').forEach(h=>h.remove());
+
+  const items = Array.from(grid.querySelectorAll('.gallery-item'));
+  items.forEach(el=>{
+    const cat = el.dataset.cat || GALLERY_DEFAULT_CAT;
+    const month = el.dataset.month || '';
+    let show = (galleryActiveCat==='all') || (cat===galleryActiveCat);
+    if(show && galleryActiveCat==='transformation' && galleryActiveMonth!=='all'){
+      show = (month === galleryActiveMonth);
+    }
+    el.style.display = show ? '' : 'none';
+  });
+
+  // In der Transformation-Ansicht (alle Monate) nach Monat gruppieren mit Überschriften
+  if(galleryActiveCat==='transformation' && galleryActiveMonth==='all'){
+    const addCard = grid.querySelector('.gallery-add');
+    GALLERY_TRANSFORM_MONTHS.forEach(m=>{
+      const monthItems = items.filter(el=>el.dataset.month===m.id && el.style.display!=='none');
+      if(monthItems.length){
+        const head = document.createElement('div');
+        head.className = 'gallery-group-head';
+        head.innerHTML = `${m.label} <span class="cnt">${monthItems.length} Bild(er)</span>`;
+        grid.insertBefore(head, monthItems[0]);
+      }
+    });
+    // Bilder ohne Monat unter "Ohne Monat" sammeln
+    const noMonth = items.filter(el=>!el.dataset.month && el.style.display!=='none');
+    if(noMonth.length){
+      const head = document.createElement('div');
+      head.className = 'gallery-group-head';
+      head.innerHTML = `Ohne Monat <span class="cnt">${noMonth.length} Bild(er)</span>`;
+      grid.insertBefore(head, noMonth[0]);
+    }
+  }
+  checkGalleryEmpty();
+}
+
 function checkGalleryEmpty() {
-  const hasItems = document.querySelectorAll('.gallery-item').length > 0;
-  document.getElementById('galleryEmpty').style.display = hasItems ? 'none' : 'block';
+  const visible = Array.from(document.querySelectorAll('#galleryGrid .gallery-item')).filter(el=>el.style.display!=='none').length;
+  const empty = document.getElementById('galleryEmpty');
+  if(empty) empty.style.display = visible ? 'none' : 'block';
 }
 
 function openLightbox(src) { document.getElementById('lightboxImg').src=src; document.getElementById('lightbox').classList.add('open'); }
@@ -1750,6 +1953,10 @@ function dishError(items, tP, tC, tF){
 // Kohlenhydratquellen, die dem Gericht den Namen/Charakter geben und daher nicht
 // auf 0g fallen dürfen (z.B. Haferflocken im Porridge, Reis in der Bowl).
 const STAPLE_CARB_KEYS = ['haferflocken','reis','basmati','vollkornreis','kartoffeln','suesskartoffel','quinoa','vollkornpasta','couscous','bulgur','vollkornbrot','roggenbrot','wrap','reiswaffeln'];
+// Namensgebende Früchte (Apfel/Banane/Beeren) sind in einigen Gerichten die KH-Quelle
+// (z.B. "Quark-Apfel Bowl", "Whey Shake mit Banane"). Sie dürfen nicht auf 0g
+// fallen, sonst fehlt die titelgebende Zutat im Gericht UND in der Einkaufsliste.
+const STAPLE_FRUIT_KEYS = ['apfel','banane','beeren'];
 
 // Portionsbeschränkter Optimierer: Protein- und Fettquelle werden im realistischen
 // Bereich gerastert, die KH-Quelle füllt die restlichen Kohlenhydrate auf.
@@ -1769,8 +1976,8 @@ function buildDishFromBlueprint(bp, targetP, targetC, targetF){
   if(!pF||!cF||!fF) return consolidateFoods(fixed);
 
   const pP=portionFor(pKey), pF_=portionFor(fKey), pC=portionFor(cKey);
-  const cIsStaple = STAPLE_CARB_KEYS.includes(cKey);
-  // Untergrenze der KH-Quelle: Grundpfeiler nie unter Mindestportion.
+  const cIsStaple = STAPLE_CARB_KEYS.includes(cKey) || STAPLE_FRUIT_KEYS.includes(cKey);
+  // Untergrenze der KH-Quelle: Grundpfeiler (inkl. namensgebende Früchte) nie unter Mindestportion.
   const cMin = cIsStaple ? pC.min : 0;
   let best=null;
 
