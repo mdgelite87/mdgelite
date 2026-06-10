@@ -1685,7 +1685,7 @@ const FOOD_DB = {
   tahini:{name:'Tahini',p:17,c:21,f:54,kcal:595,cat:'Fette & Nüsse',pack:300,tags:['fat','savory']},
   oliven:{name:'Oliven',p:1,c:6,f:11,kcal:145,cat:'Fette & Nüsse',pack:200,tags:['fat','savory']},
   kokosmilch_light:{name:'Kokosmilch light',p:1.5,c:3,f:7,kcal:80,cat:'Fette & Nüsse',pack:400,tags:['fat','dinner']},
-  mandelmilch:{name:'Mandelmilch ungesüsst',p:0.5,c:0.5,f:1.1,kcal:13,cat:'Sonstiges',pack:1000,tags:['liquid','sweet']},
+  mandelmilch:{name:'Mandelmilch ungesüsst',p:0.5,c:0.5,f:1,kcal:15,cat:'Sonstiges',pack:1000,tags:['liquid','sweet']},
   hafermilch:{name:'Hafermilch',p:1,c:9,f:1.5,kcal:45,cat:'Sonstiges',pack:1000,tags:['liquid','sweet']},
   // Zero Sauce: Durchschnittswert über More Nutrition & Callowfit Sorten.
   // Reale Werte: ~50 kcal/100ml im Schnitt (überwiegend Kohlenhydrate, kaum Fett/Protein).
@@ -1733,11 +1733,11 @@ const PORTION = {
   cherrytomaten:{min:50,max:200,step:10}, spargel:{min:100,max:350,step:10}, bohnengruen:{min:80,max:300,step:10},
   karotten:{min:60,max:250,step:10},
   // Fette
-  olivenoel:{min:2,max:20,step:1}, rapsoel:{min:2,max:20,step:1}, avocado:{min:20,max:120,step:5},
+  olivenoel:{min:5,max:20,step:1}, rapsoel:{min:5,max:20,step:1}, avocado:{min:20,max:120,step:5},
   mandeln:{min:5,max:45,step:5}, walnuesse:{min:5,max:40,step:5}, cashews:{min:5,max:45,step:5},
   chia:{min:5,max:30,step:1}, leinsamen:{min:5,max:30,step:1}, kuerbiskerne:{min:5,max:35,step:2},
   erdnussbutter:{min:5,max:35,step:1}, tahini:{min:5,max:30,step:1}, oliven:{min:10,max:60,step:5},
-  kokosmilch_light:{min:30,max:150,step:10},
+  kokosmilch_light:{min:30,max:150,step:10}, mandelmilch:{min:250,max:250,step:10},
   // Zero Sauce: realistische Sauciermenge 50–70g pro Mahlzeit
   zerosauce:{min:50,max:70,step:5}
 };
@@ -1748,7 +1748,7 @@ const MEAL_BLUEPRINTS = {
   breakfast_sweet:[
     {title:'Protein Oats mit Beeren', keys:['magerquark','haferflocken','mandeln'], extras:[['beeren',80]], note:'süsses Frühstück mit Haferflocken, Quark und Beeren'},
     {title:'Skyr-Bowl mit Banane', keys:['skyr','haferflocken','chia'], extras:[['banane',60]], note:'cremige Bowl mit Frucht und Omega-3-reichen Samen'},
-    {title:'Whey-Oats', keys:['whey','haferflocken','erdnussbutter'], extras:[['beeren',60]], note:'Whey Protein, Oats und kleine Fettquelle'}
+    {title:'Whey-Oats', keys:['whey','haferflocken','mandeln'], extras:[['beeren',60],['mandelmilch',250]], note:'cremiges Porridge mit Mandelmilch, Whey nach dem Kochen einrühren'}
   ],
   breakfast_savory:[
     {title:'Eiklar-Rührei mit Vollkornbrot', keys:['eiklar','vollkornbrot','olivenoel'], extras:[['spinat',70]], note:'salziges Frühstück mit Brot und Gemüse'},
@@ -1759,7 +1759,7 @@ const MEAL_BLUEPRINTS = {
     {title:'Hähnchen-Aufschnitt Bowl', keys:['haehnchenaufschnitt','vollkornbrot','avocado'], extras:[['gurke',100]], note:'leichtes herzhaftes Frühstück'}
   ],
   snack_sweet:[
-    {title:'Whey Shake mit Banane', keys:['whey','banane','mandeln'], extras:[], note:'süsser Shake-Snack; Whey Protein statt Isolat'},
+    {title:'Whey Shake mit Banane', keys:['whey','banane','mandeln'], extras:[['mandelmilch',250]], note:'cremiger Shake mit Mandelmilch, Banane und Whey – einfach mixen'},
     {title:'Skyr mit Beeren', keys:['skyr','haferflocken','walnuesse'], extras:[['beeren',80]], note:'süss, ballaststoffreich und proteinreich'},
     {title:'Quark-Apfel Bowl', keys:['magerquark','apfel','chia'], extras:[], note:'leichte süsse Zwischenmahlzeit'},
     {title:'Protein-Joghurt mit Beeren', keys:['proteinjoghurt','beeren','mandeln'], extras:[], note:'kalorienarm, hoher Proteinanteil'},
@@ -1796,7 +1796,7 @@ const MEAL_BLUEPRINTS = {
   breakfast_sweet_vegetarian:[
     {title:'Skyr-Oats mit Beeren', keys:['skyr','haferflocken','mandeln'], extras:[['beeren',90]], note:'vegetarische Protein-Bowl mit Beeren'},
     {title:'Quark-Bananen-Oats', keys:['magerquark','haferflocken','chia'], extras:[['banane',70]], note:'süss, sättigend und meal-prep-tauglich'},
-    {title:'Whey Protein Porridge', keys:['whey','haferflocken','erdnussbutter'], extras:[['beeren',70]], note:'warmes Frühstück mit Whey Protein'}
+    {title:'Whey Protein Porridge', keys:['whey','haferflocken','mandeln'], extras:[['beeren',70],['mandelmilch',250]], note:'warmes cremiges Porridge mit Mandelmilch; Whey nach dem Kochen einrühren, mit Zimt abschmecken'}
   ],
   breakfast_savory_vegetarian:[
     {title:'Eiklar-Spinat-Brot', keys:['eiklar','vollkornbrot','olivenoel'], extras:[['spinat',90]], note:'salzig, fettkontrolliert und proteinreich'},
@@ -1808,7 +1808,7 @@ const MEAL_BLUEPRINTS = {
   snack_sweet_vegetarian:[
     {title:'Skyr-Beeren-Crunch', keys:['skyr','haferflocken','walnuesse'], extras:[['beeren',80]], note:'süsser Snack mit kontrollierter Fettquelle'},
     {title:'Quark-Apfel-Chia', keys:['magerquark','apfel','chia'], extras:[], note:'leicht, süss und proteinreich'},
-    {title:'Whey Protein Shake Banane', keys:['whey','banane','mandeln'], extras:[], note:'Whey Protein statt Isolat'},
+    {title:'Whey Protein Shake Banane', keys:['whey','banane','mandeln'], extras:[['mandelmilch',250]], note:'Shake aus Mandelmilch, Banane und Whey – mixen und geniessen'},
     {title:'Protein-Joghurt mit Beeren', keys:['proteinjoghurt','beeren','mandeln'], extras:[], note:'kalorienarm, hoher Proteinanteil'}
   ],
   snack_savory_vegetarian:[
@@ -1833,9 +1833,9 @@ const MEAL_BLUEPRINTS = {
     {title:'Linsen-Vollkornpasta', keys:['linsen','vollkornpasta','olivenoel'], extras:[['gemuese',140]], note:'vegetarische Pasta mit Hülsenfrüchten'}
   ],
   breakfast_sweet_vegan:[
-    {title:'Vegane Protein-Oats', keys:['vegwhey','haferflocken','mandeln'], extras:[['beeren',90]], note:'vegane süsse Bowl mit Proteinpulver'},
-    {title:'Tofu-Beeren-Oats', keys:['tofu','haferflocken','chia'], extras:[['beeren',100]], note:'milde vegane Bowl'},
-    {title:'Protein-Bananen-Porridge', keys:['vegwhey','haferflocken','erdnussbutter'], extras:[['banane',70]], note:'süsses veganes Porridge'}
+    {title:'Vegane Protein-Oats', keys:['vegwhey','haferflocken','mandeln'], extras:[['beeren',90],['mandelmilch',250]], note:'cremige vegane Bowl mit Mandelmilch und Proteinpulver'},
+    {title:'Tofu-Beeren-Oats', keys:['tofu','haferflocken','chia'], extras:[['beeren',100],['mandelmilch',250]], note:'milde vegane Bowl mit Mandelmilch'},
+    {title:'Protein-Bananen-Porridge', keys:['vegwhey','haferflocken','mandeln'], extras:[['banane',70],['mandelmilch',250]], note:'süsses veganes Porridge mit Mandelmilch und Banane'}
   ],
   breakfast_savory_vegan:[
     {title:'Tofu Scramble Brot', keys:['tofu','vollkornbrot','olivenoel'], extras:[['spinat',120]], note:'salziges veganes Frühstück'},
@@ -1843,9 +1843,9 @@ const MEAL_BLUEPRINTS = {
     {title:'Tempeh-Kartoffel-Hash', keys:['tempeh','kartoffeln','rapsoel'], extras:[['spinat',100]], note:'deftiger veganer Start'}
   ],
   snack_sweet_vegan:[
-    {title:'Veganer Proteinshake Banane', keys:['vegwhey','banane','mandeln'], extras:[], note:'veganer Proteinshake als süsser Snack'},
-    {title:'Protein-Beeren-Oats', keys:['vegwhey','haferflocken','chia'], extras:[['beeren',80]], note:'süss und sättigend'},
-    {title:'Apfel-Erdnuss-Protein', keys:['vegwhey','apfel','erdnussbutter'], extras:[], note:'süsser veganer Snack'}
+    {title:'Veganer Proteinshake Banane', keys:['vegwhey','banane','mandeln'], extras:[['mandelmilch',250]], note:'veganer Shake mit Mandelmilch und Banane – mixen'},
+    {title:'Protein-Beeren-Oats', keys:['vegwhey','haferflocken','chia'], extras:[['beeren',80],['mandelmilch',250]], note:'cremig und sättigend mit Mandelmilch'},
+    {title:'Apfel-Protein-Shake', keys:['vegwhey','apfel','mandeln'], extras:[['mandelmilch',250]], note:'veganer Shake mit Mandelmilch, Apfel und Proteinpulver – mixen'}
   ],
   snack_savory_vegan:[
     {title:'Seitan-Wrap', keys:['seitan','wrap','olivenoel'], extras:[['salat',100]], note:'herzhafter veganer Snack'},
@@ -2956,7 +2956,7 @@ function filterCheat(cat, btn) {
     tahini:{name:'Tahini',p:17,c:21,f:54,kcal:595,cat:'Fette & Nüsse',pack:300,tags:['fat','savory']},
     oliven:{name:'Oliven',p:1,c:6,f:11,kcal:145,cat:'Fette & Nüsse',pack:200,tags:['fat','savory']},
     kokosmilch_light:{name:'Kokosmilch light',p:1.5,c:3,f:7,kcal:80,cat:'Fette & Nüsse',pack:400,tags:['fat','dinner']},
-    mandelmilch:{name:'Mandelmilch ungesüsst',p:0.5,c:0.5,f:1.1,kcal:13,cat:'Sonstiges',pack:1000,tags:['liquid','sweet','vegan']},
+    mandelmilch:{name:'Mandelmilch ungesüsst',p:0.5,c:0.5,f:1,kcal:15,cat:'Sonstiges',pack:1000,tags:['liquid','sweet','vegan']},
     hafermilch:{name:'Hafermilch',p:1,c:9,f:1.5,kcal:45,cat:'Sonstiges',pack:1000,tags:['liquid','sweet','vegan']}
   };
 
@@ -3340,12 +3340,14 @@ function filterCheat(cat, btn) {
       let totals = planTotals();
       let over = kcalFromMacros(totals.p,totals.c,totals.fat) - targets.kcal;
       if(over <= 6) break;
-      // Kandidaten: reduzierbare Portionen über ihrem Minimum, nach kcal/g sortiert (teuerste zuerst)
+      // Kandidaten: reduzierbare Portionen über ihrem Minimum, nach kcal/g sortiert (teuerste zuerst).
+      // Öle gelten auch am 5g-Minimum noch als trimmbar (sie dürfen ganz entfernt werden).
       let refs = allSelectedFoods().filter(r=>{
         if((r.meal && r.meal.kind)==='shake') return false;
         if(!trimOrder.includes(r.food.k)) return false;
         const pf = portionFor(r.food.k);
-        return r.food.grams > pf.min;
+        const isOil = (r.food.k==='olivenoel' || r.food.k==='rapsoel');
+        return r.food.grams > pf.min || (isOil && r.food.grams > 0);
       });
       // Falls nichts mehr trimmbar: Protein antasten. Das Kalorienziel hat Vorrang –
       // notfalls bis zu den Portionsminima (der Hinweis informiert über die Anpassung).
@@ -3367,9 +3369,15 @@ function filterCheat(cat, btn) {
       const db = FOOD_DB[ref.food.k];
       const kcalPerG = (db.p*4+db.c*4+db.f*9)/100;
       const pf = portionFor(ref.food.k);
+      // Reine Öle dürfen komplett entfernt werden (0g statt am 5g-Minimum kleben),
+      // wenn das Budget es verlangt – keine lächerlichen Mini-Fettmengen.
+      const removableOil = (ref.food.k==='olivenoel' || ref.food.k==='rapsoel');
       let reduceG = Math.max(pf.step, Math.ceil((over/kcalPerG)/pf.step)*pf.step);
-      let newG = Math.max(pf.min, snap(ref.food.k, ref.food.grams - reduceG));
-      if(newG >= ref.food.grams){ newG = Math.max(pf.min, ref.food.grams - pf.step); }
+      let newG = snap(ref.food.k, ref.food.grams - reduceG);
+      newG = removableOil ? Math.max(0, newG) : Math.max(pf.min, newG);
+      if(newG >= ref.food.grams){ newG = removableOil ? Math.max(0, ref.food.grams - pf.step) : Math.max(pf.min, ref.food.grams - pf.step); }
+      // Wenn Öl unter sein Minimum gedrückt würde, ganz entfernen statt 5g zu lassen.
+      if(removableOil && newG > 0 && newG < pf.min) newG = 0;
       refreshFood(ref, newG);
     }
 
