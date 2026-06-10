@@ -230,6 +230,11 @@ section{position:relative;z-index:1;}
 .bk-step:hover{border-color:var(--gold-dim);color:var(--gold);}
 .bk-step.bk-del{color:var(--muted);}
 .bk-step.bk-del:hover{border-color:#e07c7c;color:#e07c7c;}
+.bk-amount{display:inline-flex;align-items:center;gap:4px;}
+.bk-gram{width:54px;background:var(--card2);border:1px solid var(--border);color:var(--text);font-size:13px;font-weight:600;text-align:center;padding:4px 4px;border-radius:3px;-moz-appearance:textfield;}
+.bk-gram::-webkit-outer-spin-button,.bk-gram::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.bk-gram:focus{outline:none;border-color:var(--gold-dim);}
+.bk-gram-unit{font-size:12px;color:var(--muted);margin-right:2px;}
 .nw-card{background:var(--card);border:1px solid var(--gold-dim);border-radius:6px;padding:24px;margin-bottom:16px;animation:fadeUp 0.3s ease;}
 .nw-name{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--text);margin-bottom:4px;}
 .nw-per{font-size:12px;color:var(--muted);margin-bottom:16px;}
@@ -420,7 +425,7 @@ footer a{color:var(--gold);text-decoration:none;}
     <a href="#" onclick="showSection('videos');return false;">Videos</a>
     <a href="#" onclick="showSection('bilder');return false;">Bilder</a>
     <a href="#" onclick="showSection('rechner');return false;">Rechner</a>
-    <a href="#" onclick="showSection('naehrwert');return false;">Plan-Baukasten</a>
+    <a href="#" onclick="showSection('naehrwert');return false;">Meal Builder</a>
     <a href="#" onclick="showSection('kontakt');return false;">Kontakt</a>
     <div class="admin-badge" id="adminBadge" onclick="adminLogout()">
       <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
@@ -436,7 +441,7 @@ footer a{color:var(--gold);text-decoration:none;}
   <a href="#" onclick="showSection('videos');toggleMobileMenu();return false;">Videos</a>
   <a href="#" onclick="showSection('bilder');toggleMobileMenu();return false;">Bilder</a>
   <a href="#" onclick="showSection('rechner');toggleMobileMenu();return false;">Rechner</a>
-  <a href="#" onclick="showSection('naehrwert');toggleMobileMenu();return false;">Plan-Baukasten</a>
+  <a href="#" onclick="showSection('naehrwert');toggleMobileMenu();return false;">Meal Builder</a>
   <a href="#" onclick="showSection('kontakt');toggleMobileMenu();return false;">Kontakt</a>
 </div>
 
@@ -468,6 +473,7 @@ footer a{color:var(--gold);text-decoration:none;}
     </div>
     <div class="hero-ctas">
       <button class="btn-primary" onclick="showSection('rechner')">RECHNER STARTEN</button>
+      <button class="btn-primary" onclick="showSection('naehrwert')">MEAL BUILDER</button>
       <button class="btn-outline" onclick="showSection('videos')">VIDEOS ANSEHEN</button>
     </div>
     <div class="hero-ctas" style="margin-top:12px;">
@@ -771,7 +777,7 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
   <div class="content-wrap">
     <div class="page-header">
       <div class="eyebrow">Selbst zusammenstellen</div>
-      <h2>PLAN-BAUKASTEN</h2>
+      <h2>MEAL BUILDER</h2>
       <p>Gib deine Daten &amp; dein Ziel ein und baue dir deinen Ernährungsplan selbst zusammen</p>
     </div>
     <div class="rechner-wrap">
@@ -786,7 +792,8 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
           <div class="field"><label>Körpergrösse</label><input type="number" id="bk_height" placeholder="178" min="140" max="220"><span class="field-unit">cm</span></div>
           <div class="field"><label>Körperfett % (optional)</label><input type="number" id="bk_bf" placeholder="15" min="3" max="50" step="0.1"><span class="field-unit">%</span></div>
         </div>
-        <div class="toggle-wrap">
+        <p style="font-size:11px;color:var(--muted);line-height:1.5;margin:-4px 0 0 0;">💡 Körperfett nur ausfüllen, wenn <strong style="color:var(--text);">gemessen</strong> (DEXA, Caliper, Körperfett-Waage). Dann rechnen wir mit der präziseren Katch-McArdle-Formel. Leer lassen ist völlig ok – dann nutzen wir Mifflin-St-Jeor.</p>
+        <div class="toggle-wrap" style="margin-top:16px;">
           <span class="toggle-label">Geschlecht</span>
           <div class="toggle-group" id="bk_genderToggle">
             <button class="active" data-val="male">♂ &nbsp;Mann</button>
@@ -3622,6 +3629,7 @@ function filterCheat(cat, btn) {
       if(cat==='protein') inCat = tags.includes('protein');
       else if(cat==='carb') inCat = tags.includes('carb') && !tags.includes('protein');
       else if(cat==='fat') inCat = tags.includes('fat');
+      else if(cat==='liquid') inCat = tags.includes('sauce') || tags.includes('liquid');
       if(!inCat) continue;
       out.push({k, name:f.name});
     }
@@ -3671,40 +3679,91 @@ function filterCheat(cat, btn) {
   function bkRenderTotals(){
     const t=BK.target, d=bkDayTotals();
     const kcalPct = t.kcal>0 ? Math.round(d.cal/t.kcal*100) : 0;
+    const remCal = t.kcal - d.cal;
+    const over = remCal < -t.kcal*0.05;
+    const remTxt = remCal >= 0
+      ? '<span style="color:var(--gold-bright);">noch '+Math.round(remCal)+' kcal frei</span>'
+      : '<span style="color:#e07c7c;">'+Math.abs(Math.round(remCal))+' kcal über dem Ziel</span>';
+    const hasItems = BK.meals.some(m=>m.items.length>0);
     document.getElementById('bkLiveTotals').innerHTML =
-        '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;">'
+        '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">'
       + '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:30px;letter-spacing:2px;color:#fff;">'+Math.round(d.cal)+'<span style="font-size:16px;color:var(--muted);"> / '+t.kcal+' kcal</span></span>'
-      + '<span style="font-size:13px;color:'+(d.cal>t.kcal*1.05?'#e07c7c':'var(--gold-bright)')+';font-weight:600;">'+kcalPct+'%</span></div>'
+      + '<span style="font-size:13px;color:'+(over?'#e07c7c':'var(--gold-bright)')+';font-weight:600;">'+kcalPct+'%</span></div>'
+      + '<div style="font-size:12px;margin-bottom:12px;">'+remTxt+'</div>'
       + bar('Protein', d.p, t.proteinG, 'var(--gold)')
       + bar('Kohlenhydrate', d.c, t.carbsG, '#5b8fc9')
-      + bar('Fett', d.fat, t.fatG, '#c9a84c');
+      + bar('Fett', d.fat, t.fatG, '#c9a84c')
+      + (hasItems ? '<button onclick="bkAutoFit()" style="width:100%;margin-top:12px;padding:11px;background:transparent;border:1px solid var(--gold-dim);color:var(--gold);font-family:\'Bebas Neue\',sans-serif;font-size:15px;letter-spacing:2px;cursor:pointer;border-radius:3px;transition:all .15s;" onmouseover="this.style.background=\'var(--gold)\';this.style.color=\'var(--black)\';" onmouseout="this.style.background=\'transparent\';this.style.color=\'var(--gold)\';">⚖ MENGEN AUTO-ANPASSEN</button>' : '');
   }
+
+  // Auto-Anpassen: skaliert alle Mengen proportional, damit die Gesamtkalorien
+  // möglichst genau aufs Ziel kommen. Saucen/Flüssigkeiten und Volumen-Gemüse
+  // werden NICHT mitskaliert (sie sollen Sättigung/Geschmack liefern, nicht
+  // als Kalorien-Stellschraube dienen). Danach auf Portionsraster gerundet.
+  window.bkAutoFit = function(){
+    const t=BK.target;
+    // skalierbare Items = alles ausser reine Saucen/Flüssigkeiten & Volumen-Gemüse
+    const scalable=[];
+    BK.meals.forEach(m=>m.items.forEach(it=>{
+      const tags=(FOOD_DB[it.k]&&FOOD_DB[it.k].tags)||[];
+      const fixed = tags.includes('sauce')||tags.includes('liquid')||tags.includes('volume')||tags.includes('veg');
+      if(!fixed) scalable.push(it);
+    }));
+    if(!scalable.length){ if(typeof showToast==='function') showToast('Keine anpassbaren Lebensmittel – füge Protein/KH/Fett hinzu'); return; }
+    const d=bkDayTotals();
+    const fixedCal = d.cal - scalable.reduce((s,it)=>s+it.cal,0);
+    const scalableCal = scalable.reduce((s,it)=>s+it.cal,0);
+    const targetForScalable = t.kcal - fixedCal;
+    if(scalableCal<=0 || targetForScalable<=0){ if(typeof showToast==='function') showToast('Mengen lassen sich nicht sinnvoll skalieren'); return; }
+    let factor = targetForScalable / scalableCal;
+    factor = Math.max(0.3, Math.min(3, factor)); // realistische Grenzen
+    scalable.forEach(it=>{
+      const pf=(typeof portionFor==='function')?portionFor(it.k):{min:5,max:2000,step:5};
+      let g=it.grams*factor;
+      if(typeof snap==='function') g=snap(it.k,g);
+      g=Math.max(pf.min, Math.min(pf.max, g));
+      const m=bkMacrosFor(it.k,g);
+      Object.assign(it,{grams:m.grams,p:m.p,c:m.c,fat:m.fat,cal:m.cal});
+    });
+    bkRenderMeals();
+    const after=bkDayTotals().cal;
+    const diff=Math.abs(after-t.kcal);
+    if(diff<=t.kcal*0.05){
+      if(typeof showToast==='function') showToast('✓ Mengen ans Kalorienziel angepasst');
+    } else if(after < t.kcal){
+      if(typeof showToast==='function') showToast('Angepasst – für '+t.kcal+' kcal fehlen noch '+Math.round(t.kcal-after)+'. Füge mehr Lebensmittel hinzu.');
+    } else {
+      if(typeof showToast==='function') showToast('Angepasst – noch '+Math.round(after-t.kcal)+' kcal über Ziel. Entferne etwas oder reduziere von Hand.');
+    }
+  };
 
   function bkRenderMeals(){
     const wrap=document.getElementById('bkMeals');
     wrap.innerHTML = BK.meals.map((meal,mi)=>{
       const t=bkMealTotals(meal);
       const rows = meal.items.map((it,ii)=>
-          '<div class="meal-food" style="align-items:center;">'
-        + '<span class="food-n">'+it.name+' <span style="color:var(--muted);font-size:12px;">'+it.grams+'g</span></span>'
-        + '<span class="food-macros" style="align-items:center;gap:6px;">'
+          '<div class="meal-food" style="align-items:center;flex-wrap:wrap;gap:8px;">'
+        + '<span class="food-n">'+it.name+'</span>'
+        + '<span class="food-macros" style="align-items:center;gap:6px;flex-wrap:wrap;">'
         + '<span class="macro-pill p">'+Math.round(it.p)+'g P</span>'
         + '<span class="macro-pill c">'+Math.round(it.c)+'g C</span>'
         + '<span class="macro-pill f">'+Math.round(it.fat)+'g F</span>'
         + '<span class="macro-pill k">'+it.cal+' kcal</span>'
-        + '<button class="bk-step" onclick="bkAdjust('+mi+','+ii+',-1)">−</button>'
-        + '<button class="bk-step" onclick="bkAdjust('+mi+','+ii+',1)">+</button>'
+        + '<span class="bk-amount"><button class="bk-step" onclick="bkAdjust('+mi+','+ii+',-1)">−</button>'
+        + '<input class="bk-gram" type="number" min="0" max="2000" value="'+it.grams+'" '
+        + 'onchange="bkSetGram('+mi+','+ii+',this.value)" onkeydown="if(event.key===\'Enter\')this.blur()"><span class="bk-gram-unit">g</span>'
+        + '<button class="bk-step" onclick="bkAdjust('+mi+','+ii+',1)">+</button></span>'
         + '<button class="bk-step bk-del" onclick="bkRemove('+mi+','+ii+')">✕</button>'
         + '</span></div>'
       ).join('') || '<div style="padding:10px 0;color:var(--muted);font-size:13px;">Noch nichts ausgewählt – füge unten Lebensmittel hinzu.</div>';
 
-      const picker = ['protein','carb','fat'].map(cat=>{
-        const label = cat==='protein'?'Protein':cat==='carb'?'Kohlenhydrate':'Fette';
+      const picker = ['protein','carb','fat','liquid'].map(cat=>{
+        const label = cat==='protein'?'Protein':cat==='carb'?'Kohlenhydrate':cat==='fat'?'Fette':'Saucen & Flüssigkeiten';
         const opts = bkFoodsByCat(cat).map(f=>'<option value="'+f.k+'">'+f.name+'</option>').join('');
         return '<div style="flex:1;min-width:150px;">'
           + '<label style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">'+label+'</label>'
           + '<select id="bkSel_'+mi+'_'+cat+'" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:3px;padding:9px 10px;color:var(--text);font-size:14px;">'
-          + '<option value="">+ '+label+' wählen…</option>'+opts+'</select></div>';
+          + '<option value="">+ '+label+'…</option>'+opts+'</select></div>';
       }).join('');
 
       return '<div class="meal-card" style="border-left:3px solid var(--border2);margin-bottom:18px;">'
@@ -3722,7 +3781,7 @@ function filterCheat(cat, btn) {
 
   // ── Aktionen ──
   window.bkAddFromPickers = function(mi){
-    const cats=['protein','carb','fat']; let added=0;
+    const cats=['protein','carb','fat','liquid']; let added=0;
     cats.forEach(cat=>{
       const sel=document.getElementById('bkSel_'+mi+'_'+cat);
       if(sel && sel.value){
@@ -3740,6 +3799,16 @@ function filterCheat(cat, btn) {
     let g=it.grams + dir*pf.step;
     if(typeof snap==='function') g=snap(it.k,g);
     g=Math.max(pf.min, Math.min(pf.max, g));
+    const m=bkMacrosFor(it.k,g);
+    Object.assign(it,{grams:m.grams,p:m.p,c:m.c,fat:m.fat,cal:m.cal});
+    bkRenderMeals();
+  };
+
+  // Freie Gramm-Eingabe: erlaubt jeden realistischen Wert (0–2000), ohne ans
+  // Portions-Minimum gebunden zu sein – der Besucher hat hier volle Kontrolle.
+  window.bkSetGram = function(mi,ii,val){
+    const it=BK.meals[mi].items[ii];
+    let g=parseFloat(val); if(isNaN(g)||g<0) g=0; g=Math.min(2000, Math.round(g));
     const m=bkMacrosFor(it.k,g);
     Object.assign(it,{grams:m.grams,p:m.p,c:m.c,fat:m.fat,cal:m.cal});
     bkRenderMeals();
