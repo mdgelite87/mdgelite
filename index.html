@@ -1091,6 +1091,10 @@ const MDG_UI = {
   "videos.tab.journey": {de:"Mein Weg zur Bühne", it:"Il mio percorso verso il palco", en:"My road to the stage"},
   "videos.embed": {de:"YouTube Video einbetten", it:"Incorpora video YouTube", en:"Embed YouTube video"},
   "videos.openchannel": {de:"YOUTUBE KANAL ÖFFNEN", it:"APRI IL CANALE YOUTUBE", en:"OPEN YOUTUBE CHANNEL"},
+  "videos.cat.ernaehrung": {de:"Ernährung", it:"Alimentazione", en:"Nutrition"},
+  "videos.cat.training": {de:"Training", it:"Allenamento", en:"Training"},
+  "videos.cat.supplemente": {de:"Supplemente", it:"Integratori", en:"Supplements"},
+  "videos.cat.weg": {de:"Mein Weg zur Bühne", it:"Il mio percorso verso il palco", en:"My road to the stage"},
   "pics.eyebrow": {de:"Galerie", it:"Galleria", en:"Gallery"},
   "pics.title": {de:"BILDER", it:"FOTO", en:"PHOTOS"},
   "pics.subtitle": {de:"Transformation, Wettkampf-Prep und hinter den Kulissen", it:"Trasformazione, preparazione gara e dietro le quinte", en:"Transformation, contest prep and behind the scenes"},
@@ -1315,6 +1319,13 @@ const MDG_UI = {
 };
 const MDG_TR = {
   food: { it: {
+  "Milch 1.5%": "Latte 1,5%",
+  "Milch 3.5%": "Latte 3,5%",
+  "Tomatensauce": "Salsa di pomodoro",
+  "Bolognese": "Ragù alla bolognese",
+  "Pesto Verde": "Pesto verde",
+  "Pesto Rosso": "Pesto rosso",
+  "Rahmsauce": "Salsa alla panna",
   "Hühnerbrust (roh)": "Petto di pollo (crudo)",
   "Putenbrust (roh)": "Petto di tacchino (crudo)",
   "Rindssteak mager (roh)": "Bistecca di manzo magra (cruda)",
@@ -1412,6 +1423,13 @@ const MDG_TR = {
   "Hafermilch": "Latte d'avena",
   "Zero Sauce (z.B. More Nutrition / Callowfit)": "Salsa Zero (es. More Nutrition / Callowfit)"
 }, en: {
+  "Milch 1.5%": "Milk 1.5%",
+  "Milch 3.5%": "Milk 3.5%",
+  "Tomatensauce": "Tomato sauce",
+  "Bolognese": "Bolognese",
+  "Pesto Verde": "Green pesto",
+  "Pesto Rosso": "Red pesto",
+  "Rahmsauce": "Cream sauce",
   "Hühnerbrust (roh)": "Chicken breast (raw)",
   "Putenbrust (roh)": "Turkey breast (raw)",
   "Rindssteak mager (roh)": "Lean beef steak (raw)",
@@ -1994,6 +2012,7 @@ function setLang(lang, opts){
   // 3) re-render dynamic, language-aware widgets
   try { if (typeof buildGalleryFilter === 'function') buildGalleryFilter(); } catch(e){}
   try { if (typeof renderGalleryFilter === 'function') renderGalleryFilter(); } catch(e){}
+  try { if (typeof renderSavedVideos === 'function' && siteState && (siteState.videos||[]).length) renderSavedVideos(); } catch(e){}
   // 4) re-render an existing meal plan / builder if visible
   try {
     if (window._mealTemplates && typeof renderMealPlan === 'function'){
@@ -2057,7 +2076,7 @@ const supabaseClient = (window.supabase && SUPABASE_URL && SUPABASE_PUBLISHABLE_
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
   : null;
 
-let siteState = { content:{}, images:{}, gallery:[] };
+let siteState = { content:{}, images:{}, gallery:[], videos:[] };
 let supabaseLoaded = false;
 
 function collectEditableContent(){
@@ -2144,6 +2163,7 @@ function loadLocalBackup(){
     siteState.images.aboutBefore = localStorage.getItem('mdgelite_about_before') || siteState.images.aboutBefore;
     siteState.images.aboutAfter = localStorage.getItem('mdgelite_about_after') || siteState.images.aboutAfter;
     siteState.gallery = JSON.parse(localStorage.getItem('mdgelite_gallery_images') || '[]');
+    siteState.videos = JSON.parse(localStorage.getItem('mdgelite_videos') || '[]');
   } catch(e) {}
 }
 
@@ -2155,6 +2175,7 @@ function saveLocalBackup(){
     if (siteState.images?.aboutBefore) localStorage.setItem('mdgelite_about_before', siteState.images.aboutBefore);
     if (siteState.images?.aboutAfter) localStorage.setItem('mdgelite_about_after', siteState.images.aboutAfter);
     localStorage.setItem('mdgelite_gallery_images', JSON.stringify(siteState.gallery || []));
+    localStorage.setItem('mdgelite_videos', JSON.stringify(siteState.videos || []));
   } catch(e) {}
 }
 
@@ -2168,7 +2189,7 @@ async function loadSiteState(){
       .maybeSingle();
     if (error) throw error;
     if (data && data.value) {
-      siteState = Object.assign({content:{}, contentByLang:{}, images:{}, gallery:[]}, data.value);
+      siteState = Object.assign({content:{}, contentByLang:{}, images:{}, gallery:[], videos:[]}, data.value);
       supabaseLoaded = true;
       saveLocalBackup();
     } else {
@@ -2191,6 +2212,7 @@ async function saveSiteState(showMessage=true){
   // keep legacy mirror in sync with German for backward compatibility
   if (MDG_LANG === 'de') siteState.content = siteState.contentByLang.de;
   siteState.gallery = getGallerySources();
+  siteState.videos = getVideoSources();
   saveLocalBackup();
 
   if (!supabaseClient) {
@@ -2306,6 +2328,8 @@ async function loadSaved() {
   buildGalleryFilter();
   renderGalleryFilter();
   checkGalleryEmpty();
+
+  renderSavedVideos();
 }
 
 function changePassword() {
@@ -2419,10 +2443,46 @@ async function setAboutImg(e, type) {
 }
 
 // ══ VIDEOS ══
-function getYTId(input) {
-  const patterns = [/youtube\.com\/watch\?v=([^&]+)/,/youtu\.be\/([^?]+)/,/youtube\.com\/embed\/([^?]+)/,/^([a-zA-Z0-9_-]{11})$/];
-  for (const p of patterns) { const m = input.match(p); if (m) return m[1]; }
-  return null;
+// Video-Kategorie-Label übersetzt zur aktiven Sprache.
+function videoCatLabel(cat){ return t('videos.cat.'+cat) || cat; }
+
+// Liest die aktuell angezeigten Videos aus dem DOM (für Speicherung).
+function getVideoSources(){
+  return Array.from(document.querySelectorAll('#videoGrid .video-card')).map(el => ({
+    vid: el.dataset.vid,
+    title: el.dataset.title || 'MDG Elite Video',
+    cat: el.dataset.cat || 'ernaehrung'
+  })).filter(v => v.vid);
+}
+
+// Baut eine Video-Karte. persist=true speichert anschliessend nach Supabase/lokal.
+function renderVideoCard(vid, title, cat){
+  const card = document.createElement('div');
+  card.className = 'video-card';
+  card.dataset.cat = cat;
+  card.dataset.vid = vid;
+  card.dataset.title = title;
+  card.innerHTML = `
+    <button class="video-delete-btn" onclick="removeVideo(this)">×</button>
+    <div class="video-thumb" onclick="playVideo(this,'${vid}')">
+      <img src="https://img.youtube.com/vi/${vid}/mqdefault.jpg" style="width:100%;height:100%;object-fit:cover;" alt="">
+      <div class="video-play-overlay"><div class="video-play"><svg width="16" height="16" viewBox="0 0 24 24" fill="#000"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+    </div>
+    <div class="video-info">
+      <div class="video-cat">${videoCatLabel(cat)}</div>
+      <div class="video-title">${escapeHtml(title)}</div>
+      <div class="video-meta">MDG Elite · YouTube</div>
+    </div>`;
+  const grid = document.getElementById('videoGrid');
+  const addCard = grid.querySelector('.add-video-card');
+  if (addCard) grid.insertBefore(card, addCard); else grid.appendChild(card);
+  return card;
+}
+
+// Rendert alle gespeicherten Videos neu (z.B. beim Laden oder Sprachwechsel).
+function renderSavedVideos(){
+  document.querySelectorAll('#videoGrid .video-card').forEach(el => el.remove());
+  (siteState.videos || []).forEach(v => renderVideoCard(v.vid, v.title, v.cat));
 }
 
 function addVideo() {
@@ -2431,25 +2491,26 @@ function addVideo() {
   const cat = document.getElementById('ytCat').value;
   const vid = getYTId(url);
   if (!vid) { showToast(t('toast.badYt')); return; }
-  const catLabels = {ernaehrung:'Ernährung',training:'Training',supplemente:'Supplemente',weg:'Mein Weg zur Bühne'};
-  const card = document.createElement('div');
-  card.className = 'video-card'; card.dataset.cat = cat;
-  card.innerHTML = `
-    <button class="video-delete-btn" onclick="this.closest('.video-card').remove();showToast(t('toast.videoRemoved'))">×</button>
-    <div class="video-thumb" onclick="playVideo(this,'${vid}')">
-      <img src="https://img.youtube.com/vi/${vid}/mqdefault.jpg" style="width:100%;height:100%;object-fit:cover;" alt="">
-      <div class="video-play-overlay"><div class="video-play"><svg width="16" height="16" viewBox="0 0 24 24" fill="#000"><polygon points="5,3 19,12 5,21"/></svg></div></div>
-    </div>
-    <div class="video-info">
-      <div class="video-cat">${catLabels[cat]}</div>
-      <div class="video-title">${title}</div>
-      <div class="video-meta">MDG Elite · YouTube</div>
-    </div>`;
-  document.getElementById('videoGrid').appendChild(card);
+  renderVideoCard(vid, title, cat);
   document.getElementById('ytUrl').value = '';
   document.getElementById('ytTitle').value = '';
   closeModal('addVideoModal');
+  siteState.videos = getVideoSources();
+  saveSiteState();
   showToast(t('toast.videoAdded'));
+}
+
+function removeVideo(btn){
+  btn.closest('.video-card').remove();
+  siteState.videos = getVideoSources();
+  saveSiteState();
+  showToast(t('toast.videoRemoved'));
+}
+
+function getYTId(input) {
+  const patterns = [/youtube\.com\/watch\?v=([^&]+)/,/youtu\.be\/([^?]+)/,/youtube\.com\/embed\/([^?]+)/,/^([a-zA-Z0-9_-]{11})$/];
+  for (const p of patterns) { const m = input.match(p); if (m) return m[1]; }
+  return null;
 }
 
 function playVideo(thumb, vid) {
@@ -2766,6 +2827,13 @@ const FOOD_DB = {
   kokosmilch_light:{name:'Kokosmilch light',p:1.5,c:3,f:7,kcal:80,cat:'Fette & Nüsse',pack:400,tags:['fat','dinner']},
   mandelmilch:{name:'Mandelmilch ungesüsst',p:0.5,c:0.5,f:1,kcal:15,cat:'Sonstiges',pack:1000,tags:['liquid','sweet']},
   hafermilch:{name:'Hafermilch',p:1,c:9,f:1.5,kcal:45,cat:'Sonstiges',pack:1000,tags:['liquid','sweet']},
+  milch15:{name:'Milch 1.5%',p:3.4,c:4.8,f:1.5,kcal:47,cat:'Sonstiges',pack:1000,tags:['liquid','dairy','sweet','savory']},
+  milch35:{name:'Milch 3.5%',p:3.3,c:4.7,f:3.5,kcal:64,cat:'Sonstiges',pack:1000,tags:['liquid','dairy','sweet','savory']},
+  tomatensauce:{name:'Tomatensauce',p:1.4,c:6,f:0.3,kcal:33,cat:'Sonstiges',pack:400,tags:['sauce','savory','lunch','dinner']},
+  bolognese:{name:'Bolognese',p:8,c:5,f:7,kcal:115,cat:'Sonstiges',pack:400,tags:['sauce','savory','lunch','dinner']},
+  pestoverde:{name:'Pesto Verde',p:5,c:6,f:45,kcal:455,cat:'Sonstiges',pack:190,tags:['sauce','fat','savory','lunch','dinner']},
+  pestorosso:{name:'Pesto Rosso',p:4,c:9,f:38,kcal:390,cat:'Sonstiges',pack:190,tags:['sauce','fat','savory','lunch','dinner']},
+  rahmsauce:{name:'Rahmsauce',p:2,c:4,f:18,kcal:190,cat:'Sonstiges',pack:250,tags:['sauce','fat','savory','lunch','dinner']},
   // Zero Sauce: Durchschnittswert über More Nutrition & Callowfit Sorten.
   // Reale Werte: ~50 kcal/100ml im Schnitt (überwiegend Kohlenhydrate, kaum Fett/Protein).
   zerosauce:{name:'Zero Sauce (z.B. More Nutrition / Callowfit)',p:0.5,c:11,f:0.2,kcal:50,cat:'Sonstiges',pack:300,tags:['sauce','savory']}
@@ -2817,6 +2885,9 @@ const PORTION = {
   chia:{min:5,max:30,step:1}, leinsamen:{min:5,max:30,step:1}, kuerbiskerne:{min:5,max:35,step:2},
   erdnussbutter:{min:5,max:35,step:1}, tahini:{min:5,max:30,step:1}, oliven:{min:10,max:60,step:5},
   kokosmilch_light:{min:30,max:150,step:10}, mandelmilch:{min:250,max:250,step:10},
+  milch15:{min:100,max:300,step:10}, milch35:{min:100,max:300,step:10},
+  tomatensauce:{min:50,max:200,step:10}, bolognese:{min:80,max:250,step:10},
+  pestoverde:{min:10,max:40,step:5}, pestorosso:{min:10,max:40,step:5}, rahmsauce:{min:30,max:120,step:10},
   // Zero Sauce: realistische Sauciermenge 50–70g pro Mahlzeit
   zerosauce:{min:50,max:70,step:5}
 };
