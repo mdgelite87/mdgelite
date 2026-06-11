@@ -28,6 +28,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(8,8,8,0.96);
 .admin-badge{display:none;padding:6px 12px;background:var(--admin-dim);border:1px solid var(--admin);border-radius:2px;color:var(--admin);font-size:10px;letter-spacing:2px;font-weight:700;cursor:pointer;transition:all 0.2s;}
 .admin-badge:hover{background:rgba(255,107,53,0.25);}
 .admin-badge.visible{display:flex;align-items:center;gap:6px;}
+.lang-switch{display:flex;gap:2px;align-items:center;margin-left:10px;padding-left:10px;border-left:1px solid var(--border);}
+.lang-flag{background:none;border:1px solid transparent;border-radius:4px;cursor:pointer;font-size:18px;line-height:1;padding:4px 6px;filter:grayscale(0.7);opacity:0.55;transition:all 0.2s;}
+.lang-flag:hover{opacity:0.9;filter:grayscale(0.2);}
+.lang-flag.active{opacity:1;filter:grayscale(0);border-color:var(--gold-dim);background:rgba(201,168,76,0.08);}
+.mobile-lang-switch{display:none;justify-content:center;gap:8px;padding:14px 16px 4px;border-top:1px solid var(--border);margin-top:8px;}
+.mobile-lang-switch .lang-flag{font-size:24px;}
+@media(max-width:768px){.mobile-menu .mobile-lang-switch{display:flex;}}
 .nav-burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;}
 .nav-burger span{width:22px;height:2px;background:var(--muted);border-radius:2px;}
 .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;z-index:190;background:rgba(8,8,8,0.98);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px;}
@@ -420,13 +427,14 @@ footer a{color:var(--gold);text-decoration:none;}
 <nav>
   <div class="nav-logo" onclick="showSection('home')">MDG<span> ELITE</span></div>
   <div class="nav-links">
-    <a href="#" class="active" onclick="showSection('home');return false;">Home</a>
-    <a href="#" onclick="showSection('uebermich');return false;">Über mich</a>
-    <a href="#" onclick="showSection('videos');return false;">Videos</a>
-    <a href="#" onclick="showSection('bilder');return false;">Bilder</a>
-    <a href="#" onclick="showSection('rechner');return false;">Rechner</a>
-    <a href="#" onclick="showSection('naehrwert');return false;">Meal Builder</a>
-    <a href="#" onclick="showSection('kontakt');return false;">Kontakt</a>
+    <a href="#" class="active" data-i18n="nav.home" onclick="showSection('home');return false;">Home</a>
+    <a href="#" data-i18n="nav.about" onclick="showSection('uebermich');return false;">Über mich</a>
+    <a href="#" data-i18n="nav.videos" onclick="showSection('videos');return false;">Videos</a>
+    <a href="#" data-i18n="nav.pics" onclick="showSection('bilder');return false;">Bilder</a>
+    <a href="#" data-i18n="nav.calc" onclick="showSection('rechner');return false;">Rechner</a>
+    <a href="#" data-i18n="nav.builder" onclick="showSection('naehrwert');return false;">Meal Builder</a>
+    <a href="#" data-i18n="nav.contact" onclick="showSection('kontakt');return false;">Kontakt</a>
+    <div class="lang-switch"></div>
     <div class="admin-badge" id="adminBadge" onclick="adminLogout()">
       <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       ADMIN &nbsp;·&nbsp; Logout
@@ -436,13 +444,14 @@ footer a{color:var(--gold);text-decoration:none;}
 </nav>
 
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#" onclick="showSection('home');toggleMobileMenu();return false;">Home</a>
-  <a href="#" onclick="showSection('uebermich');toggleMobileMenu();return false;">Über mich</a>
-  <a href="#" onclick="showSection('videos');toggleMobileMenu();return false;">Videos</a>
-  <a href="#" onclick="showSection('bilder');toggleMobileMenu();return false;">Bilder</a>
-  <a href="#" onclick="showSection('rechner');toggleMobileMenu();return false;">Rechner</a>
-  <a href="#" onclick="showSection('naehrwert');toggleMobileMenu();return false;">Meal Builder</a>
-  <a href="#" onclick="showSection('kontakt');toggleMobileMenu();return false;">Kontakt</a>
+  <a href="#" data-i18n="nav.home" onclick="showSection('home');toggleMobileMenu();return false;">Home</a>
+  <a href="#" data-i18n="nav.about" onclick="showSection('uebermich');toggleMobileMenu();return false;">Über mich</a>
+  <a href="#" data-i18n="nav.videos" onclick="showSection('videos');toggleMobileMenu();return false;">Videos</a>
+  <a href="#" data-i18n="nav.pics" onclick="showSection('bilder');toggleMobileMenu();return false;">Bilder</a>
+  <a href="#" data-i18n="nav.calc" onclick="showSection('rechner');toggleMobileMenu();return false;">Rechner</a>
+  <a href="#" data-i18n="nav.builder" onclick="showSection('naehrwert');toggleMobileMenu();return false;">Meal Builder</a>
+  <a href="#" data-i18n="nav.contact" onclick="showSection('kontakt');toggleMobileMenu();return false;">Kontakt</a>
+  <div class="mobile-lang-switch lang-switch"></div>
 </div>
 
 <!-- ══ HOME ══ -->
@@ -468,22 +477,22 @@ footer a{color:var(--gold);text-decoration:none;}
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.3 0 .59.04.87.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1Z"/></svg>
       </a>
     </div>
-    <div class="hero-welcome" id="heroWelcome" data-editable>
+    <div class="hero-welcome" id="heroWelcome" data-editable data-i18n="ed.heroWelcome">
       Willkommen auf meiner Website! Ich bin Marco – Fitness-Athlet, Content Creator und auf dem Weg zur IFBB-Bühne 2027. Hier findest du kostenlose Tools, ehrliche Einblicke in meine Prep und alles rund um Ernährung, Training und Lifestyle.
     </div>
     <div class="hero-ctas">
-      <button class="btn-primary" onclick="showSection('rechner')">RECHNER STARTEN</button>
-      <button class="btn-primary" onclick="showSection('naehrwert')">MEAL BUILDER</button>
-      <button class="btn-outline" onclick="showSection('videos')">VIDEOS ANSEHEN</button>
+      <button class="btn-primary" data-i18n="home.cta.calc" onclick="showSection('rechner')">RECHNER STARTEN</button>
+      <button class="btn-primary" data-i18n="home.cta.builder" onclick="showSection('naehrwert')">MEAL BUILDER</button>
+      <button class="btn-outline" data-i18n="home.cta.videos" onclick="showSection('videos')">VIDEOS ANSEHEN</button>
     </div>
     <div class="hero-ctas" style="margin-top:12px;">
-      <button class="btn-outline" onclick="showSection('uebermich')">ÜBER MICH</button>
-      <button class="btn-outline" onclick="showSection('bilder')">FOTOS</button>
+      <button class="btn-outline" data-i18n="home.cta.about" onclick="showSection('uebermich')">ÜBER MICH</button>
+      <button class="btn-outline" data-i18n="home.cta.photos" onclick="showSection('bilder')">FOTOS</button>
     </div>
     <div class="hero-stats">
-      <div class="stat"><div class="stat-val" id="stat1" data-editable>-22kg</div><div class="stat-label" id="stat1l" data-editable>Transformation</div></div>
-      <div class="stat"><div class="stat-val" id="stat2" data-editable>8.4%</div><div class="stat-label" id="stat2l" data-editable>Körperfett</div></div>
-      <div class="stat"><div class="stat-val" id="stat3" data-editable>2027</div><div class="stat-label" id="stat3l" data-editable>IFBB Debut</div></div>
+      <div class="stat"><div class="stat-val" id="stat1" data-editable>-22kg</div><div class="stat-label" id="stat1l" data-editable data-i18n="ed.stat1l">Transformation</div></div>
+      <div class="stat"><div class="stat-val" id="stat2" data-editable>8.4%</div><div class="stat-label" id="stat2l" data-editable data-i18n="ed.stat2l">Körperfett</div></div>
+      <div class="stat"><div class="stat-val" id="stat3" data-editable>2027</div><div class="stat-label" id="stat3l" data-editable data-i18n="ed.stat3l">IFBB Debut</div></div>
     </div>
   </div>
 </section>
@@ -493,36 +502,36 @@ footer a{color:var(--gold);text-decoration:none;}
 <section id="sec-uebermich" class="page-section">
   <div class="content-wrap">
     <div class="page-header">
-      <div class="eyebrow">Meine Transformation</div>
-      <h2 data-editable id="aboutTitle">ÜBER MICH</h2>
-      <p data-editable id="aboutSubtitle">Vorher, Nachher und meine Geschichte</p>
+      <div class="eyebrow" data-i18n="about.eyebrow">Meine Transformation</div>
+      <h2 data-editable data-i18n="ed.aboutTitle" id="aboutTitle">ÜBER MICH</h2>
+      <p data-editable data-i18n="ed.aboutSubtitle" id="aboutSubtitle">Vorher, Nachher und meine Geschichte</p>
     </div>
     <div class="about-wrap">
       <div class="about-photo-grid">
         <div class="about-photo-card">
-          <div class="about-photo-head"><div class="about-photo-title">Vorher</div><div class="about-photo-hint">Admin Upload</div></div>
+          <div class="about-photo-head"><div class="about-photo-title" data-i18n="about.photo.before">Vorher</div><div class="about-photo-hint" data-i18n="about.photo.adminupload">Admin Upload</div></div>
           <div class="about-photo-box" id="aboutBeforeBox" onclick="adminOnly(()=>document.getElementById('aboutBeforeInput').click())">
             <div class="about-photo-placeholder">
               <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-              <span>Vorher-Foto hochladen<br><small>nur im Admin-Modus</small></span>
+              <span><span data-i18n="about.photo.beforeUpload">Vorher-Foto hochladen</span><br><small data-i18n="about.photo.adminonly">nur im Admin-Modus</small></span>
             </div>
           </div>
           <input type="file" id="aboutBeforeInput" accept="image/*" onchange="setAboutImg(event,'before')">
         </div>
         <div class="about-photo-card">
-          <div class="about-photo-head"><div class="about-photo-title">Nachher</div><div class="about-photo-hint">Admin Upload</div></div>
+          <div class="about-photo-head"><div class="about-photo-title" data-i18n="about.photo.after">Nachher</div><div class="about-photo-hint" data-i18n="about.photo.adminupload">Admin Upload</div></div>
           <div class="about-photo-box" id="aboutAfterBox" onclick="adminOnly(()=>document.getElementById('aboutAfterInput').click())">
             <div class="about-photo-placeholder">
               <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-              <span>Nachher-Foto hochladen<br><small>nur im Admin-Modus</small></span>
+              <span><span data-i18n="about.photo.afterUpload">Nachher-Foto hochladen</span><br><small data-i18n="about.photo.adminonly">nur im Admin-Modus</small></span>
             </div>
           </div>
           <input type="file" id="aboutAfterInput" accept="image/*" onchange="setAboutImg(event,'after')">
         </div>
       </div>
       <div class="about-text-card">
-        <h3 data-editable id="aboutStoryHeadline">Meine Geschichte</h3>
-        <div class="about-text" id="aboutStoryText" data-editable>
+        <h3 data-editable data-i18n="ed.aboutStoryHeadline" id="aboutStoryHeadline">Meine Geschichte</h3>
+        <div class="about-text" id="aboutStoryText" data-editable data-i18n="ed.aboutStoryText">
 Hier kannst du im Admin-Modus deinen persönlichen Text einfügen. Der Bereich ist bewusst großzügig vorbereitet und bietet ungefähr Platz für eine A4-lange Geschichte: dein Startpunkt, deine Transformation, deine Motivation, Rückschläge, Learnings und dein Ziel.
 
 Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte und speichere anschließend über die Admin-Leiste.
@@ -536,25 +545,25 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
 <section id="sec-videos" class="page-section">
   <div class="content-wrap">
     <div class="page-header">
-      <div class="eyebrow">Content</div>
-      <h2 data-editable>VIDEOS</h2>
-      <p data-editable>Ehrliche Einblicke in Training, Ernährung und meinen Weg zur Bühne</p>
+      <div class="eyebrow" data-i18n="videos.eyebrow">Content</div>
+      <h2 data-i18n="videos.title">VIDEOS</h2>
+      <p data-i18n="videos.subtitle">Ehrliche Einblicke in Training, Ernährung und meinen Weg zur Bühne</p>
     </div>
     <div class="video-tabs">
-      <button class="video-tab active" data-cat="alle" onclick="filterVideos('alle')">Alle</button>
-      <button class="video-tab" data-cat="ernaehrung" onclick="filterVideos('ernaehrung')">Ernährung</button>
-      <button class="video-tab" data-cat="training" onclick="filterVideos('training')">Training</button>
-      <button class="video-tab" data-cat="supplemente" onclick="filterVideos('supplemente')">Supplemente</button>
-      <button class="video-tab" data-cat="weg" onclick="filterVideos('weg')">Mein Weg zur Bühne</button>
+      <button class="video-tab active" data-cat="alle" data-i18n="videos.tab.all" onclick="filterVideos('alle')">Alle</button>
+      <button class="video-tab" data-cat="ernaehrung" data-i18n="videos.tab.nutrition" onclick="filterVideos('ernaehrung')">Ernährung</button>
+      <button class="video-tab" data-cat="training" data-i18n="videos.tab.training" onclick="filterVideos('training')">Training</button>
+      <button class="video-tab" data-cat="supplemente" data-i18n="videos.tab.supps" onclick="filterVideos('supplemente')">Supplemente</button>
+      <button class="video-tab" data-cat="weg" data-i18n="videos.tab.journey" onclick="filterVideos('weg')">Mein Weg zur Bühne</button>
     </div>
     <div class="video-grid" id="videoGrid">
       <div class="add-video-card admin-only" onclick="openAddVideoModal()" style="min-height:220px;">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span>YouTube Video einbetten</span>
+        <span data-i18n="videos.embed">YouTube Video einbetten</span>
       </div>
     </div>
     <div style="text-align:center;margin-top:40px;" id="ytChannelBtn">
-      <button class="btn-primary" onclick="window.open('https://youtube.com/@mdgelite87','_blank')">YOUTUBE KANAL ÖFFNEN</button>
+      <button class="btn-primary" data-i18n="videos.openchannel" onclick="window.open('https://youtube.com/@mdgelite87','_blank')">YOUTUBE KANAL ÖFFNEN</button>
     </div>
   </div>
 </section>
@@ -563,21 +572,21 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
 <section id="sec-bilder" class="page-section">
   <div class="content-wrap">
     <div class="page-header">
-      <div class="eyebrow">Galerie</div>
-      <h2 data-editable>BILDER</h2>
-      <p data-editable>Transformation, Wettkampf-Prep und hinter den Kulissen</p>
+      <div class="eyebrow" data-i18n="pics.eyebrow">Galerie</div>
+      <h2 data-i18n="pics.title">BILDER</h2>
+      <p data-i18n="pics.subtitle">Transformation, Wettkampf-Prep und hinter den Kulissen</p>
     </div>
     <div class="gallery-filter" id="galleryFilter"></div>
     <div class="gallery-subfilter" id="gallerySubfilter"></div>
     <div class="gallery-grid" id="galleryGrid">
       <div class="gallery-add admin-only" onclick="adminOnly(()=>openGalleryUpload())">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span>Bilder hinzufügen</span>
+        <span data-i18n="pics.add">Bilder hinzufügen</span>
       </div>
     </div>
     <input type="file" id="galleryInput" accept="image/*" multiple onchange="addGalleryImages(event)">
     <div id="galleryEmpty" style="text-align:center;padding:60px 20px;color:var(--muted);font-size:14px;">
-      Noch keine Bilder vorhanden.<br><span style="font-size:12px;opacity:0.6;">Bilder werden vom Admin hinzugefügt.</span>
+      <span data-i18n="pics.empty">Noch keine Bilder vorhanden.</span><br><span style="font-size:12px;opacity:0.6;" data-i18n="pics.emptyHint">Bilder werden vom Admin hinzugefügt.</span>
     </div>
   </div>
 </section>
@@ -586,186 +595,186 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
 <section id="sec-rechner" class="page-section">
   <div class="content-wrap">
     <div class="page-header">
-      <div class="eyebrow">Kostenloses Tool</div>
-      <h2 data-editable>KALORIEN­RECHNER</h2>
-      <p data-editable>Berechne deinen genauen Tagesbedarf, Makros und Ernährungsplan</p>
+      <div class="eyebrow" data-i18n="calc.eyebrow">Kostenloses Tool</div>
+      <h2 data-i18n="calc.title">KALORIEN­RECHNER</h2>
+      <p data-i18n="calc.subtitle">Berechne deinen genauen Tagesbedarf, Makros und Ernährungsplan</p>
     </div>
     <div class="rechner-wrap">
       <div class="r-section">
-        <div class="sec-head"><span class="sec-num">SO FUNKTIONIERT'S</span><div class="sec-line"></div></div>
+        <div class="sec-head"><span class="sec-num" data-i18n="calc.how.label">SO FUNKTIONIERT'S</span><div class="sec-line"></div></div>
         <div class="how-steps">
           <div class="how-step">
             <div class="how-num">01</div>
             <div class="how-content">
-              <div class="how-title">Daten ehrlich eingeben</div>
-              <div class="how-desc">Keine geschönten Zahlen – je genauer deine Angaben, desto präziser dein Plan.</div>
+              <div class="how-title" data-i18n="calc.how1.title">Daten ehrlich eingeben</div>
+              <div class="how-desc" data-i18n="calc.how1.desc">Keine geschönten Zahlen – je genauer deine Angaben, desto präziser dein Plan.</div>
             </div>
           </div>
           <div class="how-arrow">↓</div>
           <div class="how-step">
             <div class="how-num">02</div>
             <div class="how-content">
-              <div class="how-title">Kalorienrichtwert &amp; Ernährungsplan – kostenlos, sofort</div>
-              <div class="how-desc">Dein persönlicher Tagesbedarf, Makros und ein kompletter Mahlzeitenplan werden direkt berechnet.</div>
+              <div class="how-title" data-i18n="calc.how2.title">Kalorienrichtwert &amp; Ernährungsplan – kostenlos, sofort</div>
+              <div class="how-desc" data-i18n="calc.how2.desc">Dein persönlicher Tagesbedarf, Makros und ein kompletter Mahlzeitenplan werden direkt berechnet.</div>
             </div>
           </div>
           <div class="how-arrow">↓</div>
           <div class="how-step">
             <div class="how-num">03</div>
             <div class="how-content">
-              <div class="how-title">Einkaufsliste für 7 Tage direkt ausdrucken</div>
-              <div class="how-desc">Alle Lebensmittel für eine Woche auf einen Blick – einfach drucken und einkaufen gehen.</div>
+              <div class="how-title" data-i18n="calc.how3.title">Einkaufsliste für 7 Tage direkt ausdrucken</div>
+              <div class="how-desc" data-i18n="calc.how3.desc">Alle Lebensmittel für eine Woche auf einen Blick – einfach drucken und einkaufen gehen.</div>
             </div>
           </div>
         </div>
         <div class="tip-box">
           <div class="tip-icon">💡</div>
           <div class="tip-content">
-            <div class="tip-title">So überprüfst du deinen echten Kalorienbedarf</div>
-            <p>Ernähre dich <strong>14 Tage</strong> nach deinem Kalorienrichtwert und lebe deinen Alltag wie bisher – kein Extra-Sport, keine Veränderungen. Wiege dich täglich <strong>morgens nach dem Aufstehen und Toilettengang</strong> – immer zur gleichen Zeit, ohne Kleidung.</p>
+            <div class="tip-title" data-i18n="calc.tip.title">So überprüfst du deinen echten Kalorienbedarf</div>
+            <p data-i18n="calc.tip.p1">Ernähre dich <strong>14 Tage</strong> nach deinem Kalorienrichtwert und lebe deinen Alltag wie bisher – kein Extra-Sport, keine Veränderungen. Wiege dich täglich <strong>morgens nach dem Aufstehen und Toilettengang</strong> – immer zur gleichen Zeit, ohne Kleidung.</p>
             <div class="tip-timeline">
-              <div class="tip-milestone"><div class="tip-day">Nach 7 Tagen</div><div class="tip-result">→ Erster Richtwert sichtbar</div></div>
-              <div class="tip-milestone"><div class="tip-day">Nach 14 Tagen</div><div class="tip-result">→ Gewissheit über deinen echten Kalorienbedarf</div></div>
+              <div class="tip-milestone"><div class="tip-day" data-i18n="calc.tip.m1day">Nach 7 Tagen</div><div class="tip-result" data-i18n="calc.tip.m1res">→ Erster Richtwert sichtbar</div></div>
+              <div class="tip-milestone"><div class="tip-day" data-i18n="calc.tip.m2day">Nach 14 Tagen</div><div class="tip-result" data-i18n="calc.tip.m2res">→ Gewissheit über deinen echten Kalorienbedarf</div></div>
             </div>
-            <p style="margin-top:12px;">Mit einem Kaloriendefizit von <strong>1'000 kcal/Tag</strong> beträgt der durchschnittliche Gewichtsverlust <strong>~1 kg pro Woche</strong>. In der ersten Woche kann der Verlust deutlich höher sein – dies liegt am Wasserhaushalt, nicht an reinem Fett.</p>
-            <p style="margin-top:8px;">⚖️ <strong>Physik bleibt Physik:</strong> Für 1 kg reines Fett müssen ca. <strong>7'000 kcal</strong> eingespart oder verbrannt werden.</p>
-            <p style="margin-top:8px;font-size:12px;color:var(--muted);">📹 In meinen Videos gehe ich auf diese Thematik im Detail ein.</p>
+            <p style="margin-top:12px;" data-i18n="calc.tip.p2">Mit einem Kaloriendefizit von <strong>1'000 kcal/Tag</strong> beträgt der durchschnittliche Gewichtsverlust <strong>~1 kg pro Woche</strong>. In der ersten Woche kann der Verlust deutlich höher sein – dies liegt am Wasserhaushalt, nicht an reinem Fett.</p>
+            <p style="margin-top:8px;" data-i18n="calc.tip.p3">⚖️ <strong>Physik bleibt Physik:</strong> Für 1 kg reines Fett müssen ca. <strong>7'000 kcal</strong> eingespart oder verbrannt werden.</p>
+            <p style="margin-top:8px;font-size:12px;color:var(--muted);" data-i18n="calc.tip.p4">📹 In meinen Videos gehe ich auf diese Thematik im Detail ein.</p>
           </div>
         </div>
       </div>
       <div class="r-section">
-        <div class="sec-head"><span class="sec-num">01</span><span class="sec-title">Grunddaten</span><div class="sec-line"></div></div>
+        <div class="sec-head"><span class="sec-num">01</span><span class="sec-title" data-i18n="calc.s1.title">Grunddaten</span><div class="sec-line"></div></div>
         <div class="grid-2" style="margin-bottom:12px;">
-          <div class="field"><label>Alter</label><input type="number" id="age" placeholder="28" min="15" max="80"><span class="field-unit">Jahre</span></div>
-          <div class="field"><label>Körpergewicht</label><input type="number" id="weight" placeholder="80" min="40" max="250" step="0.1"><span class="field-unit">kg</span></div>
+          <div class="field"><label data-i18n="field.age">Alter</label><input type="number" id="age" placeholder="28" min="15" max="80"><span class="field-unit" data-i18n="field.age.unit">Jahre</span></div>
+          <div class="field"><label data-i18n="field.weight">Körpergewicht</label><input type="number" id="weight" placeholder="80" min="40" max="250" step="0.1"><span class="field-unit">kg</span></div>
         </div>
         <div class="grid-2" style="margin-bottom:16px;">
-          <div class="field"><label>Körpergrösse</label><input type="number" id="height" placeholder="178" min="140" max="220"><span class="field-unit">cm</span></div>
-          <div class="field"><label>Körperfett % (optional)</label><input type="number" id="bf" placeholder="15" min="3" max="50" step="0.1"><span class="field-unit">%</span></div>
+          <div class="field"><label data-i18n="field.height">Körpergrösse</label><input type="number" id="height" placeholder="178" min="140" max="220"><span class="field-unit">cm</span></div>
+          <div class="field"><label data-i18n="field.bf">Körperfett % (optional)</label><input type="number" id="bf" placeholder="15" min="3" max="50" step="0.1"><span class="field-unit">%</span></div>
         </div>
         <div class="toggle-wrap">
-          <span class="toggle-label">Geschlecht</span>
+          <span class="toggle-label" data-i18n="field.gender">Geschlecht</span>
           <div class="toggle-group" id="genderToggle">
-            <button class="active" data-val="male">♂ &nbsp;Mann</button>
-            <button data-val="female">♀ &nbsp;Frau</button>
+            <button class="active" data-val="male" data-i18n="gender.male">♂ &nbsp;Mann</button>
+            <button data-val="female" data-i18n="gender.female">♀ &nbsp;Frau</button>
           </div>
         </div>
 
       </div>
       <div class="r-section">
-        <div class="sec-head"><span class="sec-num">02</span><span class="sec-title">Aktivitätslevel</span><div class="sec-line"></div></div>
-        <div class="field"><label>Alltagsaktivität (ohne separates Training gerechnet)</label>
+        <div class="sec-head"><span class="sec-num">02</span><span class="sec-title" data-i18n="calc.s2.title">Aktivitätslevel</span><div class="sec-line"></div></div>
+        <div class="field"><label data-i18n="field.activity">Alltagsaktivität (ohne separates Training gerechnet)</label>
           <select id="activity">
-            <option value="1.2">Sitzend – Home Office, wenig Bewegung (× 1.2)</option>
-            <option value="1.375" selected>Normal aktiv – mind. 10'000 Schritte täglich (× 1.375)</option>
-            <option value="1.55">Aktiv – viel auf den Beinen, 12'000+ Schritte (× 1.55)</option>
-            <option value="1.725">Sehr aktiv – Vereinssport, Ausdauer, 15'000+ Schritte (× 1.725)</option>
+            <option value="1.2" data-i18n="activity.1">Sitzend – Home Office, wenig Bewegung (× 1.2)</option>
+            <option value="1.375" selected data-i18n="activity.2">Normal aktiv – mind. 10'000 Schritte täglich (× 1.375)</option>
+            <option value="1.55" data-i18n="activity.3">Aktiv – viel auf den Beinen, 12'000+ Schritte (× 1.55)</option>
+            <option value="1.725" data-i18n="activity.4">Sehr aktiv – Vereinssport, Ausdauer, 15'000+ Schritte (× 1.725)</option>
           </select>
-          <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;">Wähle ehrlich nach deinem <strong style="color:var(--text);">Alltag</strong>. Lieber etwas tiefer ansetzen – die meisten überschätzen ihren Verbrauch. Dein echter Bedarf zeigt sich nach 14 Tagen Tracking (siehe oben).</p>
+          <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;" data-i18n="calc.activity.note">Wähle ehrlich nach deinem <strong style="color:var(--text);">Alltag</strong>. Lieber etwas tiefer ansetzen – die meisten überschätzen ihren Verbrauch. Dein echter Bedarf zeigt sich nach 14 Tagen Tracking (siehe oben).</p>
         </div>
       </div>
       <div class="r-section">
-        <div class="sec-head"><span class="sec-num">03</span><span class="sec-title">Ziel &amp; Makros</span><div class="sec-line"></div></div>
-        <div class="toggle-wrap"><span class="toggle-label">Gewichtsziel</span>
+        <div class="sec-head"><span class="sec-num">03</span><span class="sec-title" data-i18n="calc.s3.title">Ziel &amp; Makros</span><div class="sec-line"></div></div>
+        <div class="toggle-wrap"><span class="toggle-label" data-i18n="field.goal">Gewichtsziel</span>
           <div class="toggle-group" id="goalToggle">
-            <button data-val="-1000">Schnell abnehmen<small>−1 kg / Woche</small></button>
-            <button data-val="-500">Abnehmen<small>−0.5 kg / Woche</small></button>
-            <button data-val="-300">Langsam abnehmen<small>−0.3 kg / Woche</small></button>
-            <button class="active" data-val="0">Gewicht halten<small>±0 kg</small></button>
-            <button data-val="250">Langsam aufbauen<small>+0.25 kg / Woche</small></button>
-            <button data-val="500">Masse aufbauen<small>+0.5 kg / Woche</small></button>
+            <button data-val="-1000"><span data-i18n="goal.fastloss">Schnell abnehmen</span><small data-i18n="goal.wk.m1000">−1 kg / Woche</small></button>
+            <button data-val="-500"><span data-i18n="goal.loss">Abnehmen</span><small data-i18n="goal.wk.m500">−0.5 kg / Woche</small></button>
+            <button data-val="-300"><span data-i18n="goal.slowloss">Langsam abnehmen</span><small data-i18n="goal.wk.m300">−0.3 kg / Woche</small></button>
+            <button class="active" data-val="0"><span data-i18n="goal.maintain">Gewicht halten</span><small data-i18n="goal.wk.0">±0 kg</small></button>
+            <button data-val="250"><span data-i18n="goal.slowgain">Langsam aufbauen</span><small data-i18n="goal.wk.250">+0.25 kg / Woche</small></button>
+            <button data-val="500"><span data-i18n="goal.gain">Masse aufbauen</span><small data-i18n="goal.wk.500">+0.5 kg / Woche</small></button>
           </div>
         </div>
-        <div class="toggle-wrap"><span class="toggle-label">Protein-Priorität</span>
+        <div class="toggle-wrap"><span class="toggle-label" data-i18n="field.protein">Protein-Priorität</span>
           <div class="toggle-group" id="proteinToggle">
-            <button data-val="1.8">Standard<small>1.8 g/kg</small></button>
-            <button class="active" data-val="2.2">Athletisch<small>2.2 g/kg</small></button>
-            <button data-val="2.8">High Protein<small>2.8 g/kg</small></button>
+            <button data-val="1.8"><span data-i18n="protein.standard">Standard</span><small>1.8 g/kg</small></button>
+            <button class="active" data-val="2.2"><span data-i18n="protein.athletic">Athletisch</span><small>2.2 g/kg</small></button>
+            <button data-val="2.8"><span data-i18n="protein.high">High Protein</span><small>2.8 g/kg</small></button>
           </div>
         </div>
-        <div class="toggle-wrap"><span class="toggle-label">Ernährungsweise</span>
+        <div class="toggle-wrap"><span class="toggle-label" data-i18n="field.diet">Ernährungsweise</span>
           <div class="toggle-group" id="dietToggle">
-            <button class="active" data-val="meat">🥩 Fleisch</button>
-            <button data-val="vegetarian">🥦 Vegetarisch</button>
-            <button data-val="vegan">🌱 Vegan</button>
+            <button class="active" data-val="meat" data-i18n="diet.meat">🥩 Fleisch</button>
+            <button data-val="vegetarian" data-i18n="diet.vegetarian">🥦 Vegetarisch</button>
+            <button data-val="vegan" data-i18n="diet.vegan">🌱 Vegan</button>
           </div>
         </div>
-        <div class="toggle-wrap"><span class="toggle-label">Mahlzeiten pro Tag</span>
+        <div class="toggle-wrap"><span class="toggle-label" data-i18n="field.meals">Mahlzeiten pro Tag</span>
           <div class="toggle-group" id="mealsToggle">
-            <button data-val="3" onclick="hideFastenInfo()">3 Mahlzeiten</button>
-            <button class="active" data-val="4" onclick="hideFastenInfo()">4 Mahlzeiten</button>
-            <button data-val="5" onclick="hideFastenInfo()">5 Mahlzeiten</button>
-            <button data-val="fasten" onclick="showFastenInfo()" style="border-left:2px solid var(--gold-dim);">⚡ Protein<br>Fasten</button>
+            <button data-val="3" data-i18n="meals.3" onclick="hideFastenInfo()">3 Mahlzeiten</button>
+            <button class="active" data-val="4" data-i18n="meals.4" onclick="hideFastenInfo()">4 Mahlzeiten</button>
+            <button data-val="5" data-i18n="meals.5" onclick="hideFastenInfo()">5 Mahlzeiten</button>
+            <button data-val="fasten" data-i18n="meals.fasten" onclick="showFastenInfo()" style="border-left:2px solid var(--gold-dim);">⚡ Protein<br>Fasten</button>
           </div>
         </div>
         <div id="fastenInfo" style="display:none;margin-top:8px;padding:16px 20px;background:rgba(201,168,76,0.07);border:1px solid var(--gold-dim);border-radius:4px;">
-          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px;">⚡ Protein Fasten</div>
-          <p style="font-size:13px;color:var(--muted);line-height:1.7;">Proteinfasten bedeutet: <strong style="color:var(--text);">2 Mahlzeiten werden durch Whey-Proteinshakes ersetzt</strong>. Jeder Shake liefert ca. <strong style="color:var(--text);">33% deines Tagesproteins</strong>. Die Hauptmahlzeit deckt den Rest der Makros ab.</p>
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px;" data-i18n="fasten.label">⚡ Protein Fasten</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.7;" data-i18n="fasten.desc">Proteinfasten bedeutet: <strong style="color:var(--text);">2 Mahlzeiten werden durch Whey-Proteinshakes ersetzt</strong>. Jeder Shake liefert ca. <strong style="color:var(--text);">33% deines Tagesproteins</strong>. Die Hauptmahlzeit deckt den Rest der Makros ab.</p>
         </div>
       </div>
 
       <div class="r-section plan-preferences">
-        <div class="sec-head"><span class="sec-num">04</span><span class="sec-title">Essensvorlieben</span><div class="sec-line"></div></div>
-        <div class="toggle-wrap"><span class="toggle-label">Frühstück</span>
+        <div class="sec-head"><span class="sec-num">04</span><span class="sec-title" data-i18n="calc.s4.title">Essensvorlieben</span><div class="sec-line"></div></div>
+        <div class="toggle-wrap"><span class="toggle-label" data-i18n="pref.breakfast">Frühstück</span>
           <div class="toggle-group" id="breakfastPrefToggle">
-            <button class="active" data-val="sweet">Süss<small>Oats, Quark, Früchte</small></button>
-            <button data-val="savory">Salzig<small>Eier, Brot, Bowl</small></button>
-            <button data-val="mixed">Beides<small>abwechslungsreich</small></button>
+            <button class="active" data-val="sweet"><span data-i18n="pref.sweet">Süss</span><small data-i18n="pref.bf.sweet.sub">Oats, Quark, Früchte</small></button>
+            <button data-val="savory"><span data-i18n="pref.savory">Salzig</span><small data-i18n="pref.bf.savory.sub">Eier, Brot, Bowl</small></button>
+            <button data-val="mixed"><span data-i18n="pref.mixed">Beides</span><small data-i18n="pref.sweet.sub">abwechslungsreich</small></button>
           </div>
         </div>
-        <div class="toggle-wrap"><span class="toggle-label">Zwischenmahlzeiten</span>
+        <div class="toggle-wrap"><span class="toggle-label" data-i18n="pref.snack">Zwischenmahlzeiten</span>
           <div class="toggle-group" id="snackPrefToggle">
-            <button class="active" data-val="sweet">Süss<small>Shake, Skyr, Früchte</small></button>
-            <button data-val="savory">Salzig<small>Brot, Hüttenkäse, Wrap</small></button>
-            <button data-val="mixed">Beides<small>abwechslungsreich</small></button>
+            <button class="active" data-val="sweet"><span data-i18n="pref.sweet">Süss</span><small data-i18n="pref.snack.sweet.sub">Shake, Skyr, Früchte</small></button>
+            <button data-val="savory"><span data-i18n="pref.savory">Salzig</span><small data-i18n="pref.snack.savory.sub">Brot, Hüttenkäse, Wrap</small></button>
+            <button data-val="mixed"><span data-i18n="pref.mixed">Beides</span><small data-i18n="pref.sweet.sub">abwechslungsreich</small></button>
           </div>
         </div>
-        <div class="toggle-wrap" id="fastenMainTimeWrap" style="display:none;"><span class="toggle-label">Proteinfasten: Hauptmahlzeit</span>
+        <div class="toggle-wrap" id="fastenMainTimeWrap" style="display:none;"><span class="toggle-label" data-i18n="pref.fastenmain">Proteinfasten: Hauptmahlzeit</span>
           <div class="toggle-group" id="fastenMainTimeToggle">
-            <button class="active" data-val="lunch">Mittags<small>Shake morgens/abends</small></button>
-            <button data-val="dinner">Abends<small>Shake morgens/mittags</small></button>
+            <button class="active" data-val="lunch"><span data-i18n="pref.fasten.lunch">Mittags</span><small data-i18n="pref.fasten.lunch.sub">Shake morgens/abends</small></button>
+            <button data-val="dinner"><span data-i18n="pref.fasten.dinner">Abends</span><small data-i18n="pref.fasten.dinner.sub">Shake morgens/mittags</small></button>
           </div>
         </div>
         <div class="form-field" style="margin-top:14px;">
-          <label>Lebensmittel, die du nicht magst oder nicht verträgst</label>
-          <textarea id="dislikedFoods" placeholder="z.B. Lachs, Eier, Quark, Brokkoli, Thunfisch..." style="min-height:84px;"></textarea>
-          <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;">Diese Lebensmittel werden bei der Planerstellung vermieden. Mehrere Begriffe mit Komma trennen.</p><p style="font-size:12px;color:var(--muted);margin-top:6px;line-height:1.6;">Reis, Pasta, Couscous, Bulgur, Quinoa und Kartoffeln werden im Plan und in der Einkaufsliste immer als Roh-/Einkaufsgewicht berechnet.</p>
+          <label data-i18n="pref.disliked.label">Lebensmittel, die du nicht magst oder nicht verträgst</label>
+          <textarea id="dislikedFoods" data-i18n-ph="pref.disliked.ph" placeholder="z.B. Lachs, Eier, Quark, Brokkoli, Thunfisch..." style="min-height:84px;"></textarea>
+          <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;" data-i18n="pref.disliked.note1">Diese Lebensmittel werden bei der Planerstellung vermieden. Mehrere Begriffe mit Komma trennen.</p><p style="font-size:12px;color:var(--muted);margin-top:6px;line-height:1.6;" data-i18n="pref.disliked.note2">Reis, Pasta, Couscous, Bulgur, Quinoa und Kartoffeln werden im Plan und in der Einkaufsliste immer als Roh-/Einkaufsgewicht berechnet.</p>
         </div>
       </div>
-      <button class="btn-calculate" onclick="calculate()">MEINEN PLAN BERECHNEN →</button>
+      <button class="btn-calculate" data-i18n="calc.calcbtn" onclick="calculate()">MEINEN PLAN BERECHNEN →</button>
       <div id="results">
         <div class="results-divider"></div>
-        <div class="result-hero"><div class="result-label">Täglicher Kalorienbedarf</div><div class="result-kcal" id="kcalDisplay">—</div><div class="result-unit">kcal pro Tag</div><div class="result-badge" id="goalBadge"></div></div>
+        <div class="result-hero"><div class="result-label" data-i18n="res.dailyneed">Täglicher Kalorienbedarf</div><div class="result-kcal" id="kcalDisplay">—</div><div class="result-unit" data-i18n="res.perday">kcal pro Tag</div><div class="result-badge" id="goalBadge"></div></div>
         <div id="deficitNote" style="display:none;margin:0 0 20px;padding:14px 18px;background:rgba(201,168,76,0.08);border:1px solid var(--gold-dim);border-radius:6px;color:var(--gold-bright);font-size:13px;line-height:1.6;"></div>
         <div class="macro-row">
-          <div class="macro-card p"><div class="mc-label">Protein</div><div class="mc-val" id="proteinG">—</div><div class="mc-unit">Gramm</div><div class="mc-kcal" id="proteinKcal">—</div></div>
-          <div class="macro-card c"><div class="mc-label">Kohlenhydrate</div><div class="mc-val" id="carbsG">—</div><div class="mc-unit">Gramm</div><div class="mc-kcal" id="carbsKcal">—</div></div>
-          <div class="macro-card f"><div class="mc-label">Fett</div><div class="mc-val" id="fatG">—</div><div class="mc-unit">Gramm</div><div class="mc-kcal" id="fatKcal">—</div></div>
+          <div class="macro-card p"><div class="mc-label" data-i18n="macro.protein">Protein</div><div class="mc-val" id="proteinG">—</div><div class="mc-unit" data-i18n="macro.grams">Gramm</div><div class="mc-kcal" id="proteinKcal">—</div></div>
+          <div class="macro-card c"><div class="mc-label" data-i18n="macro.carbs">Kohlenhydrate</div><div class="mc-val" id="carbsG">—</div><div class="mc-unit" data-i18n="macro.grams">Gramm</div><div class="mc-kcal" id="carbsKcal">—</div></div>
+          <div class="macro-card f"><div class="mc-label" data-i18n="macro.fat">Fett</div><div class="mc-val" id="fatG">—</div><div class="mc-unit" data-i18n="macro.grams">Gramm</div><div class="mc-kcal" id="fatKcal">—</div></div>
         </div>
         <div class="breakdown">
-          <div class="bd-head">Berechnungsdetails</div>
-          <div class="bd-row"><span class="lbl">Formel</span><span class="val" id="formulaUsed">—</span></div>
-          <div class="bd-row"><span class="lbl">BMR</span><span class="val" id="bmrVal">—</span></div>
-          <div class="bd-row"><span class="lbl">TDEE</span><span class="val" id="tdeeVal">—</span></div>
-          <div class="bd-row"><span class="lbl">Kalorienziel</span><span class="val" id="targetVal">—</span></div>
-          <div class="bd-row"><span class="lbl">Wöchentlicher Effekt</span><span class="val" id="weeklyVal">—</span></div>
+          <div class="bd-head" data-i18n="bd.head">Berechnungsdetails</div>
+          <div class="bd-row"><span class="lbl" data-i18n="bd.formula">Formel</span><span class="val" id="formulaUsed">—</span></div>
+          <div class="bd-row"><span class="lbl" data-i18n="bd.bmr">BMR</span><span class="val" id="bmrVal">—</span></div>
+          <div class="bd-row"><span class="lbl" data-i18n="bd.tdee">TDEE</span><span class="val" id="tdeeVal">—</span></div>
+          <div class="bd-row"><span class="lbl" data-i18n="bd.target">Kalorienziel</span><span class="val" id="targetVal">—</span></div>
+          <div class="bd-row"><span class="lbl" data-i18n="bd.weekly">Wöchentlicher Effekt</span><span class="val" id="weeklyVal">—</span></div>
         </div>
         <div id="planAdminIntroBox" style="margin:0 0 24px;padding:22px 24px;background:rgba(201,168,76,0.06);border:1px solid var(--gold-dim);border-radius:4px;">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:var(--gold);margin-bottom:10px;">Hinweis zum Ernährungsplan</div>
-          <div id="planAdminIntroText" data-editable style="font-size:14px;color:var(--muted);line-height:1.7;min-height:70px;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:var(--gold);margin-bottom:10px;" data-i18n="plan.adminintro.title">Hinweis zum Ernährungsplan</div>
+          <div id="planAdminIntroText" data-editable data-i18n="ed.planAdminIntroText" style="font-size:14px;color:var(--muted);line-height:1.7;min-height:70px;">
             Hier kannst du im Admin-Modus einen eigenen Hinweis vor dem Ernährungsplan einfügen, z.B. Disclaimer, Coaching-Hinweis, Zubereitungstipps oder eine Erklärung zur Verwendung der Rohgewichte.
           </div>
         </div>
-        <div class="sec-head"><span class="sec-num">PLAN</span><span class="sec-title">Beispiel-Ernährungsplan</span><div class="sec-line"></div></div>
+        <div class="sec-head"><span class="sec-num" data-i18n="plan.title.label">PLAN</span><span class="sec-title" data-i18n="plan.title">Beispiel-Ernährungsplan</span><div class="sec-line"></div></div>
         <div id="mealPlan"></div>
-        <div class="disclaimer"><strong>⚠ Hinweis:</strong> Schätzwerte auf Basis Mifflin-St Jeor / Katch-McArdle. Kein Ersatz für Fachberatung.</div>
+        <div class="disclaimer" data-i18n="plan.disclaimer"><strong>⚠ Hinweis:</strong> Schätzwerte auf Basis Mifflin-St Jeor / Katch-McArdle. Kein Ersatz für Fachberatung.</div>
 
         <!-- EINKAUFSLISTE -->
         <div id="shoppingSection" style="margin-top:32px;">
-          <div class="sec-head"><span class="sec-num">🛒</span><span class="sec-title">Einkaufsliste für 1 Woche</span><div class="sec-line"></div></div>
-          <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">Alle Lebensmittel für 7 Tage – basierend auf deinem Ernährungsplan.</p>
+          <div class="sec-head"><span class="sec-num">🛒</span><span class="sec-title" data-i18n="shop.title">Einkaufsliste für 1 Woche</span><div class="sec-line"></div></div>
+          <p style="font-size:14px;color:var(--muted);margin-bottom:20px;" data-i18n="shop.subtitle">Alle Lebensmittel für 7 Tage – basierend auf deinem Ernährungsplan.</p>
           <div id="shoppingList"></div>
-          <button class="btn-calculate" style="margin-top:16px;font-size:20px;" onclick="printShoppingList()">🖨️ &nbsp;EINKAUFSLISTE DRUCKEN</button>
+          <button class="btn-calculate" style="margin-top:16px;font-size:20px;" data-i18n="shop.print" onclick="printShoppingList()">🖨️ &nbsp;EINKAUFSLISTE DRUCKEN</button>
         </div>
       </div>
     </div>
@@ -776,70 +785,70 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
 <section id="sec-naehrwert" class="page-section">
   <div class="content-wrap">
     <div class="page-header">
-      <div class="eyebrow">Selbst zusammenstellen</div>
-      <h2>MEAL BUILDER</h2>
-      <p>Gib deine Daten &amp; dein Ziel ein und baue dir deinen Ernährungsplan selbst zusammen</p>
+      <div class="eyebrow" data-i18n="mb.eyebrow">Selbst zusammenstellen</div>
+      <h2 data-i18n="mb.title">MEAL BUILDER</h2>
+      <p data-i18n="mb.subtitle">Gib deine Daten &amp; dein Ziel ein und baue dir deinen Ernährungsplan selbst zusammen</p>
     </div>
     <div class="rechner-wrap">
       <!-- Schritt 1: Daten & Ziel (eigene IDs, damit der Rechner unberührt bleibt) -->
       <div class="r-section">
-        <div class="sec-head"><span class="sec-num">01</span><span class="sec-title">Grunddaten</span><div class="sec-line"></div></div>
+        <div class="sec-head"><span class="sec-num">01</span><span class="sec-title" data-i18n="calc.s1.title">Grunddaten</span><div class="sec-line"></div></div>
         <div class="grid-2" style="margin-bottom:12px;">
-          <div class="field"><label>Alter</label><input type="number" id="bk_age" placeholder="28" min="15" max="80"><span class="field-unit">Jahre</span></div>
-          <div class="field"><label>Körpergewicht</label><input type="number" id="bk_weight" placeholder="80" min="40" max="250" step="0.1"><span class="field-unit">kg</span></div>
+          <div class="field"><label data-i18n="field.age">Alter</label><input type="number" id="bk_age" placeholder="28" min="15" max="80"><span class="field-unit" data-i18n="field.age.unit">Jahre</span></div>
+          <div class="field"><label data-i18n="field.weight">Körpergewicht</label><input type="number" id="bk_weight" placeholder="80" min="40" max="250" step="0.1"><span class="field-unit">kg</span></div>
         </div>
         <div class="grid-2" style="margin-bottom:16px;">
-          <div class="field"><label>Körpergrösse</label><input type="number" id="bk_height" placeholder="178" min="140" max="220"><span class="field-unit">cm</span></div>
-          <div class="field"><label>Körperfett % (optional)</label><input type="number" id="bk_bf" placeholder="15" min="3" max="50" step="0.1"><span class="field-unit">%</span></div>
+          <div class="field"><label data-i18n="field.height">Körpergrösse</label><input type="number" id="bk_height" placeholder="178" min="140" max="220"><span class="field-unit">cm</span></div>
+          <div class="field"><label data-i18n="field.bf">Körperfett % (optional)</label><input type="number" id="bk_bf" placeholder="15" min="3" max="50" step="0.1"><span class="field-unit">%</span></div>
         </div>
-        <p style="font-size:11px;color:var(--muted);line-height:1.5;margin:-4px 0 0 0;">💡 Körperfett nur ausfüllen, wenn <strong style="color:var(--text);">gemessen</strong> (DEXA, Caliper, Körperfett-Waage). Dann rechnen wir mit der präziseren Katch-McArdle-Formel. Leer lassen ist völlig ok – dann nutzen wir Mifflin-St-Jeor.</p>
+        <p style="font-size:11px;color:var(--muted);line-height:1.5;margin:-4px 0 0 0;" data-i18n="mb.bf.note">💡 Körperfett nur ausfüllen, wenn <strong style="color:var(--text);">gemessen</strong> (DEXA, Caliper, Körperfett-Waage). Dann rechnen wir mit der präziseren Katch-McArdle-Formel. Leer lassen ist völlig ok – dann nutzen wir Mifflin-St-Jeor.</p>
         <div class="toggle-wrap" style="margin-top:16px;">
-          <span class="toggle-label">Geschlecht</span>
+          <span class="toggle-label" data-i18n="field.gender">Geschlecht</span>
           <div class="toggle-group" id="bk_genderToggle">
-            <button class="active" data-val="male">♂ &nbsp;Mann</button>
-            <button data-val="female">♀ &nbsp;Frau</button>
+            <button class="active" data-val="male" data-i18n="gender.male">♂ &nbsp;Mann</button>
+            <button data-val="female" data-i18n="gender.female">♀ &nbsp;Frau</button>
           </div>
         </div>
       </div>
       <div class="r-section">
-        <div class="sec-head"><span class="sec-num">02</span><span class="sec-title">Aktivitätslevel</span><div class="sec-line"></div></div>
-        <div class="field"><label>Alltagsaktivität (ohne separates Training gerechnet)</label>
+        <div class="sec-head"><span class="sec-num">02</span><span class="sec-title" data-i18n="calc.s2.title">Aktivitätslevel</span><div class="sec-line"></div></div>
+        <div class="field"><label data-i18n="field.activity">Alltagsaktivität (ohne separates Training gerechnet)</label>
           <select id="bk_activity">
-            <option value="1.2">Sitzend – Home Office, wenig Bewegung (× 1.2)</option>
-            <option value="1.375" selected>Normal aktiv – mind. 10'000 Schritte täglich (× 1.375)</option>
-            <option value="1.55">Aktiv – viel auf den Beinen, 12'000+ Schritte (× 1.55)</option>
-            <option value="1.725">Sehr aktiv – Vereinssport, Ausdauer, 15'000+ Schritte (× 1.725)</option>
+            <option value="1.2" data-i18n="activity.1">Sitzend – Home Office, wenig Bewegung (× 1.2)</option>
+            <option value="1.375" selected data-i18n="activity.2">Normal aktiv – mind. 10'000 Schritte täglich (× 1.375)</option>
+            <option value="1.55" data-i18n="activity.3">Aktiv – viel auf den Beinen, 12'000+ Schritte (× 1.55)</option>
+            <option value="1.725" data-i18n="activity.4">Sehr aktiv – Vereinssport, Ausdauer, 15'000+ Schritte (× 1.725)</option>
           </select>
         </div>
       </div>
       <div class="r-section">
-        <div class="sec-head"><span class="sec-num">03</span><span class="sec-title">Ziel &amp; Makros</span><div class="sec-line"></div></div>
-        <div class="toggle-wrap"><span class="toggle-label">Gewichtsziel</span>
+        <div class="sec-head"><span class="sec-num">03</span><span class="sec-title" data-i18n="calc.s3.title">Ziel &amp; Makros</span><div class="sec-line"></div></div>
+        <div class="toggle-wrap"><span class="toggle-label" data-i18n="field.goal">Gewichtsziel</span>
           <div class="toggle-group" id="bk_goalToggle">
-            <button data-val="-1000">Schnell abnehmen<small>−1 kg / Woche</small></button>
-            <button data-val="-500">Abnehmen<small>−0.5 kg / Woche</small></button>
-            <button data-val="-300">Langsam abnehmen<small>−0.3 kg / Woche</small></button>
-            <button class="active" data-val="0">Gewicht halten<small>±0 kg</small></button>
-            <button data-val="250">Langsam aufbauen<small>+0.25 kg / Woche</small></button>
-            <button data-val="500">Masse aufbauen<small>+0.5 kg / Woche</small></button>
+            <button data-val="-1000"><span data-i18n="goal.fastloss">Schnell abnehmen</span><small data-i18n="goal.wk.m1000">−1 kg / Woche</small></button>
+            <button data-val="-500"><span data-i18n="goal.loss">Abnehmen</span><small data-i18n="goal.wk.m500">−0.5 kg / Woche</small></button>
+            <button data-val="-300"><span data-i18n="goal.slowloss">Langsam abnehmen</span><small data-i18n="goal.wk.m300">−0.3 kg / Woche</small></button>
+            <button class="active" data-val="0"><span data-i18n="goal.maintain">Gewicht halten</span><small data-i18n="goal.wk.0">±0 kg</small></button>
+            <button data-val="250"><span data-i18n="goal.slowgain">Langsam aufbauen</span><small data-i18n="goal.wk.250">+0.25 kg / Woche</small></button>
+            <button data-val="500"><span data-i18n="goal.gain">Masse aufbauen</span><small data-i18n="goal.wk.500">+0.5 kg / Woche</small></button>
           </div>
         </div>
-        <div class="toggle-wrap"><span class="toggle-label">Protein-Priorität</span>
+        <div class="toggle-wrap"><span class="toggle-label" data-i18n="field.protein">Protein-Priorität</span>
           <div class="toggle-group" id="bk_proteinToggle">
-            <button data-val="1.8">Standard<small>1.8 g/kg</small></button>
-            <button class="active" data-val="2.2">Athletisch<small>2.2 g/kg</small></button>
-            <button data-val="2.8">High Protein<small>2.8 g/kg</small></button>
+            <button data-val="1.8"><span data-i18n="protein.standard">Standard</span><small>1.8 g/kg</small></button>
+            <button class="active" data-val="2.2"><span data-i18n="protein.athletic">Athletisch</span><small>2.2 g/kg</small></button>
+            <button data-val="2.8"><span data-i18n="protein.high">High Protein</span><small>2.8 g/kg</small></button>
           </div>
         </div>
-        <div class="toggle-wrap"><span class="toggle-label">Ernährungsweise</span>
+        <div class="toggle-wrap"><span class="toggle-label" data-i18n="field.diet">Ernährungsweise</span>
           <div class="toggle-group" id="bk_dietToggle">
-            <button class="active" data-val="meat">🥩 Fleisch</button>
-            <button data-val="vegetarian">🥦 Vegetarisch</button>
-            <button data-val="vegan">🌱 Vegan</button>
+            <button class="active" data-val="meat" data-i18n="diet.meat">🥩 Fleisch</button>
+            <button data-val="vegetarian" data-i18n="diet.vegetarian">🥦 Vegetarisch</button>
+            <button data-val="vegan" data-i18n="diet.vegan">🌱 Vegan</button>
           </div>
         </div>
       </div>
-      <button class="btn-calculate" onclick="bkStart()">ZIEL BERECHNEN &amp; PLAN BAUEN →</button>
+      <button class="btn-calculate" data-i18n="mb.startbtn" onclick="bkStart()">ZIEL BERECHNEN &amp; PLAN BAUEN →</button>
 
       <!-- Schritt 2: Zielanzeige + Baukasten (wird nach bkStart sichtbar) -->
       <div id="bkBuilder" style="display:none;">
@@ -847,23 +856,23 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
 
         <!-- Ziel-Bilanz (sticky Live-Anzeige) -->
         <div id="bkTargetBar" style="position:sticky;top:64px;z-index:40;background:var(--card);border:1px solid var(--gold-dim);border-radius:6px;padding:16px 20px;margin-bottom:24px;box-shadow:0 6px 24px rgba(0,0,0,0.4);">
-          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:12px;">Dein Tagesziel · Live-Bilanz</div>
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:12px;" data-i18n="mb.live.label">Dein Tagesziel · Live-Bilanz</div>
           <div id="bkLiveTotals"></div>
         </div>
 
-        <div class="sec-head"><span class="sec-num">BAU</span><span class="sec-title">Mahlzeiten zusammenstellen</span><div class="sec-line"></div></div>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;">Wähle pro Mahlzeit aus Protein-, Kohlenhydrat- und Fettquellen. Die Portion wird automatisch vorgeschlagen und lässt sich mit <strong style="color:var(--text);">+ / −</strong> anpassen.</p>
+        <div class="sec-head"><span class="sec-num" data-i18n="mb.build.label">BAU</span><span class="sec-title" data-i18n="mb.build.title">Mahlzeiten zusammenstellen</span><div class="sec-line"></div></div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;" data-i18n="mb.build.desc">Wähle pro Mahlzeit aus Protein-, Kohlenhydrat- und Fettquellen. Die Portion wird automatisch vorgeschlagen und lässt sich mit <strong style="color:var(--text);">+ / −</strong> anpassen.</p>
         <div id="bkMeals"></div>
 
         <!-- Einkaufsliste -->
         <div id="bkShoppingSection" style="margin-top:32px;display:none;">
-          <div class="sec-head"><span class="sec-num">🛒</span><span class="sec-title">Einkaufsliste für 1 Woche</span><div class="sec-line"></div></div>
-          <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">Alle Lebensmittel für 7 Tage – basierend auf deinem selbst gebauten Plan.</p>
+          <div class="sec-head"><span class="sec-num">🛒</span><span class="sec-title" data-i18n="shop.title">Einkaufsliste für 1 Woche</span><div class="sec-line"></div></div>
+          <p style="font-size:14px;color:var(--muted);margin-bottom:20px;" data-i18n="shop.subtitle.builder">Alle Lebensmittel für 7 Tage – basierend auf deinem selbst gebauten Plan.</p>
           <div id="bkShoppingList"></div>
-          <button class="btn-calculate" style="margin-top:16px;font-size:20px;" onclick="bkPrintShoppingList()">🖨️ &nbsp;EINKAUFSLISTE DRUCKEN</button>
+          <button class="btn-calculate" style="margin-top:16px;font-size:20px;" data-i18n="shop.print" onclick="bkPrintShoppingList()">🖨️ &nbsp;EINKAUFSLISTE DRUCKEN</button>
         </div>
 
-        <div class="disclaimer" style="margin-top:24px;"><strong>⚠ Hinweis:</strong> Schätzwerte auf Basis Mifflin-St Jeor / Katch-McArdle. Kein Ersatz für Fachberatung.</div>
+        <div class="disclaimer" style="margin-top:24px;" data-i18n="plan.disclaimer"><strong>⚠ Hinweis:</strong> Schätzwerte auf Basis Mifflin-St Jeor / Katch-McArdle. Kein Ersatz für Fachberatung.</div>
       </div>
     </div>
   </div>
@@ -873,16 +882,16 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
 <section id="sec-kontakt" class="page-section">
   <div class="content-wrap">
     <div class="page-header">
-      <div class="eyebrow">Get in Touch</div>
-      <h2 data-editable>KONTAKT</h2>
-      <p data-editable>Fragen, Kooperationen oder einfach Hallo sagen</p>
+      <div class="eyebrow" data-i18n="contact.eyebrow">Get in Touch</div>
+      <h2 data-i18n="contact.title">KONTAKT</h2>
+      <p data-i18n="contact.subtitle">Fragen, Kooperationen oder einfach Hallo sagen</p>
     </div>
     <div class="kontakt-wrap">
       <div class="contact-card">
         <div class="contact-icon">✉</div>
-        <p class="contact-lead">Schreib mir direkt eine E-Mail – ich melde mich so schnell wie möglich.</p>
+        <p class="contact-lead" data-i18n="contact.lead">Schreib mir direkt eine E-Mail – ich melde mich so schnell wie möglich.</p>
         <a class="contact-mail" href="mailto:mdgelite87@gmail.com">mdgelite87@gmail.com</a>
-        <a class="btn-submit contact-btn" href="mailto:mdgelite87@gmail.com">E-MAIL SCHREIBEN →</a>
+        <a class="btn-submit contact-btn" data-i18n="contact.btn" href="mailto:mdgelite87@gmail.com">E-MAIL SCHREIBEN →</a>
       </div>
       <div class="social-links">
         <a class="social-link" href="https://youtube.com/@mdgelite87" target="_blank" rel="noopener">▶ YouTube</a>
@@ -898,9 +907,9 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
 <section id="sec-impressum" class="page-section">
   <div class="content-wrap">
     <div class="page-header">
-      <div class="eyebrow">Rechtliches</div>
-      <h2 id="impressumTitle" data-editable>IMPRESSUM</h2>
-      <p id="impressumSubtitle" data-editable>Angaben gemäss Schweizer Recht</p>
+      <div class="eyebrow" data-i18n="legal.eyebrow">Rechtliches</div>
+      <h2 id="impressumTitle" data-editable data-i18n="ed.impressumTitle">IMPRESSUM</h2>
+      <p id="impressumSubtitle" data-editable data-i18n="ed.impressumSubtitle">Angaben gemäss Schweizer Recht</p>
     </div>
     <div id="impressumContent" data-editable class="kontakt-wrap" style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:28px;line-height:1.8;color:var(--muted);font-size:14px;min-height:360px;">
       <p><strong style="color:var(--text);">MDG Elite / Marco Di Giovanni</strong></p>
@@ -916,9 +925,9 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
 <section id="sec-datenschutz" class="page-section">
   <div class="content-wrap">
     <div class="page-header">
-      <div class="eyebrow">Rechtliches</div>
-      <h2 id="datenschutzTitle" data-editable>DATENSCHUTZ</h2>
-      <p id="datenschutzSubtitle" data-editable>Informationen zur Datenbearbeitung</p>
+      <div class="eyebrow" data-i18n="legal.eyebrow">Rechtliches</div>
+      <h2 id="datenschutzTitle" data-editable data-i18n="ed.datenschutzTitle">DATENSCHUTZ</h2>
+      <p id="datenschutzSubtitle" data-editable data-i18n="ed.datenschutzSubtitle">Informationen zur Datenbearbeitung</p>
     </div>
     <div id="datenschutzContent" data-editable class="kontakt-wrap" style="background:var(--card);border:1px solid var(--border);border-radius:4px;padding:28px;line-height:1.8;color:var(--muted);font-size:14px;min-height:520px;">
       <p><strong style="color:var(--text);">Verantwortlich:</strong> MDG Elite / Marco Di Giovanni, Schweiz, E-Mail: <a href="mailto:mdgelite87@gmail.com" style="color:var(--gold);">mdgelite87@gmail.com</a></p>
@@ -933,7 +942,7 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
 
 <footer>
   <div class="footer-logo">MDG ELITE</div>
-  <p>© 2026 Marco Di Giovanni · <a href="#" onclick="showSection('kontakt');return false;">Kontakt</a> · <a href="#" onclick="showSection('impressum');return false;">Impressum</a> · <a href="#" onclick="showSection('datenschutz');return false;">Datenschutz</a><br>
+  <p>© 2026 Marco Di Giovanni · <a href="#" data-i18n="footer.contact" onclick="showSection('kontakt');return false;">Kontakt</a> · <a href="#" data-i18n="footer.impressum" onclick="showSection('impressum');return false;">Impressum</a> · <a href="#" data-i18n="footer.datenschutz" onclick="showSection('datenschutz');return false;">Datenschutz</a><br>
   <span style="font-size:11px;opacity:0.5;">mdgelite.com</span> · <a href="#" onclick="openModal('loginModal');return false;" style="font-size:10px;opacity:0.25;color:var(--muted);text-decoration:none;">Admin</a></p>
 </footer>
 
@@ -1050,6 +1059,935 @@ Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte 
 <div class="toast" id="toast"></div>
 
 <script>
+
+/* ════════ i18n CORE (DE/IT/EN) ════════ */
+const MDG_UI = {
+  "nav.home": {de:"Home", it:"Home", en:"Home"},
+  "nav.about": {de:"Über mich", it:"Chi sono", en:"About"},
+  "nav.videos": {de:"Videos", it:"Video", en:"Videos"},
+  "nav.pics": {de:"Bilder", it:"Foto", en:"Photos"},
+  "nav.calc": {de:"Rechner", it:"Calcolatore", en:"Calculator"},
+  "nav.builder": {de:"Meal Builder", it:"Meal Builder", en:"Meal Builder"},
+  "nav.contact": {de:"Kontakt", it:"Contatti", en:"Contact"},
+  "home.cta.calc": {de:"RECHNER STARTEN", it:"AVVIA CALCOLATORE", en:"START CALCULATOR"},
+  "home.cta.builder": {de:"MEAL BUILDER", it:"MEAL BUILDER", en:"MEAL BUILDER"},
+  "home.cta.videos": {de:"VIDEOS ANSEHEN", it:"GUARDA I VIDEO", en:"WATCH VIDEOS"},
+  "home.cta.about": {de:"ÜBER MICH", it:"CHI SONO", en:"ABOUT ME"},
+  "home.cta.photos": {de:"FOTOS", it:"FOTO", en:"PHOTOS"},
+  "about.eyebrow": {de:"Meine Transformation", it:"La mia trasformazione", en:"My transformation"},
+  "about.photo.before": {de:"Vorher", it:"Prima", en:"Before"},
+  "about.photo.after": {de:"Nachher", it:"Dopo", en:"After"},
+  "about.photo.adminupload": {de:"Admin Upload", it:"Caricamento admin", en:"Admin upload"},
+  "about.photo.beforeUpload": {de:"Vorher-Foto hochladen", it:"Carica foto \"prima\"", en:"Upload before photo"},
+  "about.photo.afterUpload": {de:"Nachher-Foto hochladen", it:"Carica foto \"dopo\"", en:"Upload after photo"},
+  "about.photo.adminonly": {de:"nur im Admin-Modus", it:"solo in modalità admin", en:"admin mode only"},
+  "videos.eyebrow": {de:"Content", it:"Contenuti", en:"Content"},
+  "videos.title": {de:"VIDEOS", it:"VIDEO", en:"VIDEOS"},
+  "videos.subtitle": {de:"Ehrliche Einblicke in Training, Ernährung und meinen Weg zur Bühne", it:"Approfondimenti sinceri su allenamento, alimentazione e il mio percorso verso il palco", en:"Honest insights into training, nutrition and my road to the stage"},
+  "videos.tab.all": {de:"Alle", it:"Tutti", en:"All"},
+  "videos.tab.nutrition": {de:"Ernährung", it:"Alimentazione", en:"Nutrition"},
+  "videos.tab.training": {de:"Training", it:"Allenamento", en:"Training"},
+  "videos.tab.supps": {de:"Supplemente", it:"Integratori", en:"Supplements"},
+  "videos.tab.journey": {de:"Mein Weg zur Bühne", it:"Il mio percorso verso il palco", en:"My road to the stage"},
+  "videos.embed": {de:"YouTube Video einbetten", it:"Incorpora video YouTube", en:"Embed YouTube video"},
+  "videos.openchannel": {de:"YOUTUBE KANAL ÖFFNEN", it:"APRI IL CANALE YOUTUBE", en:"OPEN YOUTUBE CHANNEL"},
+  "pics.eyebrow": {de:"Galerie", it:"Galleria", en:"Gallery"},
+  "pics.title": {de:"BILDER", it:"FOTO", en:"PHOTOS"},
+  "pics.subtitle": {de:"Transformation, Wettkampf-Prep und hinter den Kulissen", it:"Trasformazione, preparazione gara e dietro le quinte", en:"Transformation, contest prep and behind the scenes"},
+  "pics.add": {de:"Bilder hinzufügen", it:"Aggiungi foto", en:"Add photos"},
+  "pics.empty": {de:"Noch keine Bilder vorhanden.", it:"Ancora nessuna foto.", en:"No photos yet."},
+  "pics.emptyHint": {de:"Bilder werden vom Admin hinzugefügt.", it:"Le foto vengono aggiunte dall'admin.", en:"Photos are added by the admin."},
+  "pics.cat.all": {de:"Alle", it:"Tutti", en:"All"},
+  "pics.cat.transformation": {de:"Transformation", it:"Trasformazione", en:"Transformation"},
+  "pics.cat.gym": {de:"Gym Pics", it:"Foto in palestra", en:"Gym pics"},
+  "pics.cat.food": {de:"Food & Rezepte", it:"Cibo e ricette", en:"Food & recipes"},
+  "pics.month.all": {de:"Alle Monate", it:"Tutti i mesi", en:"All months"},
+  "pics.images": {de:"Bild(er)", it:"foto", en:"image(s)"},
+  "pics.nomonth": {de:"Ohne Monat", it:"Senza mese", en:"No month"},
+  "calc.eyebrow": {de:"Kostenloses Tool", it:"Strumento gratuito", en:"Free tool"},
+  "calc.title": {de:"KALORIENRECHNER", it:"CALCOLATORE CALORIE", en:"CALORIE CALCULATOR"},
+  "calc.subtitle": {de:"Berechne deinen genauen Tagesbedarf, Makros und Ernährungsplan", it:"Calcola il tuo fabbisogno giornaliero preciso, i macro e il piano alimentare", en:"Calculate your exact daily needs, macros and meal plan"},
+  "calc.how.label": {de:"SO FUNKTIONIERT'S", it:"COME FUNZIONA", en:"HOW IT WORKS"},
+  "calc.how1.title": {de:"Daten ehrlich eingeben", it:"Inserisci i dati onestamente", en:"Enter your data honestly"},
+  "calc.how1.desc": {de:"Keine geschönten Zahlen – je genauer deine Angaben, desto präziser dein Plan.", it:"Niente numeri abbelliti – più precisi sono i dati, più preciso sarà il piano.", en:"No flattering numbers – the more accurate your input, the more precise your plan."},
+  "calc.how2.title": {de:"Kalorienrichtwert & Ernährungsplan – kostenlos, sofort", it:"Valore calorico e piano alimentare – gratis, subito", en:"Calorie target & meal plan – free, instant"},
+  "calc.how2.desc": {de:"Dein persönlicher Tagesbedarf, Makros und ein kompletter Mahlzeitenplan werden direkt berechnet.", it:"Il tuo fabbisogno giornaliero, i macro e un piano pasti completo vengono calcolati subito.", en:"Your personal daily needs, macros and a complete meal plan are calculated instantly."},
+  "calc.how3.title": {de:"Einkaufsliste für 7 Tage direkt ausdrucken", it:"Stampa subito la lista della spesa per 7 giorni", en:"Print a 7-day shopping list right away"},
+  "calc.how3.desc": {de:"Alle Lebensmittel für eine Woche auf einen Blick – einfach drucken und einkaufen gehen.", it:"Tutti gli alimenti per una settimana a colpo d'occhio – stampa e vai a fare la spesa.", en:"All foods for a week at a glance – just print and go shopping."},
+  "calc.tip.title": {de:"So überprüfst du deinen echten Kalorienbedarf", it:"Come verificare il tuo vero fabbisogno calorico", en:"How to verify your real calorie needs"},
+  "calc.tip.p1": {de:"Ernähre dich <strong>14 Tage</strong> nach deinem Kalorienrichtwert und lebe deinen Alltag wie bisher – kein Extra-Sport, keine Veränderungen. Wiege dich täglich <strong>morgens nach dem Aufstehen und Toilettengang</strong> – immer zur gleichen Zeit, ohne Kleidung.", it:"Mangia per <strong>14 giorni</strong> secondo il tuo valore calorico e vivi la tua quotidianità come sempre – niente sport extra, nessun cambiamento. Pesati ogni giorno <strong>al mattino dopo esserti alzato e dopo il bagno</strong> – sempre alla stessa ora, senza vestiti.", en:"Eat according to your calorie target for <strong>14 days</strong> and live your everyday life as usual – no extra exercise, no changes. Weigh yourself daily <strong>in the morning after getting up and using the toilet</strong> – always at the same time, without clothes."},
+  "calc.tip.m1day": {de:"Nach 7 Tagen", it:"Dopo 7 giorni", en:"After 7 days"},
+  "calc.tip.m1res": {de:"→ Erster Richtwert sichtbar", it:"→ Primo valore indicativo visibile", en:"→ First reference value visible"},
+  "calc.tip.m2day": {de:"Nach 14 Tagen", it:"Dopo 14 giorni", en:"After 14 days"},
+  "calc.tip.m2res": {de:"→ Gewissheit über deinen echten Kalorienbedarf", it:"→ Certezza sul tuo vero fabbisogno calorico", en:"→ Certainty about your real calorie needs"},
+  "calc.tip.p2": {de:"Mit einem Kaloriendefizit von <strong>1'000 kcal/Tag</strong> beträgt der durchschnittliche Gewichtsverlust <strong>~1 kg pro Woche</strong>. In der ersten Woche kann der Verlust deutlich höher sein – dies liegt am Wasserhaushalt, nicht an reinem Fett.", it:"Con un deficit calorico di <strong>1.000 kcal/giorno</strong> la perdita di peso media è di <strong>~1 kg a settimana</strong>. Nella prima settimana la perdita può essere molto maggiore – dipende dai liquidi, non dal grasso puro.", en:"With a calorie deficit of <strong>1,000 kcal/day</strong> the average weight loss is <strong>~1 kg per week</strong>. In the first week the loss can be significantly higher – this is due to water balance, not pure fat."},
+  "calc.tip.p3": {de:"⚖️ <strong>Physik bleibt Physik:</strong> Für 1 kg reines Fett müssen ca. <strong>7'000 kcal</strong> eingespart oder verbrannt werden.", it:"⚖️ <strong>La fisica resta fisica:</strong> per 1 kg di grasso puro servono circa <strong>7.000 kcal</strong> risparmiate o bruciate.", en:"⚖️ <strong>Physics stays physics:</strong> for 1 kg of pure fat about <strong>7,000 kcal</strong> must be saved or burned."},
+  "calc.tip.p4": {de:"📹 In meinen Videos gehe ich auf diese Thematik im Detail ein.", it:"📹 Nei miei video approfondisco questo argomento in dettaglio.", en:"📹 In my videos I cover this topic in detail."},
+  "calc.s1.title": {de:"Grunddaten", it:"Dati di base", en:"Basic data"},
+  "field.age": {de:"Alter", it:"Età", en:"Age"},
+  "field.age.unit": {de:"Jahre", it:"anni", en:"years"},
+  "field.weight": {de:"Körpergewicht", it:"Peso corporeo", en:"Body weight"},
+  "field.height": {de:"Körpergrösse", it:"Altezza", en:"Height"},
+  "field.bf": {de:"Körperfett % (optional)", it:"Grasso corporeo % (opzionale)", en:"Body fat % (optional)"},
+  "field.gender": {de:"Geschlecht", it:"Sesso", en:"Gender"},
+  "gender.male": {de:"♂  Mann", it:"♂  Uomo", en:"♂  Male"},
+  "gender.female": {de:"♀  Frau", it:"♀  Donna", en:"♀  Female"},
+  "calc.s2.title": {de:"Aktivitätslevel", it:"Livello di attività", en:"Activity level"},
+  "field.activity": {de:"Alltagsaktivität (ohne separates Training gerechnet)", it:"Attività quotidiana (allenamento escluso)", en:"Daily activity (training counted separately)"},
+  "activity.1": {de:"Sitzend – Home Office, wenig Bewegung (× 1.2)", it:"Sedentario – ufficio in casa, poco movimento (× 1.2)", en:"Sedentary – home office, little movement (× 1.2)"},
+  "activity.2": {de:"Normal aktiv – mind. 10'000 Schritte täglich (× 1.375)", it:"Normalmente attivo – almeno 10.000 passi al giorno (× 1.375)", en:"Normally active – at least 10,000 steps daily (× 1.375)"},
+  "activity.3": {de:"Aktiv – viel auf den Beinen, 12'000+ Schritte (× 1.55)", it:"Attivo – molto in piedi, 12.000+ passi (× 1.55)", en:"Active – on your feet a lot, 12,000+ steps (× 1.55)"},
+  "activity.4": {de:"Sehr aktiv – Vereinssport, Ausdauer, 15'000+ Schritte (× 1.725)", it:"Molto attivo – sport agonistico, resistenza, 15.000+ passi (× 1.725)", en:"Very active – club sport, endurance, 15,000+ steps (× 1.725)"},
+  "calc.activity.note": {de:"Wähle ehrlich nach deinem <strong style=\"color:var(--text);\">Alltag</strong>. Lieber etwas tiefer ansetzen – die meisten überschätzen ihren Verbrauch. Dein echter Bedarf zeigt sich nach 14 Tagen Tracking (siehe oben).", it:"Scegli onestamente in base alla tua <strong style=\"color:var(--text);\">quotidianità</strong>. Meglio stimare un po' più basso – la maggior parte sovrastima il proprio consumo. Il tuo vero fabbisogno emerge dopo 14 giorni di tracciamento (vedi sopra).", en:"Choose honestly based on your <strong style=\"color:var(--text);\">everyday life</strong>. Better to set it a little lower – most people overestimate their expenditure. Your real needs show after 14 days of tracking (see above)."},
+  "calc.s3.title": {de:"Ziel & Makros", it:"Obiettivo e macro", en:"Goal & macros"},
+  "field.goal": {de:"Gewichtsziel", it:"Obiettivo di peso", en:"Weight goal"},
+  "goal.fastloss": {de:"Schnell abnehmen", it:"Dimagrire velocemente", en:"Lose fast"},
+  "goal.loss": {de:"Abnehmen", it:"Dimagrire", en:"Lose weight"},
+  "goal.slowloss": {de:"Langsam abnehmen", it:"Dimagrire lentamente", en:"Lose slowly"},
+  "goal.maintain": {de:"Gewicht halten", it:"Mantenere il peso", en:"Maintain"},
+  "goal.slowgain": {de:"Langsam aufbauen", it:"Aumentare lentamente", en:"Gain slowly"},
+  "goal.gain": {de:"Masse aufbauen", it:"Aumentare massa", en:"Build mass"},
+  "goal.wk.m1000": {de:"−1 kg / Woche", it:"−1 kg / settimana", en:"−1 kg / week"},
+  "goal.wk.m500": {de:"−0.5 kg / Woche", it:"−0,5 kg / settimana", en:"−0.5 kg / week"},
+  "goal.wk.m300": {de:"−0.3 kg / Woche", it:"−0,3 kg / settimana", en:"−0.3 kg / week"},
+  "goal.wk.0": {de:"±0 kg", it:"±0 kg", en:"±0 kg"},
+  "goal.wk.250": {de:"+0.25 kg / Woche", it:"+0,25 kg / settimana", en:"+0.25 kg / week"},
+  "goal.wk.500": {de:"+0.5 kg / Woche", it:"+0,5 kg / settimana", en:"+0.5 kg / week"},
+  "field.protein": {de:"Protein-Priorität", it:"Priorità proteine", en:"Protein priority"},
+  "protein.standard": {de:"Standard", it:"Standard", en:"Standard"},
+  "protein.athletic": {de:"Athletisch", it:"Atletico", en:"Athletic"},
+  "protein.high": {de:"High Protein", it:"High protein", en:"High protein"},
+  "field.diet": {de:"Ernährungsweise", it:"Tipo di dieta", en:"Diet type"},
+  "diet.meat": {de:"🥩 Fleisch", it:"🥩 Carne", en:"🥩 Meat"},
+  "diet.vegetarian": {de:"🥦 Vegetarisch", it:"🥦 Vegetariano", en:"🥦 Vegetarian"},
+  "diet.vegan": {de:"🌱 Vegan", it:"🌱 Vegano", en:"🌱 Vegan"},
+  "field.meals": {de:"Mahlzeiten pro Tag", it:"Pasti al giorno", en:"Meals per day"},
+  "meals.3": {de:"3 Mahlzeiten", it:"3 pasti", en:"3 meals"},
+  "meals.4": {de:"4 Mahlzeiten", it:"4 pasti", en:"4 meals"},
+  "meals.5": {de:"5 Mahlzeiten", it:"5 pasti", en:"5 meals"},
+  "meals.fasten": {de:"⚡ Protein<br>Fasten", it:"⚡ Digiuno<br>proteico", en:"⚡ Protein<br>fasting"},
+  "fasten.label": {de:"⚡ Protein Fasten", it:"⚡ Digiuno proteico", en:"⚡ Protein fasting"},
+  "fasten.desc": {de:"Proteinfasten bedeutet: <strong style=\"color:var(--text);\">2 Mahlzeiten werden durch Whey-Proteinshakes ersetzt</strong>. Jeder Shake liefert ca. <strong style=\"color:var(--text);\">33% deines Tagesproteins</strong>. Die Hauptmahlzeit deckt den Rest der Makros ab.", it:"Digiuno proteico significa: <strong style=\"color:var(--text);\">2 pasti vengono sostituiti da shake proteici whey</strong>. Ogni shake fornisce circa <strong style=\"color:var(--text);\">il 33% delle tue proteine giornaliere</strong>. Il pasto principale copre il resto dei macro.", en:"Protein fasting means: <strong style=\"color:var(--text);\">2 meals are replaced by whey protein shakes</strong>. Each shake provides about <strong style=\"color:var(--text);\">33% of your daily protein</strong>. The main meal covers the rest of the macros."},
+  "calc.s4.title": {de:"Essensvorlieben", it:"Preferenze alimentari", en:"Food preferences"},
+  "pref.breakfast": {de:"Frühstück", it:"Colazione", en:"Breakfast"},
+  "pref.snack": {de:"Zwischenmahlzeiten", it:"Spuntini", en:"Snacks"},
+  "pref.sweet": {de:"Süss", it:"Dolce", en:"Sweet"},
+  "pref.savory": {de:"Salzig", it:"Salato", en:"Savoury"},
+  "pref.mixed": {de:"Beides", it:"Entrambi", en:"Both"},
+  "pref.bf.sweet.sub": {de:"Oats, Quark, Früchte", it:"Oats, quark, frutta", en:"Oats, quark, fruit"},
+  "pref.bf.savory.sub": {de:"Eier, Brot, Bowl", it:"Uova, pane, bowl", en:"Eggs, bread, bowl"},
+  "pref.sweet.sub": {de:"abwechslungsreich", it:"vario", en:"varied"},
+  "pref.snack.sweet.sub": {de:"Shake, Skyr, Früchte", it:"Shake, skyr, frutta", en:"Shake, skyr, fruit"},
+  "pref.snack.savory.sub": {de:"Brot, Hüttenkäse, Wrap", it:"Pane, fiocchi di latte, wrap", en:"Bread, cottage cheese, wrap"},
+  "pref.fastenmain": {de:"Proteinfasten: Hauptmahlzeit", it:"Digiuno proteico: pasto principale", en:"Protein fasting: main meal"},
+  "pref.fasten.lunch": {de:"Mittags", it:"A pranzo", en:"Lunch"},
+  "pref.fasten.lunch.sub": {de:"Shake morgens/abends", it:"Shake mattina/sera", en:"Shake morning/evening"},
+  "pref.fasten.dinner": {de:"Abends", it:"A cena", en:"Dinner"},
+  "pref.fasten.dinner.sub": {de:"Shake morgens/mittags", it:"Shake mattina/pranzo", en:"Shake morning/lunch"},
+  "pref.disliked.label": {de:"Lebensmittel, die du nicht magst oder nicht verträgst", it:"Alimenti che non ti piacciono o che non tolleri", en:"Foods you dislike or can't tolerate"},
+  "pref.disliked.ph": {de:"z.B. Lachs, Eier, Quark, Brokkoli, Thunfisch...", it:"es. salmone, uova, quark, broccoli, tonno...", en:"e.g. salmon, eggs, quark, broccoli, tuna..."},
+  "pref.disliked.note1": {de:"Diese Lebensmittel werden bei der Planerstellung vermieden. Mehrere Begriffe mit Komma trennen.", it:"Questi alimenti vengono evitati nella creazione del piano. Separa più termini con la virgola.", en:"These foods are avoided when creating the plan. Separate multiple terms with commas."},
+  "pref.disliked.note2": {de:"Reis, Pasta, Couscous, Bulgur, Quinoa und Kartoffeln werden im Plan und in der Einkaufsliste immer als Roh-/Einkaufsgewicht berechnet.", it:"Riso, pasta, couscous, bulgur, quinoa e patate vengono sempre calcolati nel piano e nella lista della spesa come peso crudo/d'acquisto.", en:"Rice, pasta, couscous, bulgur, quinoa and potatoes are always counted in the plan and shopping list as raw/purchase weight."},
+  "calc.calcbtn": {de:"MEINEN PLAN BERECHNEN →", it:"CALCOLA IL MIO PIANO →", en:"CALCULATE MY PLAN →"},
+  "res.dailyneed": {de:"Täglicher Kalorienbedarf", it:"Fabbisogno calorico giornaliero", en:"Daily calorie needs"},
+  "res.perday": {de:"kcal pro Tag", it:"kcal al giorno", en:"kcal per day"},
+  "macro.protein": {de:"Protein", it:"Proteine", en:"Protein"},
+  "macro.carbs": {de:"Kohlenhydrate", it:"Carboidrati", en:"Carbohydrates"},
+  "macro.fat": {de:"Fett", it:"Grassi", en:"Fat"},
+  "macro.grams": {de:"Gramm", it:"grammi", en:"Grams"},
+  "bd.head": {de:"Berechnungsdetails", it:"Dettagli del calcolo", en:"Calculation details"},
+  "bd.formula": {de:"Formel", it:"Formula", en:"Formula"},
+  "bd.bmr": {de:"BMR", it:"BMR", en:"BMR"},
+  "bd.tdee": {de:"TDEE", it:"TDEE", en:"TDEE"},
+  "bd.target": {de:"Kalorienziel", it:"Obiettivo calorico", en:"Calorie target"},
+  "bd.weekly": {de:"Wöchentlicher Effekt", it:"Effetto settimanale", en:"Weekly effect"},
+  "plan.adminintro.title": {de:"Hinweis zum Ernährungsplan", it:"Nota sul piano alimentare", en:"Note on the meal plan"},
+  "plan.title.label": {de:"PLAN", it:"PIANO", en:"PLAN"},
+  "plan.title": {de:"Beispiel-Ernährungsplan", it:"Esempio di piano alimentare", en:"Sample meal plan"},
+  "plan.disclaimer": {de:"<strong>⚠ Hinweis:</strong> Schätzwerte auf Basis Mifflin-St Jeor / Katch-McArdle. Kein Ersatz für Fachberatung.", it:"<strong>⚠ Nota:</strong> valori stimati basati su Mifflin-St Jeor / Katch-McArdle. Non sostituiscono una consulenza professionale.", en:"<strong>⚠ Note:</strong> estimates based on Mifflin-St Jeor / Katch-McArdle. Not a substitute for professional advice."},
+  "shop.title": {de:"Einkaufsliste für 1 Woche", it:"Lista della spesa per 1 settimana", en:"Shopping list for 1 week"},
+  "shop.subtitle": {de:"Alle Lebensmittel für 7 Tage – basierend auf deinem Ernährungsplan.", it:"Tutti gli alimenti per 7 giorni – in base al tuo piano alimentare.", en:"All foods for 7 days – based on your meal plan."},
+  "shop.subtitle.builder": {de:"Alle Lebensmittel für 7 Tage – basierend auf deinem selbst gebauten Plan.", it:"Tutti gli alimenti per 7 giorni – in base al piano che hai creato tu.", en:"All foods for 7 days – based on the plan you built yourself."},
+  "shop.print": {de:"🖨️  EINKAUFSLISTE DRUCKEN", it:"🖨️  STAMPA LISTA DELLA SPESA", en:"🖨️  PRINT SHOPPING LIST"},
+  "shop.print.title": {de:"Einkaufsliste – 1 Woche (MDG Elite Plan-Baukasten)", it:"Lista della spesa – 1 settimana (MDG Elite Meal Builder)", en:"Shopping list – 1 week (MDG Elite meal builder)"},
+  "shop.needed": {de:"Benötigt:", it:"Necessario:", en:"Needed:"},
+  "shop.print.pagetitle": {de:"MDG Elite – Einkaufsliste", it:"MDG Elite – Lista della spesa", en:"MDG Elite – Shopping list"},
+  "shop.print.sub": {de:"Einkaufsliste für 7 Tage · Erstellt am {DATE}", it:"Lista della spesa per 7 giorni · Creata il {DATE}", en:"Shopping list for 7 days · Created on {DATE}"},
+  "shop.print.btn": {de:"🖨️ Drucken", it:"🖨️ Stampa", en:"🖨️ Print"},
+  "shop.print.foot": {de:"mdgelite.com · Mengen auf realistische Packungsgrössen aufgerundet", it:"mdgelite.com · quantità arrotondate a confezioni realistiche", en:"mdgelite.com · amounts rounded up to realistic package sizes"},
+  "mb.eyebrow": {de:"Selbst zusammenstellen", it:"Componi tu stesso", en:"Build it yourself"},
+  "mb.title": {de:"MEAL BUILDER", it:"MEAL BUILDER", en:"MEAL BUILDER"},
+  "mb.subtitle": {de:"Gib deine Daten & dein Ziel ein und baue dir deinen Ernährungsplan selbst zusammen", it:"Inserisci i tuoi dati e il tuo obiettivo e crea da solo il tuo piano alimentare", en:"Enter your data & goal and build your own meal plan"},
+  "mb.bf.note": {de:"💡 Körperfett nur ausfüllen, wenn <strong style=\"color:var(--text);\">gemessen</strong> (DEXA, Caliper, Körperfett-Waage). Dann rechnen wir mit der präziseren Katch-McArdle-Formel. Leer lassen ist völlig ok – dann nutzen wir Mifflin-St-Jeor.", it:"💡 Compila il grasso corporeo solo se <strong style=\"color:var(--text);\">misurato</strong> (DEXA, plicometro, bilancia impedenziometrica). In tal caso usiamo la formula più precisa di Katch-McArdle. Lasciarlo vuoto va benissimo – useremo Mifflin-St-Jeor.", en:"💡 Only fill in body fat if <strong style=\"color:var(--text);\">measured</strong> (DEXA, caliper, body-fat scale). Then we use the more precise Katch-McArdle formula. Leaving it empty is totally fine – then we use Mifflin-St-Jeor."},
+  "mb.startbtn": {de:"ZIEL BERECHNEN & PLAN BAUEN →", it:"CALCOLA OBIETTIVO E COSTRUISCI IL PIANO →", en:"CALCULATE GOAL & BUILD PLAN →"},
+  "mb.live.label": {de:"Dein Tagesziel · Live-Bilanz", it:"Il tuo obiettivo giornaliero · bilancio live", en:"Your daily goal · live balance"},
+  "mb.build.label": {de:"BAU", it:"COSTRUISCI", en:"BUILD"},
+  "mb.build.title": {de:"Mahlzeiten zusammenstellen", it:"Componi i pasti", en:"Build your meals"},
+  "mb.build.desc": {de:"Wähle pro Mahlzeit aus Protein-, Kohlenhydrat- und Fettquellen. Die Portion wird automatisch vorgeschlagen und lässt sich mit <strong style=\"color:var(--text);\">+ / −</strong> anpassen.", it:"Per ogni pasto scegli tra fonti di proteine, carboidrati e grassi. La porzione viene proposta automaticamente e si può regolare con <strong style=\"color:var(--text);\">+ / −</strong>.", en:"For each meal choose from protein, carbohydrate and fat sources. The portion is suggested automatically and can be adjusted with <strong style=\"color:var(--text);\">+ / −</strong>."},
+  "mb.cat.protein": {de:"Protein", it:"Proteine", en:"Protein"},
+  "mb.cat.carb": {de:"Kohlenhydrate", it:"Carboidrati", en:"Carbohydrates"},
+  "mb.cat.fat": {de:"Fette", it:"Grassi", en:"Fats"},
+  "mb.cat.liquid": {de:"Saucen & Flüssigkeiten", it:"Salse e liquidi", en:"Sauces & liquids"},
+  "mb.add": {de:"Hinzufügen", it:"Aggiungi", en:"Add"},
+  "mb.empty": {de:"Noch nichts ausgewählt – füge unten Lebensmittel hinzu.", it:"Ancora nulla selezionato – aggiungi alimenti qui sotto.", en:"Nothing selected yet – add foods below."},
+  "mb.autofit": {de:"⚖ MENGEN AUTO-ANPASSEN", it:"⚖ ADATTA QUANTITÀ AUTOMATICAMENTE", en:"⚖ AUTO-ADJUST AMOUNTS"},
+  "mb.remaining": {de:"Verbleibend", it:"Rimanente", en:"Remaining"},
+  "mb.rem.free": {de:"noch {KCAL} kcal frei", it:"ancora {KCAL} kcal disponibili", en:"{KCAL} kcal still free"},
+  "mb.rem.over": {de:"{KCAL} kcal über dem Ziel", it:"{KCAL} kcal oltre l'obiettivo", en:"{KCAL} kcal over target"},
+  "mb.over": {de:"über Ziel", it:"oltre l'obiettivo", en:"over target"},
+  "contact.eyebrow": {de:"Get in Touch", it:"Mettiti in contatto", en:"Get in touch"},
+  "contact.title": {de:"KONTAKT", it:"CONTATTI", en:"CONTACT"},
+  "contact.subtitle": {de:"Fragen, Kooperationen oder einfach Hallo sagen", it:"Domande, collaborazioni o semplicemente un saluto", en:"Questions, collaborations or just to say hello"},
+  "contact.lead": {de:"Schreib mir direkt eine E-Mail – ich melde mich so schnell wie möglich.", it:"Scrivimi direttamente una e-mail – ti rispondo il prima possibile.", en:"Send me an email directly – I'll get back to you as soon as possible."},
+  "contact.btn": {de:"E-MAIL SCHREIBEN →", it:"SCRIVI UNA E-MAIL →", en:"WRITE AN EMAIL →"},
+  "legal.eyebrow": {de:"Rechtliches", it:"Note legali", en:"Legal"},
+  "impressum.title": {de:"IMPRESSUM", it:"NOTE LEGALI", en:"IMPRINT"},
+  "impressum.subtitle": {de:"Angaben gemäss Schweizer Recht", it:"Informazioni ai sensi del diritto svizzero", en:"Information under Swiss law"},
+  "datenschutz.title": {de:"DATENSCHUTZ", it:"PRIVACY", en:"PRIVACY POLICY"},
+  "datenschutz.subtitle": {de:"Informationen zur Datenbearbeitung", it:"Informazioni sul trattamento dei dati", en:"Information on data processing"},
+  "footer.contact": {de:"Kontakt", it:"Contatti", en:"Contact"},
+  "footer.impressum": {de:"Impressum", it:"Note legali", en:"Imprint"},
+  "footer.datenschutz": {de:"Datenschutz", it:"Privacy", en:"Privacy"},
+  "dyn.mealtotal": {de:"Mahlzeit gesamt", it:"Totale pasto", en:"Meal total"},
+  "dyn.weekly.stable": {de:"Gewicht stabil", it:"Peso stabile", en:"Weight stable"},
+  "dyn.weekly.loss": {de:"Fettabbau ~{KG} kg/Woche", it:"Perdita di grasso ~{KG} kg/settimana", en:"Fat loss ~{KG} kg/week"},
+  "dyn.weekly.gain": {de:"Gewichtszunahme ~{KG} kg/Woche", it:"Aumento di peso ~{KG} kg/settimana", en:"Weight gain ~{KG} kg/week"},
+  "dyn.badge.m1000": {de:"Schnell abnehmen · −1 kg/Woche", it:"Dimagrire velocemente · −1 kg/settimana", en:"Lose fast · −1 kg/week"},
+  "dyn.badge.m500": {de:"Abnehmen · −0.5 kg/Woche", it:"Dimagrire · −0,5 kg/settimana", en:"Lose weight · −0.5 kg/week"},
+  "dyn.badge.m300": {de:"Langsam abnehmen · −0.3 kg/Woche", it:"Dimagrire lentamente · −0,3 kg/settimana", en:"Lose slowly · −0.3 kg/week"},
+  "dyn.badge.0": {de:"Gewicht halten", it:"Mantenere il peso", en:"Maintain"},
+  "dyn.badge.250": {de:"Langsam aufbauen · +0.25 kg/Woche", it:"Aumentare lentamente · +0,25 kg/settimana", en:"Gain slowly · +0.25 kg/week"},
+  "dyn.badge.500": {de:"Masse aufbauen · +0.5 kg/Woche", it:"Aumentare massa · +0,5 kg/settimana", en:"Build mass · +0.5 kg/week"},
+  "dyn.uhr": {de:"Uhr", it:"", en:""},
+  "dyn.targetpermeal": {de:"Ziel pro Mahlzeit:", it:"Obiettivo per pasto:", en:"Target per meal:"},
+  "dyn.goal": {de:"Ziel:", it:"Obiettivo:", en:"Goal:"},
+  "dyn.currentsel": {de:"Aktuelle Auswahl:", it:"Selezione attuale:", en:"Current selection:"},
+  "dyn.calories": {de:"Kalorien", it:"Calorie", en:"Calories"},
+  "dyn.feasibility.title": {de:"Hinweis zur Machbarkeit:", it:"Nota sulla fattibilità:", en:"Feasibility note:"},
+  "dyn.summary.fasten": {de:"Proteinfasten: 2 Whey-Proteinshakes ersetzen 2 Mahlzeiten; jeder Shake liefert ca. 33% deines Tagesproteins.", it:"Digiuno proteico: 2 shake proteici whey sostituiscono 2 pasti; ogni shake fornisce circa il 33% delle proteine giornaliere.", en:"Protein fasting: 2 whey protein shakes replace 2 meals; each shake provides about 33% of your daily protein."},
+  "dyn.summary.normal": {de:"Protein, Fett und Kohlenhydrate werden pro Mahlzeit verteilt. Die Tageskalibrierung korrigiert Protein-, Fett- und Kohlenhydratquellen automatisch.", it:"Proteine, grassi e carboidrati vengono distribuiti per pasto. La calibrazione giornaliera corregge automaticamente le fonti di proteine, grassi e carboidrati.", en:"Protein, fat and carbohydrates are distributed per meal. The daily calibration automatically corrects protein, fat and carbohydrate sources."},
+  "dyn.summary.kcalnote": {de:"Kalorien im Plan werden einheitlich aus Makros berechnet: Protein 4 kcal/g, Kohlenhydrate 4 kcal/g, Fett 9 kcal/g. Roh-/Einkaufsgewicht bei Fleisch/Fisch, Reis, Pasta, Kartoffeln, Couscous, Bulgur, Quinoa und Hülsenfrüchten.", it:"Le calorie del piano sono calcolate in modo uniforme dai macro: proteine 4 kcal/g, carboidrati 4 kcal/g, grassi 9 kcal/g. Peso crudo/d'acquisto per carne/pesce, riso, pasta, patate, couscous, bulgur, quinoa e legumi.", en:"Plan calories are calculated uniformly from macros: protein 4 kcal/g, carbs 4 kcal/g, fat 9 kcal/g. Raw/purchase weight for meat/fish, rice, pasta, potatoes, couscous, bulgur, quinoa and legumes."},
+  "dyn.feas.proteinFasten": {de:"Das Proteinziel von {P}g lässt sich mit dem Proteinfasten (2 Shakes + 1 Mahlzeit) nicht voll abdecken. Wähle für so viel Protein lieber 4–5 reguläre Mahlzeiten.", it:"L'obiettivo proteico di {P}g non può essere coperto del tutto con il digiuno proteico (2 shake + 1 pasto). Per così tante proteine scegli piuttosto 4–5 pasti regolari.", en:"A protein target of {P}g can't be fully covered with protein fasting (2 shakes + 1 meal). For that much protein, choose 4–5 regular meals instead."},
+  "dyn.feas.proteinMeals": {de:"Das Proteinziel von {P}g erfordert mehr Mahlzeiten – mit {N} Mahlzeiten wird es knapp. Erhöhe die Mahlzeitenzahl, um es realistisch zu verteilen.", it:"L'obiettivo proteico di {P}g richiede più pasti – con {N} pasti diventa difficile. Aumenta il numero di pasti per distribuirlo in modo realistico.", en:"A protein target of {P}g needs more meals – with {N} meals it gets tight. Increase the number of meals to distribute it realistically."},
+  "dyn.feas.carbsHigh": {de:"Dein Kohlenhydratziel liegt unter dem, was die Gerichte mit Gemüse, Beilagen und Sauce real liefern. Etwas mehr Kohlenhydrate sind hier kaum vermeidbar.", it:"Il tuo obiettivo di carboidrati è inferiore a quello che i piatti forniscono realmente con verdure, contorni e salsa. Qui è difficile evitare qualche carboidrato in più.", en:"Your carbohydrate target is below what the dishes really provide with veg, sides and sauce. A few more carbs are hard to avoid here."},
+  "dyn.feas.carbsLow": {de:"Das hohe Kohlenhydratziel von {C}g passt nicht vollständig in {N} Mahlzeiten. Mehr Mahlzeiten schaffen Platz dafür.", it:"L'elevato obiettivo di carboidrati di {C}g non entra del tutto in {N} pasti. Più pasti creano spazio per farlo.", en:"The high carbohydrate target of {C}g doesn't fully fit into {N} meals. More meals make room for it."},
+  "dyn.feas.fatShort": {de:"Das Fettziel wird mit diesem Format nicht ganz erreicht.", it:"L'obiettivo di grassi non viene del tutto raggiunto con questo formato.", en:"The fat target isn't quite reached with this format."},
+  "toast.savedOnline": {de:"✓ Online gespeichert – für alle Besucher sichtbar", it:"✓ Salvato online – visibile a tutti i visitatori", en:"✓ Saved online – visible to all visitors"},
+  "toast.adminActive": {de:"✓ Admin-Modus aktiv", it:"✓ Modalità admin attiva", en:"✓ Admin mode active"},
+  "toast.adminOnly": {de:"⚠ Nur im Admin-Modus verfügbar", it:"⚠ Disponibile solo in modalità admin", en:"⚠ Available in admin mode only"},
+  "toast.pwMismatch": {de:"Passwörter stimmen nicht überein.", it:"Le password non corrispondono.", en:"Passwords do not match."},
+  "toast.pwChanged": {de:"✓ Passwort geändert", it:"✓ Password modificata", en:"✓ Password changed"},
+  "toast.pwMin": {de:"Mindestens 6 Zeichen.", it:"Almeno 6 caratteri.", en:"At least 6 characters."},
+  "toast.profileOnline": {de:"✓ Profilfoto online gespeichert", it:"✓ Foto profilo salvata online", en:"✓ Profile photo saved online"},
+  "toast.profileLocal": {de:"✓ Profilfoto lokal gespeichert", it:"✓ Foto profilo salvata in locale", en:"✓ Profile photo saved locally"},
+  "toast.photoOnline": {de:"✓ Foto online gespeichert", it:"✓ Foto salvata online", en:"✓ Photo saved online"},
+  "toast.photoLocal": {de:"✓ Foto lokal gespeichert", it:"✓ Foto salvata in locale", en:"✓ Photo saved locally"},
+  "toast.badYt": {de:"⚠ Ungültige YouTube URL", it:"⚠ URL YouTube non valido", en:"⚠ Invalid YouTube URL"},
+  "toast.videoAdded": {de:"✓ Video hinzugefügt", it:"✓ Video aggiunto", en:"✓ Video added"},
+  "toast.statsUpdated": {de:"✓ Stats aktualisiert", it:"✓ Statistiche aggiornate", en:"✓ Stats updated"},
+  "toast.noSupabase": {de:"⚠ Supabase ist nicht konfiguriert – nur lokal gespeichert", it:"⚠ Supabase non è configurato – salvato solo in locale", en:"⚠ Supabase is not configured – saved locally only"},
+  "toast.saveFail": {de:"⚠ Supabase speichern fehlgeschlagen – lokal gesichert", it:"⚠ Salvataggio Supabase fallito – salvato in locale", en:"⚠ Supabase save failed – saved locally"},
+  "toast.missingData": {de:"⚠ Alter, Gewicht und Grösse eingeben", it:"⚠ Inserisci età, peso e altezza", en:"⚠ Enter age, weight and height"},
+  "toast.imgAddedOnline": {de:"✓ {N} Bild(er) → {LABEL}", it:"✓ {N} foto → {LABEL}", en:"✓ {N} photo(s) → {LABEL}"},
+  "toast.imgAddedLocal": {de:"✓ {N} Bild(er) lokal → {LABEL}", it:"✓ {N} foto in locale → {LABEL}", en:"✓ {N} photo(s) locally → {LABEL}"},
+  "toast.adminEnded": {de:"Admin-Modus beendet", it:"Modalità admin terminata", en:"Admin mode ended"},
+  "toast.imgSaveFail": {de:"⚠ Bild konnte nicht gespeichert werden", it:"⚠ Impossibile salvare l'immagine", en:"⚠ Image could not be saved"},
+  "toast.videoRemoved": {de:"Video entfernt", it:"Video rimosso", en:"Video removed"},
+  "toast.noScalable": {de:"Keine anpassbaren Lebensmittel – füge Protein/KH/Fett hinzu", it:"Nessun alimento regolabile – aggiungi proteine/carbo/grassi", en:"No adjustable foods – add protein/carbs/fat"},
+  "toast.noScale": {de:"Mengen lassen sich nicht sinnvoll skalieren", it:"Le quantità non si possono scalare in modo sensato", en:"Amounts can't be scaled meaningfully"},
+  "toast.scaleOk": {de:"✓ Mengen ans Kalorienziel angepasst", it:"✓ Quantità adattate all'obiettivo calorico", en:"✓ Amounts adjusted to calorie target"},
+  "toast.scaleShort": {de:"Angepasst – für {KCAL} kcal fehlen noch {MISS}. Füge mehr Lebensmittel hinzu.", it:"Adattato – per {KCAL} kcal mancano ancora {MISS}. Aggiungi altri alimenti.", en:"Adjusted – {MISS} short of {KCAL} kcal. Add more foods."},
+  "toast.scaleOver": {de:"Angepasst – noch {OVER} kcal über Ziel. Entferne etwas oder reduziere von Hand.", it:"Adattato – ancora {OVER} kcal oltre l'obiettivo. Rimuovi qualcosa o riduci a mano.", en:"Adjusted – still {OVER} kcal over target. Remove something or reduce manually."},
+  "toast.pickFood": {de:"Bitte zuerst ein Lebensmittel wählen", it:"Scegli prima un alimento", en:"Please choose a food first"},
+  "ed.heroWelcome": {de:"Willkommen auf meiner Website! Ich bin Marco – Fitness-Athlet, Content Creator und auf dem Weg zur IFBB-Bühne 2027. Hier findest du kostenlose Tools, ehrliche Einblicke in meine Prep und alles rund um Ernährung, Training und Lifestyle.", it:"Benvenuto sul mio sito! Sono Marco – atleta di fitness, content creator e in cammino verso il palco IFBB 2027. Qui trovi strumenti gratuiti, approfondimenti sinceri sulla mia preparazione e tutto ciò che riguarda alimentazione, allenamento e lifestyle.", en:"Welcome to my website! I'm Marco – fitness athlete, content creator and on my way to the IFBB stage 2027. Here you'll find free tools, honest insights into my prep and everything about nutrition, training and lifestyle."},
+  "ed.stat1l": {de:"Transformation", it:"Trasformazione", en:"Transformation"},
+  "ed.stat2l": {de:"Körperfett", it:"Grasso corporeo", en:"Body fat"},
+  "ed.stat3l": {de:"IFBB Debut", it:"Debutto IFBB", en:"IFBB debut"},
+  "ed.aboutTitle": {de:"ÜBER MICH", it:"CHI SONO", en:"ABOUT ME"},
+  "ed.aboutSubtitle": {de:"Vorher, Nachher und meine Geschichte", it:"Prima, dopo e la mia storia", en:"Before, after and my story"},
+  "ed.aboutStoryHeadline": {de:"Meine Geschichte", it:"La mia storia", en:"My story"},
+  "ed.aboutStoryText": {de:"Hier kannst du im Admin-Modus deinen persönlichen Text einfügen. Der Bereich ist bewusst großzügig vorbereitet und bietet ungefähr Platz für eine A4-lange Geschichte: dein Startpunkt, deine Transformation, deine Motivation, Rückschläge, Learnings und dein Ziel.<br><br>Klicke im Admin-Modus direkt in diesen Text, ersetze ihn durch deine Geschichte und speichere anschließend über die Admin-Leiste.", it:"Qui puoi inserire il tuo testo personale in modalità admin. Lo spazio è volutamente ampio e basta circa per una storia lunga una pagina A4: il tuo punto di partenza, la tua trasformazione, la tua motivazione, le difficoltà, ciò che hai imparato e il tuo obiettivo.<br><br>In modalità admin clicca direttamente in questo testo, sostituiscilo con la tua storia e salva tramite la barra admin.", en:"Here you can add your personal text in admin mode. The area is deliberately generous and fits roughly an A4-length story: your starting point, your transformation, your motivation, setbacks, learnings and your goal.<br><br>In admin mode, click directly into this text, replace it with your story and then save via the admin bar."},
+  "ed.planAdminIntroText": {de:"Hier kannst du im Admin-Modus einen eigenen Hinweis vor dem Ernährungsplan einfügen, z.B. Disclaimer, Coaching-Hinweis, Zubereitungstipps oder eine Erklärung zur Verwendung der Rohgewichte.", it:"Qui puoi inserire in modalità admin una tua nota prima del piano alimentare, ad es. disclaimer, nota di coaching, consigli di preparazione o una spiegazione sull'uso dei pesi a crudo.", en:"Here, in admin mode, you can add your own note before the meal plan, e.g. a disclaimer, coaching note, preparation tips or an explanation of how raw weights are used."},
+  "ed.impressumTitle": {de:"IMPRESSUM", it:"NOTE LEGALI", en:"IMPRINT"},
+  "ed.impressumSubtitle": {de:"Angaben gemäss Schweizer Recht", it:"Informazioni ai sensi del diritto svizzero", en:"Information under Swiss law"},
+  "ed.datenschutzTitle": {de:"DATENSCHUTZ", it:"PRIVACY", en:"PRIVACY POLICY"},
+  "ed.datenschutzSubtitle": {de:"Informationen zur Datenbearbeitung", it:"Informazioni sul trattamento dei dati", en:"Information on data processing"}
+};
+const MDG_TR = {
+  food: { it: {
+  "Hühnerbrust": "Petto di pollo",
+  "Putenbrust": "Petto di tacchino",
+  "Putenbrust-Aufschnitt": "Affettato di tacchino",
+  "Rindssteak mager": "Bistecca di manzo magra",
+  "Rinderhack 5% Fett": "Macinato di manzo 5% grassi",
+  "Kalbsfilet mager": "Filetto di vitello magro",
+  "Schweinefilet mager": "Filetto di maiale magro",
+  "Lachs": "Salmone",
+  "Kabeljau": "Merluzzo",
+  "Thunfisch in Wasser": "Tonno al naturale",
+  "Garnelen": "Gamberi",
+  "Forelle": "Trota",
+  "Eier": "Uova",
+  "Eiklar": "Albume",
+  "Magerquark 0.2%": "Quark magro 0,2%",
+  "Skyr / High Protein Joghurt": "Skyr / yogurt high protein",
+  "Hüttenkäse light": "Fiocchi di latte light",
+  "Mozzarella light": "Mozzarella light",
+  "Whey Protein": "Proteine whey",
+  "Tofu fest": "Tofu compatto",
+  "Tempeh": "Tempeh",
+  "Seitan": "Seitan",
+  "Linsen gekocht": "Lenticchie cotte",
+  "Kidneybohnen gekocht": "Fagioli rossi cotti",
+  "Veganes Proteinpulver": "Proteine vegane in polvere",
+  "Hähnchenbrust-Aufschnitt": "Affettato di petto di pollo",
+  "Pangasius/Tilapia": "Pangasio/Tilapia",
+  "Thunfisch-Steak frisch": "Trancio di tonno fresco",
+  "Magerquark Vanille (zuckerfrei)": "Quark magro vaniglia (senza zucchero)",
+  "Protein-Joghurt 0%": "Yogurt proteico 0%",
+  "Harzer Käse": "Formaggio Harzer",
+  "Edamame (Sojabohnen)": "Edamame (fagioli di soia)",
+  "Räuchertofu": "Tofu affumicato",
+  "Haferflocken": "Fiocchi d'avena",
+  "Reis (roh)": "Riso (crudo)",
+  "Basmati Reis (roh)": "Riso basmati (crudo)",
+  "Vollkornreis (roh)": "Riso integrale (crudo)",
+  "Kartoffeln (roh)": "Patate (crude)",
+  "Süsskartoffeln (roh)": "Patate dolci (crude)",
+  "Quinoa (roh)": "Quinoa (cruda)",
+  "Vollkornpasta (roh)": "Pasta integrale (cruda)",
+  "Couscous (roh)": "Couscous (crudo)",
+  "Bulgur (roh)": "Bulgur (crudo)",
+  "Vollkornbrot": "Pane integrale",
+  "Roggenbrot": "Pane di segale",
+  "Vollkorn-Wrap": "Wrap integrale",
+  "Reiswaffeln": "Gallette di riso",
+  "Banane": "Banana",
+  "Apfel": "Mela",
+  "Beerenmix": "Mix di frutti di bosco",
+  "Gemischtes Gemüse": "Verdure miste",
+  "Brokkoli": "Broccoli",
+  "Spinat": "Spinaci",
+  "Grüner Salat": "Insalata verde",
+  "Zucchini": "Zucchine",
+  "Blumenkohl": "Cavolfiore",
+  "Champignons": "Champignon",
+  "Paprika": "Peperoni",
+  "Gurke": "Cetriolo",
+  "Tomaten": "Pomodori",
+  "Cherrytomaten": "Pomodorini",
+  "Grüner Spargel": "Asparagi verdi",
+  "Grüne Bohnen": "Fagiolini",
+  "Karotten": "Carote",
+  "Olivenöl": "Olio d'oliva",
+  "Rapsöl": "Olio di colza",
+  "Avocado": "Avocado",
+  "Mandeln": "Mandorle",
+  "Walnüsse": "Noci",
+  "Cashews": "Anacardi",
+  "Chia Samen": "Semi di chia",
+  "Leinsamen": "Semi di lino",
+  "Kürbiskerne": "Semi di zucca",
+  "Erdnussbutter": "Burro di arachidi",
+  "Tahini": "Tahini",
+  "Oliven": "Olive",
+  "Kokosmilch light": "Latte di cocco light",
+  "Mandelmilch ungesüsst": "Latte di mandorla non zuccherato",
+  "Hafermilch": "Latte d'avena",
+  "Zero Sauce (z.B. More Nutrition / Callowfit)": "Salsa Zero (es. More Nutrition / Callowfit)"
+}, en: {
+  "Hühnerbrust": "Chicken breast",
+  "Putenbrust": "Turkey breast",
+  "Putenbrust-Aufschnitt": "Sliced turkey breast",
+  "Rindssteak mager": "Lean beef steak",
+  "Rinderhack 5% Fett": "Ground beef 5% fat",
+  "Kalbsfilet mager": "Lean veal fillet",
+  "Schweinefilet mager": "Lean pork fillet",
+  "Lachs": "Salmon",
+  "Kabeljau": "Cod",
+  "Thunfisch in Wasser": "Tuna in water",
+  "Garnelen": "Shrimp",
+  "Forelle": "Trout",
+  "Eier": "Eggs",
+  "Eiklar": "Egg whites",
+  "Magerquark 0.2%": "Low-fat quark 0.2%",
+  "Skyr / High Protein Joghurt": "Skyr / high-protein yogurt",
+  "Hüttenkäse light": "Cottage cheese light",
+  "Mozzarella light": "Mozzarella light",
+  "Whey Protein": "Whey protein",
+  "Tofu fest": "Firm tofu",
+  "Tempeh": "Tempeh",
+  "Seitan": "Seitan",
+  "Linsen gekocht": "Cooked lentils",
+  "Kidneybohnen gekocht": "Cooked kidney beans",
+  "Veganes Proteinpulver": "Vegan protein powder",
+  "Hähnchenbrust-Aufschnitt": "Sliced chicken breast",
+  "Pangasius/Tilapia": "Pangasius/Tilapia",
+  "Thunfisch-Steak frisch": "Fresh tuna steak",
+  "Magerquark Vanille (zuckerfrei)": "Vanilla quark (sugar-free)",
+  "Protein-Joghurt 0%": "Protein yogurt 0%",
+  "Harzer Käse": "Harzer cheese",
+  "Edamame (Sojabohnen)": "Edamame (soybeans)",
+  "Räuchertofu": "Smoked tofu",
+  "Haferflocken": "Oats",
+  "Reis (roh)": "Rice (raw)",
+  "Basmati Reis (roh)": "Basmati rice (raw)",
+  "Vollkornreis (roh)": "Brown rice (raw)",
+  "Kartoffeln (roh)": "Potatoes (raw)",
+  "Süsskartoffeln (roh)": "Sweet potatoes (raw)",
+  "Quinoa (roh)": "Quinoa (raw)",
+  "Vollkornpasta (roh)": "Wholegrain pasta (raw)",
+  "Couscous (roh)": "Couscous (raw)",
+  "Bulgur (roh)": "Bulgur (raw)",
+  "Vollkornbrot": "Wholegrain bread",
+  "Roggenbrot": "Rye bread",
+  "Vollkorn-Wrap": "Wholegrain wrap",
+  "Reiswaffeln": "Rice cakes",
+  "Banane": "Banana",
+  "Apfel": "Apple",
+  "Beerenmix": "Mixed berries",
+  "Gemischtes Gemüse": "Mixed vegetables",
+  "Brokkoli": "Broccoli",
+  "Spinat": "Spinach",
+  "Grüner Salat": "Green salad",
+  "Zucchini": "Zucchini",
+  "Blumenkohl": "Cauliflower",
+  "Champignons": "Mushrooms",
+  "Paprika": "Bell peppers",
+  "Gurke": "Cucumber",
+  "Tomaten": "Tomatoes",
+  "Cherrytomaten": "Cherry tomatoes",
+  "Grüner Spargel": "Green asparagus",
+  "Grüne Bohnen": "Green beans",
+  "Karotten": "Carrots",
+  "Olivenöl": "Olive oil",
+  "Rapsöl": "Canola oil",
+  "Avocado": "Avocado",
+  "Mandeln": "Almonds",
+  "Walnüsse": "Walnuts",
+  "Cashews": "Cashews",
+  "Chia Samen": "Chia seeds",
+  "Leinsamen": "Flaxseeds",
+  "Kürbiskerne": "Pumpkin seeds",
+  "Erdnussbutter": "Peanut butter",
+  "Tahini": "Tahini",
+  "Oliven": "Olives",
+  "Kokosmilch light": "Coconut milk light",
+  "Mandelmilch ungesüsst": "Unsweetened almond milk",
+  "Hafermilch": "Oat milk",
+  "Zero Sauce (z.B. More Nutrition / Callowfit)": "Zero sauce (e.g. More Nutrition / Callowfit)"
+} },
+  cat:  { it: {
+  "Protein": "Proteine",
+  "Milchprodukte & Protein": "Latticini e proteine",
+  "Kohlenhydrate": "Carboidrati",
+  "Gemüse & Früchte": "Verdura e frutta",
+  "Fette & Nüsse": "Grassi e frutta secca",
+  "Sonstiges": "Altro"
+}, en: {
+  "Protein": "Protein",
+  "Milchprodukte & Protein": "Dairy & protein",
+  "Kohlenhydrate": "Carbohydrates",
+  "Gemüse & Früchte": "Vegetables & fruit",
+  "Fette & Nüsse": "Fats & nuts",
+  "Sonstiges": "Other"
+} },
+  slot: { it: {
+  "Frühstück": "Colazione",
+  "Mittagessen": "Pranzo",
+  "Abendessen": "Cena",
+  "Snack": "Spuntino",
+  "Snack 1": "Spuntino 1",
+  "Snack 2": "Spuntino 2",
+  "Whey Proteinshake 1": "Shake proteico whey 1",
+  "Whey Proteinshake 2": "Shake proteico whey 2",
+  "Whey Proteinshake": "Shake proteico whey",
+  "Hauptmahlzeit Mittagessen": "Pasto principale – pranzo",
+  "Hauptmahlzeit Abendessen": "Pasto principale – cena"
+}, en: {
+  "Frühstück": "Breakfast",
+  "Mittagessen": "Lunch",
+  "Abendessen": "Dinner",
+  "Snack": "Snack",
+  "Snack 1": "Snack 1",
+  "Snack 2": "Snack 2",
+  "Whey Proteinshake 1": "Whey protein shake 1",
+  "Whey Proteinshake 2": "Whey protein shake 2",
+  "Whey Proteinshake": "Whey protein shake",
+  "Hauptmahlzeit Mittagessen": "Main meal – lunch",
+  "Hauptmahlzeit Abendessen": "Main meal – dinner"
+} },
+  title:{ it: {
+  "Apfel-Protein-Shake": "Shake proteico alla mela",
+  "Bohnen-Quinoa-Salat": "Insalata di fagioli e quinoa",
+  "Chicken Rice Bowl": "Chicken rice bowl",
+  "Ei-Eiklar-Teller": "Piatto uova e albume",
+  "Ei-Mix-Kartoffel-Teller": "Piatto uova-mix e patate",
+  "Ei-Mix-Omelett mit Vollkornbrot": "Omelette uova-mix con pane integrale",
+  "Eiklar-Champignon-Pfanne": "Padellata albume e champignon",
+  "Eiklar-Kartoffel-Gemüse": "Albume, patate e verdure",
+  "Eiklar-Rührei mit Vollkornbrot": "Albume strapazzato con pane integrale",
+  "Eiklar-Spinat-Brot": "Albume, spinaci e pane",
+  "Garnelen-Vollkornpasta": "Gamberi e pasta integrale",
+  "Harzer mit Gurke": "Harzer con cetriolo",
+  "Harzer-Brot mit Tomaten": "Pane con Harzer e pomodori",
+  "Hähnchen-Aufschnitt Bowl": "Bowl con affettato di pollo",
+  "Hähnchen-Aufschnitt Gurke": "Affettato di pollo e cetriolo",
+  "Hähnchen-Gemüsepfanne XL": "Padellata di pollo e verdure XL",
+  "Hähnchen-Süsskartoffel": "Pollo e patata dolce",
+  "Hähnchen-Zucchini-Pfanne": "Padellata di pollo e zucchine",
+  "Hüttenkäse-Brot Teller": "Piatto di pane e fiocchi di latte",
+  "Hüttenkäse-Gemüsesticks": "Fiocchi di latte e bastoncini di verdura",
+  "Hüttenkäse-Quinoa-Salat": "Insalata di quinoa e fiocchi di latte",
+  "Hüttenkäse-Roggenbrot": "Pane di segale e fiocchi di latte",
+  "Hüttenkäse-Wrap": "Wrap ai fiocchi di latte",
+  "Kabeljau-Reis-Gemüse": "Merluzzo, riso e verdure",
+  "Kabeljau-Süsskartoffel": "Merluzzo e patata dolce",
+  "Lachs-Kartoffel-Gemüse": "Salmone, patate e verdure",
+  "Linsen-Bulgur-Pfanne": "Padellata di lenticchie e bulgur",
+  "Linsen-Couscous-Bowl": "Bowl di lenticchie e couscous",
+  "Linsen-Vollkornpasta": "Lenticchie e pasta integrale",
+  "Mageres Rind mit Kartoffeln": "Manzo magro con patate",
+  "Magerquark Vanille pur": "Quark magro alla vaniglia",
+  "Mozzarella-Light Brot": "Pane con mozzarella light",
+  "Pangasius-Gemüse XL": "Pangasio e verdure XL",
+  "Pangasius-Kartoffel-Gemüse": "Pangasio, patate e verdure",
+  "Protein Oats mit Beeren": "Oats proteici ai frutti di bosco",
+  "Protein-Bananen-Porridge": "Porridge proteico alla banana",
+  "Protein-Beeren-Oats": "Oats proteici ai frutti di bosco",
+  "Protein-Joghurt mit Beeren": "Yogurt proteico ai frutti di bosco",
+  "Pute-Blumenkohlreis": "Tacchino e riso di cavolfiore",
+  "Puten-Blumenkohl-Teller": "Piatto di tacchino e cavolfiore",
+  "Puten-Kartoffel-Teller": "Piatto di tacchino e patate",
+  "Putenaufschnitt-Brot": "Pane con affettato di tacchino",
+  "Putenaufschnitt-Brot mit Gemüse": "Pane con affettato di tacchino e verdure",
+  "Putenaufschnitt-Reiswaffeln": "Affettato di tacchino e gallette di riso",
+  "Quark-Apfel Bowl": "Bowl di quark e mela",
+  "Quark-Apfel-Chia": "Quark, mela e chia",
+  "Quark-Bananen-Oats": "Oats con quark e banana",
+  "Rind-Quinoa-Bowl": "Bowl di manzo e quinoa",
+  "Seitan-Basmati-Gemüse": "Seitan, basmati e verdure",
+  "Seitan-Kartoffel-Teller": "Piatto di seitan e patate",
+  "Seitan-Reis-Bowl": "Bowl di seitan e riso",
+  "Seitan-Reis-Gemüse": "Seitan, riso e verdure",
+  "Seitan-Roggenbrot Teller": "Piatto di seitan e pane di segale",
+  "Seitan-Vollkornpasta": "Seitan e pasta integrale",
+  "Seitan-Wrap": "Wrap al seitan",
+  "Skyr mit Beeren": "Skyr ai frutti di bosco",
+  "Skyr-Beeren-Crunch": "Skyr croccante ai frutti di bosco",
+  "Skyr-Bowl mit Banane": "Bowl di skyr e banana",
+  "Skyr-Dip mit Reiswaffeln": "Salsa di skyr con gallette di riso",
+  "Skyr-Oats mit Beeren": "Oats di skyr ai frutti di bosco",
+  "Tempeh-Kartoffel-Hash": "Hash di tempeh e patate",
+  "Tempeh-Kartoffel-Pfanne": "Padellata di tempeh e patate",
+  "Tempeh-Quinoa-Bowl": "Bowl di tempeh e quinoa",
+  "Tempeh-Roggenbrot": "Tempeh e pane di segale",
+  "Thunfisch-Gurken-Snack": "Snack di tonno e cetriolo",
+  "Thunfisch-Quinoa-Salat": "Insalata di tonno e quinoa",
+  "Thunfisch-Wrap": "Wrap al tonno",
+  "Tofu Scramble Brot": "Pane con tofu strapazzato",
+  "Tofu-Beeren-Oats": "Oats di tofu ai frutti di bosco",
+  "Tofu-Kartoffel-Gemüse": "Tofu, patate e verdure",
+  "Tofu-Reis-Gemüse Bowl": "Bowl di tofu, riso e verdure",
+  "Tofu-Reiswaffeln": "Tofu e gallette di riso",
+  "Tofu-Süsskartoffel-Bowl": "Bowl di tofu e patata dolce",
+  "Vegane Protein-Oats": "Oats proteici vegani",
+  "Veganer Proteinshake Banane": "Shake proteico vegano alla banana",
+  "Whey Protein Porridge": "Porridge proteico whey",
+  "Whey Protein Shake Banane": "Shake proteico whey alla banana",
+  "Whey Shake mit Banane": "Shake whey con banana",
+  "Whey-Oats": "Oats con whey",
+  "Whey Proteinshake": "Shake proteico whey"
+}, en: {
+  "Apfel-Protein-Shake": "Apple protein shake",
+  "Bohnen-Quinoa-Salat": "Bean & quinoa salad",
+  "Chicken Rice Bowl": "Chicken rice bowl",
+  "Ei-Eiklar-Teller": "Egg & egg-white plate",
+  "Ei-Mix-Kartoffel-Teller": "Egg-mix & potato plate",
+  "Ei-Mix-Omelett mit Vollkornbrot": "Egg-mix omelette with wholegrain bread",
+  "Eiklar-Champignon-Pfanne": "Egg-white & mushroom pan",
+  "Eiklar-Kartoffel-Gemüse": "Egg white, potato & veg",
+  "Eiklar-Rührei mit Vollkornbrot": "Scrambled egg whites with wholegrain bread",
+  "Eiklar-Spinat-Brot": "Egg white, spinach & bread",
+  "Garnelen-Vollkornpasta": "Shrimp & wholegrain pasta",
+  "Harzer mit Gurke": "Harzer with cucumber",
+  "Harzer-Brot mit Tomaten": "Harzer bread with tomatoes",
+  "Hähnchen-Aufschnitt Bowl": "Sliced chicken bowl",
+  "Hähnchen-Aufschnitt Gurke": "Sliced chicken & cucumber",
+  "Hähnchen-Gemüsepfanne XL": "Chicken & veg pan XL",
+  "Hähnchen-Süsskartoffel": "Chicken & sweet potato",
+  "Hähnchen-Zucchini-Pfanne": "Chicken & zucchini pan",
+  "Hüttenkäse-Brot Teller": "Cottage cheese bread plate",
+  "Hüttenkäse-Gemüsesticks": "Cottage cheese & veggie sticks",
+  "Hüttenkäse-Quinoa-Salat": "Cottage cheese quinoa salad",
+  "Hüttenkäse-Roggenbrot": "Cottage cheese rye bread",
+  "Hüttenkäse-Wrap": "Cottage cheese wrap",
+  "Kabeljau-Reis-Gemüse": "Cod, rice & veg",
+  "Kabeljau-Süsskartoffel": "Cod & sweet potato",
+  "Lachs-Kartoffel-Gemüse": "Salmon, potato & veg",
+  "Linsen-Bulgur-Pfanne": "Lentil & bulgur pan",
+  "Linsen-Couscous-Bowl": "Lentil & couscous bowl",
+  "Linsen-Vollkornpasta": "Lentils & wholegrain pasta",
+  "Mageres Rind mit Kartoffeln": "Lean beef with potatoes",
+  "Magerquark Vanille pur": "Plain vanilla quark",
+  "Mozzarella-Light Brot": "Mozzarella-light bread",
+  "Pangasius-Gemüse XL": "Pangasius & veg XL",
+  "Pangasius-Kartoffel-Gemüse": "Pangasius, potato & veg",
+  "Protein Oats mit Beeren": "Protein oats with berries",
+  "Protein-Bananen-Porridge": "Protein banana porridge",
+  "Protein-Beeren-Oats": "Protein berry oats",
+  "Protein-Joghurt mit Beeren": "Protein yogurt with berries",
+  "Pute-Blumenkohlreis": "Turkey & cauliflower rice",
+  "Puten-Blumenkohl-Teller": "Turkey & cauliflower plate",
+  "Puten-Kartoffel-Teller": "Turkey & potato plate",
+  "Putenaufschnitt-Brot": "Sliced turkey bread",
+  "Putenaufschnitt-Brot mit Gemüse": "Sliced turkey bread with veg",
+  "Putenaufschnitt-Reiswaffeln": "Sliced turkey & rice cakes",
+  "Quark-Apfel Bowl": "Quark & apple bowl",
+  "Quark-Apfel-Chia": "Quark, apple & chia",
+  "Quark-Bananen-Oats": "Quark & banana oats",
+  "Rind-Quinoa-Bowl": "Beef & quinoa bowl",
+  "Seitan-Basmati-Gemüse": "Seitan, basmati & veg",
+  "Seitan-Kartoffel-Teller": "Seitan & potato plate",
+  "Seitan-Reis-Bowl": "Seitan & rice bowl",
+  "Seitan-Reis-Gemüse": "Seitan, rice & veg",
+  "Seitan-Roggenbrot Teller": "Seitan & rye bread plate",
+  "Seitan-Vollkornpasta": "Seitan & wholegrain pasta",
+  "Seitan-Wrap": "Seitan wrap",
+  "Skyr mit Beeren": "Skyr with berries",
+  "Skyr-Beeren-Crunch": "Skyr berry crunch",
+  "Skyr-Bowl mit Banane": "Skyr bowl with banana",
+  "Skyr-Dip mit Reiswaffeln": "Skyr dip with rice cakes",
+  "Skyr-Oats mit Beeren": "Skyr oats with berries",
+  "Tempeh-Kartoffel-Hash": "Tempeh & potato hash",
+  "Tempeh-Kartoffel-Pfanne": "Tempeh & potato pan",
+  "Tempeh-Quinoa-Bowl": "Tempeh & quinoa bowl",
+  "Tempeh-Roggenbrot": "Tempeh & rye bread",
+  "Thunfisch-Gurken-Snack": "Tuna & cucumber snack",
+  "Thunfisch-Quinoa-Salat": "Tuna & quinoa salad",
+  "Thunfisch-Wrap": "Tuna wrap",
+  "Tofu Scramble Brot": "Tofu scramble bread",
+  "Tofu-Beeren-Oats": "Tofu berry oats",
+  "Tofu-Kartoffel-Gemüse": "Tofu, potato & veg",
+  "Tofu-Reis-Gemüse Bowl": "Tofu, rice & veg bowl",
+  "Tofu-Reiswaffeln": "Tofu & rice cakes",
+  "Tofu-Süsskartoffel-Bowl": "Tofu & sweet potato bowl",
+  "Vegane Protein-Oats": "Vegan protein oats",
+  "Veganer Proteinshake Banane": "Vegan protein shake banana",
+  "Whey Protein Porridge": "Whey protein porridge",
+  "Whey Protein Shake Banane": "Whey protein shake banana",
+  "Whey Shake mit Banane": "Whey shake with banana",
+  "Whey-Oats": "Whey oats",
+  "Whey Proteinshake": "Whey protein shake"
+} },
+  note: { it: {
+  "60g Whey liefern ungefähr 40g Protein.": "60g di whey forniscono circa 40g di proteine.",
+  "Low-Carb Abend mit Volumen-Gemüse": "Cena low-carb con verdure ad alto volume",
+  "Low-Carb Volumen-Teller mit Blumenkohlreis": "Piatto low-carb voluminoso con riso di cavolfiore",
+  "Omelett aus Vollei + Eiklar, dazu Brot und Spinat": "Omelette di uovo intero + albume, con pane e spinaci",
+  "Shake aus Mandelmilch, Banane und Whey – mixen und geniessen": "Shake con latte di mandorla, banana e whey – frulla e gusta",
+  "abendliches Gericht mit hochwertigen Carbs": "piatto serale con carboidrati di qualità",
+  "ballaststoffreiches veganes Abendessen": "cena vegana ricca di fibre",
+  "cremig und sättigend mit Mandelmilch": "cremoso e saziante con latte di mandorla",
+  "cremige Bowl mit Frucht und Omega-3-reichen Samen": "bowl cremosa con frutta e semi ricchi di omega-3",
+  "cremige Bowl mit guter Fettquelle": "bowl cremosa con buona fonte di grassi",
+  "cremige vegane Bowl mit Mandelmilch und Proteinpulver": "bowl vegana cremosa con latte di mandorla e proteine in polvere",
+  "cremiger Shake mit Mandelmilch, Banane und Whey – einfach mixen": "shake cremoso con latte di mandorla, banana e whey – basta frullare",
+  "cremiges Porridge mit Mandelmilch, Whey nach dem Kochen einrühren": "porridge cremoso con latte di mandorla, aggiungi il whey dopo la cottura",
+  "deftig und pflanzlich": "sostanzioso e vegetale",
+  "deftig und vegetarisch": "sostanzioso e vegetariano",
+  "deftiger Teller mit Kartoffeln als Rohgewicht": "piatto sostanzioso con patate a peso crudo",
+  "deftiger Teller mit Kartoffeln als Rohgewicht gerechnet": "piatto sostanzioso con patate calcolate a peso crudo",
+  "deftiger veganer Start": "inizio vegano sostanzioso",
+  "deftiger, aber fettkontrollierter Teller": "piatto sostanzioso ma con grassi controllati",
+  "einfach, schnell und reisefreundlich": "semplice, veloce e adatto ai viaggi",
+  "extrem mager und proteinreich (Harzer)": "estremamente magro e proteico (Harzer)",
+  "extrem mager, viel Volumen": "estremamente magro, molto volume",
+  "fettreicher Fisch; nur wenn Fettziel es zulässt": "pesce grasso; solo se l'obiettivo di grassi lo consente",
+  "herzhaft mit leichter Käsequelle": "saporito con una leggera fonte di formaggio",
+  "herzhaft und proteinreich": "saporito e proteico",
+  "herzhaft, gut sättigend und gut vorbereitbar": "saporito, saziante e facile da preparare",
+  "herzhaft, sättigend und gut vorbereitbar": "saporito, saziante e facile da preparare",
+  "herzhaft, viel Volumen, wenig Kalorien": "saporito, molto volume, poche calorie",
+  "herzhafter Snack mit Wrap und Salat": "spuntino saporito con wrap e insalata",
+  "herzhafter veganer Snack": "spuntino vegano saporito",
+  "herzhaftes Frühstück mit Putenbrust-Aufschnitt aufs Brot": "colazione saporita con affettato di tacchino sul pane",
+  "kalorienarm mit viel Gemüse": "poche calorie con molte verdure",
+  "kalorienarm, hoher Proteinanteil": "poche calorie, alta quota proteica",
+  "kalorienarmes Volumen-Abendessen": "cena voluminosa a basso contenuto calorico",
+  "klassische Fitness-Bowl mit Gemüse": "classica fitness bowl con verdure",
+  "klassischer veganer Teller": "piatto vegano classico",
+  "kräftige vegetarische Bowl": "bowl vegetariana sostanziosa",
+  "leicht und salzig-frisch": "leggero e fresco-salato",
+  "leicht, süss und proteinreich": "leggero, dolce e proteico",
+  "leichte süsse Zwischenmahlzeit": "spuntino dolce e leggero",
+  "leichter Fisch mit Süsskartoffeln": "pesce leggero con patate dolci",
+  "leichter herzhafter Snack": "spuntino leggero e saporito",
+  "leichtes Abendessen": "cena leggera",
+  "leichtes herzhaftes Frühstück": "colazione leggera e saporita",
+  "mager, sättigend und sehr gut skalierbar": "magro, saziante e molto scalabile",
+  "mageres Rind mit Quinoa und Spinat": "manzo magro con quinoa e spinaci",
+  "mageres veganes Abendessen": "cena vegana magra",
+  "mageres vegetarisches Gericht": "piatto vegetariano magro",
+  "mediterran und proteinreich": "mediterraneo e proteico",
+  "milde vegane Bowl mit Mandelmilch": "bowl vegana delicata con latte di mandorla",
+  "orientalische vegane Pfanne": "padellata vegana orientale",
+  "pflanzlich, ballaststoffreich und sättigend": "vegetale, ricco di fibre e saziante",
+  "proteinreich und kalorienarm": "proteico e a basso contenuto calorico",
+  "proteinreiches Abendessen": "cena proteica",
+  "salzig, fettkontrolliert und proteinreich": "salato, con grassi controllati e proteico",
+  "salzige Zwischenmahlzeit ohne unnötige Fettspitzen": "spuntino salato senza picchi di grassi inutili",
+  "salziger Dip-Snack mit Crunch": "spuntino salato con salsa e croccantezza",
+  "salziger vegetarischer Wrap": "wrap vegetariano salato",
+  "salziges Frühstück mit Brot und Gemüse": "colazione salata con pane e verdure",
+  "salziges veganes Frühstück": "colazione vegana salata",
+  "schnell und salzig": "veloce e salato",
+  "schnelle vegane Bowl": "bowl vegana veloce",
+  "schnelles herzhaftes Frühstück": "colazione saporita veloce",
+  "sehr fettarme Abendoption": "opzione serale molto magra",
+  "sehr leichter süsser Snack": "spuntino dolce molto leggero",
+  "sehr magerer Fisch, viel Gemüse": "pesce molto magro, molte verdure",
+  "sehr proteinreich und fettkontrolliert": "molto proteico e con grassi controllati",
+  "süss, ballaststoffreich und proteinreich": "dolce, ricco di fibre e proteico",
+  "süss, sättigend und meal-prep-tauglich": "dolce, saziante e adatto al meal prep",
+  "süsser Snack mit kontrollierter Fettquelle": "spuntino dolce con fonte di grassi controllata",
+  "süsses Frühstück mit Haferflocken, Quark und Beeren": "colazione dolce con fiocchi d'avena, quark e frutti di bosco",
+  "süsses veganes Porridge mit Mandelmilch und Banane": "porridge vegano dolce con latte di mandorla e banana",
+  "vegane Bowl mit Süsskartoffeln": "bowl vegana con patate dolci",
+  "vegane High-Protein-Bowl mit Reis roh gerechnet": "bowl vegana high-protein con riso calcolato a crudo",
+  "vegane Protein-Pasta": "pasta proteica vegana",
+  "veganer Protein-Snack": "spuntino proteico vegano",
+  "veganer Shake mit Mandelmilch und Banane – mixen": "shake vegano con latte di mandorla e banana – frulla",
+  "veganer Shake mit Mandelmilch, Apfel und Proteinpulver – mixen": "shake vegano con latte di mandorla, mela e proteine in polvere – frulla",
+  "vegetarische Bowl mit Reis als Rohgewicht": "bowl vegetariana con riso a peso crudo",
+  "vegetarische Pasta mit Hülsenfrüchten": "pasta vegetariana con legumi",
+  "vegetarische Protein-Bowl mit Beeren": "bowl proteica vegetariana ai frutti di bosco",
+  "viel Volumen-Gemüse, hohe Sättigung bei wenig Kalorien": "molte verdure ad alto volume, grande sazietà con poche calorie",
+  "vollwertige vegane Bowl": "bowl vegana completa",
+  "warmes cremiges Porridge mit Mandelmilch; Whey nach dem Kochen einrühren, mit Zimt abschmecken": "porridge caldo e cremoso con latte di mandorla; aggiungi il whey dopo la cottura e insaporisci con cannella",
+  "zweiter Proteinshake als Mahlzeitenersatz.": "secondo shake proteico come sostituto del pasto."
+}, en: {
+  "60g Whey liefern ungefähr 40g Protein.": "60g whey provides about 40g protein.",
+  "Low-Carb Abend mit Volumen-Gemüse": "Low-carb dinner with high-volume veg",
+  "Low-Carb Volumen-Teller mit Blumenkohlreis": "Low-carb volume plate with cauliflower rice",
+  "Omelett aus Vollei + Eiklar, dazu Brot und Spinat": "Whole-egg + egg-white omelette with bread and spinach",
+  "Shake aus Mandelmilch, Banane und Whey – mixen und geniessen": "Shake with almond milk, banana and whey – blend and enjoy",
+  "abendliches Gericht mit hochwertigen Carbs": "evening dish with quality carbs",
+  "ballaststoffreiches veganes Abendessen": "fibre-rich vegan dinner",
+  "cremig und sättigend mit Mandelmilch": "creamy and filling with almond milk",
+  "cremige Bowl mit Frucht und Omega-3-reichen Samen": "creamy bowl with fruit and omega-3-rich seeds",
+  "cremige Bowl mit guter Fettquelle": "creamy bowl with a good fat source",
+  "cremige vegane Bowl mit Mandelmilch und Proteinpulver": "creamy vegan bowl with almond milk and protein powder",
+  "cremiger Shake mit Mandelmilch, Banane und Whey – einfach mixen": "creamy shake with almond milk, banana and whey – just blend",
+  "cremiges Porridge mit Mandelmilch, Whey nach dem Kochen einrühren": "creamy porridge with almond milk, stir in whey after cooking",
+  "deftig und pflanzlich": "hearty and plant-based",
+  "deftig und vegetarisch": "hearty and vegetarian",
+  "deftiger Teller mit Kartoffeln als Rohgewicht": "hearty plate with potatoes as raw weight",
+  "deftiger Teller mit Kartoffeln als Rohgewicht gerechnet": "hearty plate with potatoes counted as raw weight",
+  "deftiger veganer Start": "hearty vegan start",
+  "deftiger, aber fettkontrollierter Teller": "hearty but fat-controlled plate",
+  "einfach, schnell und reisefreundlich": "simple, quick and travel-friendly",
+  "extrem mager und proteinreich (Harzer)": "extremely lean and high-protein (Harzer)",
+  "extrem mager, viel Volumen": "extremely lean, high volume",
+  "fettreicher Fisch; nur wenn Fettziel es zulässt": "fatty fish; only if your fat target allows",
+  "herzhaft mit leichter Käsequelle": "savoury with a light cheese source",
+  "herzhaft und proteinreich": "savoury and high-protein",
+  "herzhaft, gut sättigend und gut vorbereitbar": "savoury, filling and easy to prep",
+  "herzhaft, sättigend und gut vorbereitbar": "savoury, filling and easy to prep",
+  "herzhaft, viel Volumen, wenig Kalorien": "savoury, high volume, low calories",
+  "herzhafter Snack mit Wrap und Salat": "savoury snack with wrap and salad",
+  "herzhafter veganer Snack": "savoury vegan snack",
+  "herzhaftes Frühstück mit Putenbrust-Aufschnitt aufs Brot": "savoury breakfast with sliced turkey on bread",
+  "kalorienarm mit viel Gemüse": "low calorie with lots of veg",
+  "kalorienarm, hoher Proteinanteil": "low calorie, high protein",
+  "kalorienarmes Volumen-Abendessen": "low-calorie high-volume dinner",
+  "klassische Fitness-Bowl mit Gemüse": "classic fitness bowl with veg",
+  "klassischer veganer Teller": "classic vegan plate",
+  "kräftige vegetarische Bowl": "hearty vegetarian bowl",
+  "leicht und salzig-frisch": "light and savoury-fresh",
+  "leicht, süss und proteinreich": "light, sweet and high-protein",
+  "leichte süsse Zwischenmahlzeit": "light sweet snack",
+  "leichter Fisch mit Süsskartoffeln": "light fish with sweet potatoes",
+  "leichter herzhafter Snack": "light savoury snack",
+  "leichtes Abendessen": "light dinner",
+  "leichtes herzhaftes Frühstück": "light savoury breakfast",
+  "mager, sättigend und sehr gut skalierbar": "lean, filling and very scalable",
+  "mageres Rind mit Quinoa und Spinat": "lean beef with quinoa and spinach",
+  "mageres veganes Abendessen": "lean vegan dinner",
+  "mageres vegetarisches Gericht": "lean vegetarian dish",
+  "mediterran und proteinreich": "mediterranean and high-protein",
+  "milde vegane Bowl mit Mandelmilch": "mild vegan bowl with almond milk",
+  "orientalische vegane Pfanne": "oriental vegan pan",
+  "pflanzlich, ballaststoffreich und sättigend": "plant-based, fibre-rich and filling",
+  "proteinreich und kalorienarm": "high-protein and low-calorie",
+  "proteinreiches Abendessen": "high-protein dinner",
+  "salzig, fettkontrolliert und proteinreich": "savoury, fat-controlled and high-protein",
+  "salzige Zwischenmahlzeit ohne unnötige Fettspitzen": "savoury snack without unnecessary fat spikes",
+  "salziger Dip-Snack mit Crunch": "savoury dip snack with crunch",
+  "salziger vegetarischer Wrap": "savoury vegetarian wrap",
+  "salziges Frühstück mit Brot und Gemüse": "savoury breakfast with bread and veg",
+  "salziges veganes Frühstück": "savoury vegan breakfast",
+  "schnell und salzig": "quick and savoury",
+  "schnelle vegane Bowl": "quick vegan bowl",
+  "schnelles herzhaftes Frühstück": "quick savoury breakfast",
+  "sehr fettarme Abendoption": "very low-fat dinner option",
+  "sehr leichter süsser Snack": "very light sweet snack",
+  "sehr magerer Fisch, viel Gemüse": "very lean fish, lots of veg",
+  "sehr proteinreich und fettkontrolliert": "very high-protein and fat-controlled",
+  "süss, ballaststoffreich und proteinreich": "sweet, fibre-rich and high-protein",
+  "süss, sättigend und meal-prep-tauglich": "sweet, filling and meal-prep friendly",
+  "süsser Snack mit kontrollierter Fettquelle": "sweet snack with a controlled fat source",
+  "süsses Frühstück mit Haferflocken, Quark und Beeren": "sweet breakfast with oats, quark and berries",
+  "süsses veganes Porridge mit Mandelmilch und Banane": "sweet vegan porridge with almond milk and banana",
+  "vegane Bowl mit Süsskartoffeln": "vegan bowl with sweet potatoes",
+  "vegane High-Protein-Bowl mit Reis roh gerechnet": "vegan high-protein bowl with rice counted raw",
+  "vegane Protein-Pasta": "vegan protein pasta",
+  "veganer Protein-Snack": "vegan protein snack",
+  "veganer Shake mit Mandelmilch und Banane – mixen": "vegan shake with almond milk and banana – blend",
+  "veganer Shake mit Mandelmilch, Apfel und Proteinpulver – mixen": "vegan shake with almond milk, apple and protein powder – blend",
+  "vegetarische Bowl mit Reis als Rohgewicht": "vegetarian bowl with rice as raw weight",
+  "vegetarische Pasta mit Hülsenfrüchten": "vegetarian pasta with legumes",
+  "vegetarische Protein-Bowl mit Beeren": "vegetarian protein bowl with berries",
+  "viel Volumen-Gemüse, hohe Sättigung bei wenig Kalorien": "lots of high-volume veg, high satiety at low calories",
+  "vollwertige vegane Bowl": "wholesome vegan bowl",
+  "warmes cremiges Porridge mit Mandelmilch; Whey nach dem Kochen einrühren, mit Zimt abschmecken": "warm creamy porridge with almond milk; stir in whey after cooking, season with cinnamon",
+  "zweiter Proteinshake als Mahlzeitenersatz.": "second protein shake as a meal replacement."
+} }
+};
+
+/* ════════ i18n LOGIC ════════ */
+const MDG_LANGS = ['de','it','en'];
+let MDG_LANG = 'de';
+
+function mdgDetectLang(){
+  try {
+    const saved = localStorage.getItem('mdg_lang');
+    if (saved && MDG_LANGS.includes(saved)) return saved;
+  } catch(e){}
+  try {
+    const cands = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'de']);
+    for (const l of cands){
+      const code = (l||'').slice(0,2).toLowerCase();
+      if (MDG_LANGS.includes(code)) return code;
+    }
+  } catch(e){}
+  return 'de';
+}
+
+// Translate a UI key. Falls back to DE, then to the key itself.
+function t(key){
+  const e = MDG_UI[key];
+  if (!e) return key;
+  if (Object.prototype.hasOwnProperty.call(e, MDG_LANG)) return e[MDG_LANG];
+  return e.de != null ? e.de : key;
+}
+// Global alias so code inside IIFEs that locally use a variable named `t`
+// (e.g. meal totals) can still reach the translation function.
+window.tt = t;
+
+// Translate a German source string via one of the TR maps (food/cat/slot/title/note).
+function trMap(kind, deStr){
+  if (deStr == null) return deStr;
+  if (MDG_LANG === 'de') return deStr;
+  const m = MDG_TR[kind] && MDG_TR[kind][MDG_LANG];
+  if (m && Object.prototype.hasOwnProperty.call(m, deStr)) return m[deStr];
+  return deStr; // graceful fallback to German source
+}
+function tFood(de){ return trMap('food', de); }
+function tCat(de){ return trMap('cat', de); }
+function tSlot(de){ return trMap('slot', de); }
+function tTitle(de){ return trMap('title', de); }
+function tNote(de){ return trMap('note', de); }
+
+// Locale for number formatting per active language.
+function mdgNumLocale(){ return MDG_LANG==='it' ? 'it-CH' : MDG_LANG==='en' ? 'en-GB' : 'de-CH'; }
+
+// ── Static element translation via [data-i18n] ──
+// data-i18n="key" sets innerHTML to t(key).
+// data-i18n-html="key" same but explicitly allows HTML (default behaviour is HTML).
+function applyStaticI18n(root){
+  (root||document).querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if (val != null) el.innerHTML = val;
+  });
+  (root||document).querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const key = el.getAttribute('data-i18n-ph');
+    const val = t(key);
+    if (val != null) el.setAttribute('placeholder', val);
+  });
+}
+
+// ── Multilingual admin content (Option B): siteState.contentByLang = {de:{},it:{},en:{}} ──
+function mdgGetLangContent(lang){
+  siteState.contentByLang = siteState.contentByLang || {};
+  // Migration: legacy flat siteState.content is treated as German.
+  if (siteState.content && Object.keys(siteState.content).length && !siteState.contentByLang.de){
+    siteState.contentByLang.de = Object.assign({}, siteState.content);
+  }
+  return siteState.contentByLang[lang] || {};
+}
+
+// Apply admin-editable content for the active language; if a language has no
+// saved content yet, fall back to German saved content, else leave the markup default.
+function applyEditableContentForLang(lang){
+  const own = mdgGetLangContent(lang);
+  const deFallback = mdgGetLangContent('de');
+  document.querySelectorAll('[data-editable][id]').forEach(el => {
+    const id = el.id;
+    if (Object.prototype.hasOwnProperty.call(own, id)){
+      el.innerHTML = own[id];                 // saved content for this language wins
+    } else if (el.hasAttribute('data-i18n')){
+      el.innerHTML = t(el.getAttribute('data-i18n')); // translated default
+    } else if (lang !== 'de' && Object.prototype.hasOwnProperty.call(deFallback, id)){
+      el.innerHTML = deFallback[id];          // fall back to German saved content
+    }
+    // else: keep default markup
+  });
+}
+
+// Active nav-link highlighting helper exposes the current section.
+let MDG_CURRENT_SECTION = 'home';
+
+function setLang(lang, opts){
+  if (!MDG_LANGS.includes(lang)) lang = 'de';
+  MDG_LANG = lang;
+  try { localStorage.setItem('mdg_lang', lang); } catch(e){}
+  document.documentElement.setAttribute('lang', lang);
+
+  // 1) static UI strings
+  applyStaticI18n(document);
+  // 2) admin-editable content for this language (overrides static where present)
+  applyEditableContentForLang(lang);
+  // 3) re-render dynamic, language-aware widgets
+  try { if (typeof buildGalleryFilter === 'function') buildGalleryFilter(); } catch(e){}
+  try { if (typeof renderGalleryFilter === 'function') renderGalleryFilter(); } catch(e){}
+  // 4) re-render an existing meal plan / builder if visible
+  try {
+    if (window._mealTemplates && typeof renderMealPlan === 'function'){
+      renderMealPlan(window._mealTemplates, window._currentDiet, window._currentTargets,
+                     !!window._isFasten,
+                     (window._currentPrefs || (typeof readPlanPreferences==='function'?readPlanPreferences():null)));
+    }
+  } catch(e){}
+  try { if (typeof bkRenderMeals === 'function' && document.getElementById('bkBuilder') && document.getElementById('bkBuilder').style.display!=='none') bkRenderMeals(); } catch(e){}
+  try { if (typeof bkRenderLiveTotals === 'function') bkRenderLiveTotals(); } catch(e){}
+
+  // 5) flag active states
+  document.querySelectorAll('.lang-flag').forEach(b => b.classList.toggle('active', b.dataset.lang===lang));
+}
+
+function mdgRenderFlags(){
+  const flags = [
+    {lang:'de', emoji:'🇩🇪', label:'Deutsch'},
+    {lang:'it', emoji:'🇮🇹', label:'Italiano'},
+    {lang:'en', emoji:'🇬🇧', label:'English'}
+  ];
+  const html = flags.map(f => `<button class="lang-flag${f.lang===MDG_LANG?' active':''}" data-lang="${f.lang}" title="${f.label}" aria-label="${f.label}" onclick="setLang('${f.lang}')">${f.emoji}</button>`).join('');
+  document.querySelectorAll('.lang-switch').forEach(el => el.innerHTML = html);
+}
+
+
 // ══ CLOUDINARY KONFIGURATION ══
 // So richtest du Cloudinary ein (kostenlos, einmalig ~10 Min):
 // 1. Konto erstellen auf https://cloudinary.com/users/register_free
@@ -1126,8 +2064,28 @@ const GALLERY_DEFAULT_CAT = 'transformation';
 let galleryActiveCat = 'all';
 let galleryActiveMonth = 'all';
 
-function galleryCatLabel(id){ const c=GALLERY_CATEGORIES.find(c=>c.id===id); return c?c.label:'Sonstiges'; }
-function galleryMonthLabel(id){ const m=GALLERY_TRANSFORM_MONTHS.find(m=>m.id===id); return m?m.label:''; }
+const MDG_CAT_I18N = {transformation:'pics.cat.transformation', gym:'pics.cat.gym', food:'pics.cat.food'};
+const MDG_MONTH_NAMES = {
+  de:['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
+  it:['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
+  en:['January','February','March','April','May','June','July','August','September','October','November','December']
+};
+function galleryCatLabel(id){
+  if (MDG_CAT_I18N[id]) return t(MDG_CAT_I18N[id]);   // translated categories
+  const c=GALLERY_CATEGORIES.find(c=>c.id===id);
+  return c?c.label:'Sonstiges';                        // proper nouns (FIBO/Rimini) stay
+}
+function galleryMonthLabel(id){
+  const m=GALLERY_TRANSFORM_MONTHS.find(m=>m.id===id);
+  if(!m) return '';
+  // id format 'YYYY-MM' -> localized "Month YY"
+  const mm = id && id.length===7 ? parseInt(id.slice(5,7),10) : 0;
+  if(mm>=1 && mm<=12){
+    const names = MDG_MONTH_NAMES[MDG_LANG] || MDG_MONTH_NAMES.de;
+    return names[mm-1] + ' ' + id.slice(2,4);
+  }
+  return m.label;
+}
 
 // Normalisiert einen gespeicherten Eintrag (alt = nur String-URL, neu = {src,cat,month})
 function normalizeGalleryEntry(entry){
@@ -1148,6 +2106,8 @@ function loadLocalBackup(){
   try {
     const saved = localStorage.getItem('mdgelite_content');
     if (saved) siteState.content = JSON.parse(saved) || {};
+    const savedByLang = localStorage.getItem('mdgelite_content_by_lang');
+    if (savedByLang) siteState.contentByLang = JSON.parse(savedByLang) || {};
     siteState.images.hero = localStorage.getItem('mdgelite_hero_image') || siteState.images.hero;
     siteState.images.aboutBefore = localStorage.getItem('mdgelite_about_before') || siteState.images.aboutBefore;
     siteState.images.aboutAfter = localStorage.getItem('mdgelite_about_after') || siteState.images.aboutAfter;
@@ -1158,6 +2118,7 @@ function loadLocalBackup(){
 function saveLocalBackup(){
   try {
     localStorage.setItem('mdgelite_content', JSON.stringify(siteState.content || {}));
+    if (siteState.contentByLang) localStorage.setItem('mdgelite_content_by_lang', JSON.stringify(siteState.contentByLang));
     if (siteState.images?.hero) localStorage.setItem('mdgelite_hero_image', siteState.images.hero);
     if (siteState.images?.aboutBefore) localStorage.setItem('mdgelite_about_before', siteState.images.aboutBefore);
     if (siteState.images?.aboutAfter) localStorage.setItem('mdgelite_about_after', siteState.images.aboutAfter);
@@ -1175,7 +2136,7 @@ async function loadSiteState(){
       .maybeSingle();
     if (error) throw error;
     if (data && data.value) {
-      siteState = Object.assign({content:{}, images:{}, gallery:[]}, data.value);
+      siteState = Object.assign({content:{}, contentByLang:{}, images:{}, gallery:[]}, data.value);
       supabaseLoaded = true;
       saveLocalBackup();
     } else {
@@ -1188,12 +2149,20 @@ async function loadSiteState(){
 }
 
 async function saveSiteState(showMessage=true){
-  siteState.content = collectEditableContent();
+  // Save the currently visible editable content into the active language bucket.
+  siteState.contentByLang = siteState.contentByLang || {};
+  // one-time migration of legacy flat content into German bucket
+  if (siteState.content && Object.keys(siteState.content).length && !siteState.contentByLang.de){
+    siteState.contentByLang.de = Object.assign({}, siteState.content);
+  }
+  siteState.contentByLang[MDG_LANG] = collectEditableContent();
+  // keep legacy mirror in sync with German for backward compatibility
+  if (MDG_LANG === 'de') siteState.content = siteState.contentByLang.de;
   siteState.gallery = getGallerySources();
   saveLocalBackup();
 
   if (!supabaseClient) {
-    if (showMessage) showToast('⚠ Supabase ist nicht konfiguriert – nur lokal gespeichert');
+    if (showMessage) showToast(t('toast.noSupabase'));
     return false;
   }
 
@@ -1202,11 +2171,11 @@ async function saveSiteState(showMessage=true){
     const { error } = await supabaseClient.from('site_content').upsert(payload, { onConflict:'id' });
     if (error) throw error;
     supabaseLoaded = true;
-    if (showMessage) showToast('✓ Online gespeichert – für alle Besucher sichtbar');
+    if (showMessage) showToast(t('toast.savedOnline'));
     return true;
   } catch(e) {
     console.warn('Supabase speichern fehlgeschlagen:', e);
-    if (showMessage) showToast('⚠ Supabase speichern fehlgeschlagen – lokal gesichert');
+    if (showMessage) showToast(t('toast.saveFail'));
     return false;
   }
 }
@@ -1237,7 +2206,7 @@ function checkLogin() {
     document.getElementById('pwInput').value = '';
     document.getElementById('pwError').style.display = 'none';
     activateAdminMode();
-    showToast('✓ Admin-Modus aktiv');
+    showToast(t('toast.adminActive'));
   } else {
     document.getElementById('pwError').style.display = 'block';
     document.getElementById('pwInput').value = '';
@@ -1269,10 +2238,10 @@ function adminLogout() {
   document.getElementById('adminBar').classList.remove('visible');
   document.getElementById('adminBadge').classList.remove('visible');
   document.querySelectorAll('[data-editable]').forEach(el => el.contentEditable = 'false');
-  showToast('Admin-Modus beendet');
+  showToast(t('toast.adminEnded'));
 }
 
-function adminOnly(fn) { if (isAdmin) fn(); else showToast('⚠ Nur im Admin-Modus verfügbar'); }
+function adminOnly(fn) { if (isAdmin) fn(); else showToast(t('toast.adminOnly')); }
 
 async function saveAll() {
   await saveSiteState(true);
@@ -1280,7 +2249,13 @@ async function saveAll() {
 
 async function loadSaved() {
   await loadSiteState();
-  applyEditableContent(siteState.content || {});
+
+  // i18n: detect language, render flags, then apply static + per-language content.
+  MDG_LANG = mdgDetectLang();
+  document.documentElement.setAttribute('lang', MDG_LANG);
+  mdgRenderFlags();
+  applyStaticI18n(document);
+  applyEditableContentForLang(MDG_LANG);
 
   try {
     const pw = localStorage.getItem('mdgelite_pw');
@@ -1305,12 +2280,12 @@ function changePassword() {
   const p1 = document.getElementById('newPw1').value;
   const p2 = document.getElementById('newPw2').value;
   const err = document.getElementById('pwChangeError');
-  if (!p1 || p1.length < 6) { err.style.display='block'; err.textContent='Mindestens 6 Zeichen.'; return; }
-  if (p1 !== p2) { err.style.display='block'; err.textContent='Passwörter stimmen nicht überein.'; return; }
+  if (!p1 || p1.length < 6) { err.style.display='block'; err.textContent=t('toast.pwMin'); return; }
+  if (p1 !== p2) { err.style.display='block'; err.textContent=t('toast.pwMismatch'); return; }
   ADMIN_PW = p1;
   try { localStorage.setItem('mdgelite_pw', p1); } catch(e) {}
   closeModal('changePwModal');
-  showToast('✓ Passwort geändert');
+  showToast(t('toast.pwChanged'));
 }
 
 // ══ MODALS ══
@@ -1373,10 +2348,10 @@ async function setHeroImg(e) {
     siteState.images = siteState.images || {};
     siteState.images.hero = url;
     await saveSiteState(false);
-    showToast(cloudinaryReady() ? '✓ Profilfoto online gespeichert' : '✓ Profilfoto lokal gespeichert');
+    showToast(cloudinaryReady() ? t('toast.profileOnline') : t('toast.profileLocal'));
   } catch(err) {
     console.warn(err);
-    showToast('⚠ Bild konnte nicht gespeichert werden');
+    showToast(t('toast.imgSaveFail'));
   }
   e.target.value = '';
 }
@@ -1403,10 +2378,10 @@ async function setAboutImg(e, type) {
     if (type === 'before') siteState.images.aboutBefore = url;
     else siteState.images.aboutAfter = url;
     await saveSiteState(false);
-    showToast(cloudinaryReady() ? '✓ Foto online gespeichert' : '✓ Foto lokal gespeichert');
+    showToast(cloudinaryReady() ? t('toast.photoOnline') : t('toast.photoLocal'));
   } catch(err) {
     console.warn(err);
-    showToast('⚠ Bild konnte nicht gespeichert werden');
+    showToast(t('toast.imgSaveFail'));
   }
   e.target.value = '';
 }
@@ -1423,12 +2398,12 @@ function addVideo() {
   const title = document.getElementById('ytTitle').value.trim() || 'MDG Elite Video';
   const cat = document.getElementById('ytCat').value;
   const vid = getYTId(url);
-  if (!vid) { showToast('⚠ Ungültige YouTube URL'); return; }
+  if (!vid) { showToast(t('toast.badYt')); return; }
   const catLabels = {ernaehrung:'Ernährung',training:'Training',supplemente:'Supplemente',weg:'Mein Weg zur Bühne'};
   const card = document.createElement('div');
   card.className = 'video-card'; card.dataset.cat = cat;
   card.innerHTML = `
-    <button class="video-delete-btn" onclick="this.closest('.video-card').remove();showToast('Video entfernt')">×</button>
+    <button class="video-delete-btn" onclick="this.closest('.video-card').remove();showToast(t('toast.videoRemoved'))">×</button>
     <div class="video-thumb" onclick="playVideo(this,'${vid}')">
       <img src="https://img.youtube.com/vi/${vid}/mqdefault.jpg" style="width:100%;height:100%;object-fit:cover;" alt="">
       <div class="video-play-overlay"><div class="video-play"><svg width="16" height="16" viewBox="0 0 24 24" fill="#000"><polygon points="5,3 19,12 5,21"/></svg></div></div>
@@ -1442,7 +2417,7 @@ function addVideo() {
   document.getElementById('ytUrl').value = '';
   document.getElementById('ytTitle').value = '';
   closeModal('addVideoModal');
-  showToast('✓ Video hinzugefügt');
+  showToast(t('toast.videoAdded'));
 }
 
 function playVideo(thumb, vid) {
@@ -1519,9 +2494,8 @@ async function addGalleryImages(e) {
   closeModal('addGalleryModal');
   let label = galleryCatLabel(cat);
   if(cat==='transformation' && month) label += ' · ' + galleryMonthLabel(month);
-  showToast(useCloud
-    ? `✓ ${added} Bild(er) → ${label}`
-    : `✓ ${added} Bild(er) lokal → ${label}`);
+  showToast((useCloud ? t('toast.imgAddedOnline') : t('toast.imgAddedLocal'))
+    .replace('{N}', added).replace('{LABEL}', label));
   e.target.value = '';
 }
 
@@ -1540,10 +2514,10 @@ function buildGalleryFilter(){
     counts[c] = (counts[c]||0)+1;
   });
   const total = document.querySelectorAll('#galleryGrid .gallery-item').length;
-  let html = `<button class="gallery-filter-btn" data-cat="all" onclick="setGalleryFilter('all')">Alle <span style="opacity:.6">(${total})</span></button>`;
+  let html = `<button class="gallery-filter-btn" data-cat="all" onclick="setGalleryFilter('all')">${t('pics.cat.all')} <span style="opacity:.6">(${total})</span></button>`;
   html += GALLERY_CATEGORIES.map(c=>{
     const n = counts[c.id]||0;
-    return `<button class="gallery-filter-btn" data-cat="${c.id}" onclick="setGalleryFilter('${c.id}')">${c.label} <span style="opacity:.6">(${n})</span></button>`;
+    return `<button class="gallery-filter-btn" data-cat="${c.id}" onclick="setGalleryFilter('${c.id}')">${galleryCatLabel(c.id)} <span style="opacity:.6">(${n})</span></button>`;
   }).join('');
   bar.innerHTML = html;
 }
@@ -1565,10 +2539,10 @@ function renderSubFilter(){
     if(m) counts[m] = (counts[m]||0)+1;
   });
   const total = document.querySelectorAll('#galleryGrid .gallery-item[data-cat="transformation"]').length;
-  let html = `<button class="gallery-subfilter-btn ${galleryActiveMonth==='all'?'active':''}" onclick="setGalleryMonth('all')">Alle Monate (${total})</button>`;
+  let html = `<button class="gallery-subfilter-btn ${galleryActiveMonth==='all'?'active':''}" onclick="setGalleryMonth('all')">${t('pics.month.all')} (${total})</button>`;
   html += GALLERY_TRANSFORM_MONTHS.map(m=>{
     const n = counts[m.id]||0;
-    return `<button class="gallery-subfilter-btn ${galleryActiveMonth===m.id?'active':''}" onclick="setGalleryMonth('${m.id}')">${m.label}${n?` (${n})`:''}</button>`;
+    return `<button class="gallery-subfilter-btn ${galleryActiveMonth===m.id?'active':''}" onclick="setGalleryMonth('${m.id}')">${galleryMonthLabel(m.id)}${n?` (${n})`:''}</button>`;
   }).join('');
   sub.innerHTML = html;
   sub.classList.add('visible');
@@ -1606,7 +2580,7 @@ function renderGalleryFilter(){
       if(monthItems.length){
         const head = document.createElement('div');
         head.className = 'gallery-group-head';
-        head.innerHTML = `${m.label} <span class="cnt">${monthItems.length} Bild(er)</span>`;
+        head.innerHTML = `${galleryMonthLabel(m.id)} <span class="cnt">${monthItems.length} ${t('pics.images')}</span>`;
         grid.insertBefore(head, monthItems[0]);
       }
     });
@@ -1615,7 +2589,7 @@ function renderGalleryFilter(){
     if(noMonth.length){
       const head = document.createElement('div');
       head.className = 'gallery-group-head';
-      head.innerHTML = `Ohne Monat <span class="cnt">${noMonth.length} Bild(er)</span>`;
+      head.innerHTML = `${t('pics.nomonth')} <span class="cnt">${noMonth.length} ${t('pics.images')}</span>`;
       grid.insertBefore(head, noMonth[0]);
     }
   }
@@ -1641,7 +2615,7 @@ function saveStats() {
   document.getElementById('stat3').textContent = document.getElementById('s3v').value || '2027';
   document.getElementById('stat3l').textContent = document.getElementById('s3l').value || 'IFBB Debut';
   closeModal('statsModal');
-  showToast('✓ Stats aktualisiert');
+  showToast(t('toast.statsUpdated'));
 }
 
 // ══ STEPS ══
@@ -1951,7 +2925,7 @@ function calculate(){
   const goalDelta=parseFloat(getVal('goalToggle') || 0);
   const protMult=parseFloat(getVal('proteinToggle') || 2.2);
   const diet = getVal('dietToggle') || 'meat';
-  if(!age||!weight||!height){showToast('⚠ Alter, Gewicht und Grösse eingeben');return;}
+  if(!age||!weight||!height){showToast(t('toast.missingData'));return;}
 
   let bmr,formula;
   if(!isNaN(bf)&&bf>0&&bf<50){bmr=370+21.6*weight*(1-bf/100);formula='Katch-McArdle';}
@@ -2034,11 +3008,12 @@ function calculate(){
   window._deficitNote = deficitNote;
 
   const wk=goalDelta*7,wkg=(wk/7700).toFixed(2);
-  const wt=wk===0?'Gewicht stabil':wk<0?`Fettabbau ~${Math.abs(wkg)} kg/Woche`:`Gewichtszunahme ~${wkg} kg/Woche`;
-  const gl={'-1000':'Schnell abnehmen · −1 kg/Woche','-500':'Abnehmen · −0.5 kg/Woche','-300':'Langsam abnehmen · −0.3 kg/Woche','0':'Gewicht halten','250':'Langsam aufbauen · +0.25 kg/Woche','500':'Masse aufbauen · +0.5 kg/Woche'};
+  const _badgeMap={'-1000':'dyn.badge.m1000','-500':'dyn.badge.m500','-300':'dyn.badge.m300','0':'dyn.badge.0','250':'dyn.badge.250','500':'dyn.badge.500'};
+  const wt=wk===0?t('dyn.weekly.stable'):wk<0?t('dyn.weekly.loss').replace('{KG}',Math.abs(wkg)):t('dyn.weekly.gain').replace('{KG}',wkg);
+  const _loc = mdgNumLocale();
 
-  document.getElementById('kcalDisplay').textContent=target.toLocaleString('de-CH');
-  document.getElementById('goalBadge').textContent=gl[String(goalDelta)]||'';
+  document.getElementById('kcalDisplay').textContent=target.toLocaleString(_loc);
+  document.getElementById('goalBadge').textContent=t(_badgeMap[String(goalDelta)]||'')||'';
   const dn=document.getElementById('deficitNote');
   if(dn){
     if(deficitNote){
@@ -2290,6 +3265,7 @@ function generateMealPlan(kcal, meals, proteinG, carbsG, fatG, diet, prefs) {
   window._mealAltIdx = templates.map(() => 0);
   window._currentDiet = diet;
   window._currentTargets = {kcal, proteinG, carbsG, fatG};
+  window._isFasten = false; window._currentPrefs = prefs;
   calibrateCurrentPlan();
   renderMealPlan(templates, diet, window._currentTargets, false, prefs);
 }
@@ -2327,6 +3303,7 @@ function generateFastenPlan(kcal, proteinG, carbsG, fatG, diet, prefs) {
   window._mealAltIdx = templates.map(() => 0);
   window._currentDiet = diet;
   window._currentTargets = {kcal, proteinG, carbsG, fatG};
+  window._isFasten = true; window._currentPrefs = prefs;
   calibrateCurrentPlan();
   renderMealPlan(templates, diet, window._currentTargets, true, prefs);
 }
@@ -2480,11 +3457,11 @@ function generateShoppingList(mealList) {
   let html='';
   Object.keys(catColors).forEach(cat=>{
     const items=sorted[cat]; if(!items||!items.length) return;
-    html += `<div class="shop-cat"><div class="shop-cat-head" style="border-left:3px solid ${catColors[cat]};">${cat}</div><div class="shop-items">`;
+    html += `<div class="shop-cat"><div class="shop-cat-head" style="border-left:3px solid ${catColors[cat]};">${tCat(cat)}</div><div class="shop-items">`;
     items.forEach(item=>{
       const exact=item.grams>=1000?(item.grams/1000).toFixed(1)+' kg':item.grams+'g';
       const qty=packageRounded(item);
-      html += `<div class="shop-item"><div class="shop-check" onclick="this.classList.toggle('checked')"></div><span class="shop-name">${item.name}<span style="display:block;color:var(--muted);font-size:11px;">Benötigt: ${exact}</span></span><span class="shop-qty">${qty}</span></div>`;
+      html += `<div class="shop-item"><div class="shop-check" onclick="this.classList.toggle('checked')"></div><span class="shop-name">${tFood(item.name)}<span style="display:block;color:var(--muted);font-size:11px;">${t('shop.needed')} ${exact}</span></span><span class="shop-qty">${qty}</span></div>`;
     });
     html += `</div></div>`;
   });
@@ -2499,16 +3476,16 @@ function printShoppingList() {
   let rows='';
   Object.keys(catColors).forEach(cat=>{
     const items=sorted[cat]; if(!items||!items.length) return;
-    rows += `<tr><td colspan="3" style="background:#f5f5f5;font-weight:700;padding:8px 12px;border-top:2px solid #ddd;">${cat}</td></tr>`;
+    rows += `<tr><td colspan="3" style="background:#f5f5f5;font-weight:700;padding:8px 12px;border-top:2px solid #ddd;">${tCat(cat)}</td></tr>`;
     items.forEach(item=>{
       const exact=item.grams>=1000?(item.grams/1000).toFixed(1)+' kg':item.grams+'g';
       const qty=packageRounded(item);
-      rows += `<tr><td style="padding:7px 12px;border-bottom:1px solid #eee;width:28px;"><div style="width:16px;height:16px;border:2px solid #999;border-radius:3px;display:inline-block;"></div></td><td style="padding:7px 12px;border-bottom:1px solid #eee;">${item.name}<br><span style="font-size:11px;color:#777;">Benötigt: ${exact}</span></td><td style="padding:7px 12px;border-bottom:1px solid #eee;text-align:right;font-weight:600;">${qty}</td></tr>`;
+      rows += `<tr><td style="padding:7px 12px;border-bottom:1px solid #eee;width:28px;"><div style="width:16px;height:16px;border:2px solid #999;border-radius:3px;display:inline-block;"></div></td><td style="padding:7px 12px;border-bottom:1px solid #eee;">${tFood(item.name)}<br><span style="font-size:11px;color:#777;">${t('shop.needed')} ${exact}</span></td><td style="padding:7px 12px;border-bottom:1px solid #eee;text-align:right;font-weight:600;">${qty}</td></tr>`;
     });
   });
 
   const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MDG Elite – Einkaufsliste</title><style>body{font-family:Arial,sans-serif;max-width:600px;margin:40px auto;color:#111;}h1{font-size:28px;letter-spacing:4px;color:#C9A84C;margin-bottom:4px;}.subtitle{font-size:13px;color:#888;margin-bottom:24px;}table{width:100%;border-collapse:collapse;}@media print{body{margin:20px;}button{display:none!important;}.no-print{display:none!important;}}</style></head><body><h1>MDG ELITE</h1><div class="subtitle">Einkaufsliste für 7 Tage · Erstellt am ${new Date().toLocaleDateString('de-CH')}</div><button onclick="window.print()" class="no-print" style="margin-bottom:20px;padding:10px 24px;background:#C9A84C;color:#000;border:none;font-weight:700;font-size:14px;cursor:pointer;border-radius:4px;">🖨️ Drucken</button><table>${rows}</table><p style="margin-top:24px;font-size:11px;color:#aaa;">mdgelite.com · Mengen auf realistische Packungsgrössen aufgerundet</p></body></html>`);
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${t('shop.print.pagetitle')}</title><style>body{font-family:Arial,sans-serif;max-width:600px;margin:40px auto;color:#111;}h1{font-size:28px;letter-spacing:4px;color:#C9A84C;margin-bottom:4px;}.subtitle{font-size:13px;color:#888;margin-bottom:24px;}table{width:100%;border-collapse:collapse;}@media print{body{margin:20px;}button{display:none!important;}.no-print{display:none!important;}}</style></head><body><h1>MDG ELITE</h1><div class="subtitle">${t('shop.print.sub').replace('{DATE}', new Date().toLocaleDateString(mdgNumLocale()))}</div><button onclick="window.print()" class="no-print" style="margin-bottom:20px;padding:10px 24px;background:#C9A84C;color:#000;border:none;font-weight:700;font-size:14px;cursor:pointer;border-radius:4px;">${t('shop.print.btn')}</button><table>${rows}</table><p style="margin-top:24px;font-size:11px;color:#aaa;">${t('shop.print.foot')}</p></body></html>`);
   win.document.close();
   setTimeout(() => win.print(), 500);
 }
@@ -3486,7 +4463,7 @@ function filterCheat(cat, btn) {
     const cDiff = Math.round(totals.c-targets.carbsG);
     const fDiff = Math.round(totals.fat-targets.fatG);
     const ok = Math.abs(kcalDiff)<=10 && Math.abs(totals.p-targets.proteinG)<=3 && Math.abs(totals.fat-targets.fatG)<=2 && Math.abs(totals.c-targets.carbsG)<=5;
-    const diffTxt = `Kalorien ${kcalDiff>0?'+':''}${kcalDiff}, P ${pDiff>0?'+':''}${pDiff}g, C ${cDiff>0?'+':''}${cDiff}g, F ${fDiff>0?'+':''}${fDiff}g`;
+    const diffTxt = `${t('dyn.calories')} ${kcalDiff>0?'+':''}${kcalDiff}, P ${pDiff>0?'+':''}${pDiff}g, C ${cDiff>0?'+':''}${cDiff}g, F ${fDiff>0?'+':''}${fDiff}g`;
 
     // Ehrliche Machbarkeits-Warnung: Liegt ein Makro trotz Kalibrierung deutlich
     // daneben, ist die Zielkombination mit dem gewählten Format (Mahlzeitenzahl /
@@ -3501,35 +4478,35 @@ function filterCheat(cat, btn) {
       const tips = [];
       if(proteinShort){
         tips.push(isFasten
-          ? `Das Proteinziel von ${targets.proteinG}g lässt sich mit dem Proteinfasten (2 Shakes + 1 Mahlzeit) nicht voll abdecken. Wähle für so viel Protein lieber 4–5 reguläre Mahlzeiten.`
-          : `Das Proteinziel von ${targets.proteinG}g erfordert mehr Mahlzeiten – mit ${mealList.length} Mahlzeiten wird es knapp. Erhöhe die Mahlzeitenzahl, um es realistisch zu verteilen.`);
+          ? t('dyn.feas.proteinFasten').replace('{P}', targets.proteinG)
+          : t('dyn.feas.proteinMeals').replace('{P}', targets.proteinG).replace('{N}', mealList.length));
       }
-      if(carbsHigh) tips.push(`Dein Kohlenhydratziel liegt unter dem, was die Gerichte mit Gemüse, Beilagen und Sauce real liefern. Etwas mehr Kohlenhydrate sind hier kaum vermeidbar.`);
-      if(carbsLow) tips.push(`Das hohe Kohlenhydratziel von ${targets.carbsG}g passt nicht vollständig in ${mealList.length} Mahlzeiten. Mehr Mahlzeiten schaffen Platz dafür.`);
-      if(fatShort) tips.push(`Das Fettziel wird mit diesem Format nicht ganz erreicht.`);
+      if(carbsHigh) tips.push(t('dyn.feas.carbsHigh'));
+      if(carbsLow) tips.push(t('dyn.feas.carbsLow').replace('{C}', targets.carbsG).replace('{N}', mealList.length));
+      if(fatShort) tips.push(t('dyn.feas.fatShort'));
       feasibilityNote = `<div style="margin-bottom:16px;padding:12px 20px;background:rgba(224,92,92,0.08);border:1px solid rgba(224,92,92,0.4);border-radius:4px;font-size:13px;color:var(--text);line-height:1.6;">
-        <strong style="color:#e07c7c;">Hinweis zur Machbarkeit:</strong> ${tips.join(' ')}
+        <strong style="color:#e07c7c;">${t('dyn.feasibility.title')}</strong> ${tips.join(' ')}
       </div>`;
     }
 
     const adminInfo = document.getElementById('planAdminText') ? '' : '';
     const summary = `<div style="margin-bottom:16px;padding:12px 20px;background:rgba(201,168,76,0.08);border:1px solid var(--gold-dim);border-radius:4px;font-size:13px;color:var(--text);line-height:1.6;">
-      Ziel: <strong>${targets.proteinG}g P</strong> · <strong>${targets.carbsG}g C</strong> · <strong>${targets.fatG}g F</strong> · <strong>${targets.kcal} kcal</strong><br>
-      Aktuelle Auswahl: <strong>${Math.round(totals.p)}g P</strong> · <strong>${Math.round(totals.c)}g C</strong> · <strong>${Math.round(totals.fat)}g F</strong> · <strong>${Math.round(totals.cal)} kcal</strong> <span class="${ok?'macro-ok':'macro-warn'}">(${diffTxt})</span><br>
-      <span style="color:var(--muted);font-size:12px;">${isFasten?'Proteinfasten: 2 Whey-Proteinshakes ersetzen 2 Mahlzeiten; jeder Shake liefert ca. 33% deines Tagesproteins.':'Protein, Fett und Kohlenhydrate werden pro Mahlzeit verteilt. Die Tageskalibrierung korrigiert Protein-, Fett- und Kohlenhydratquellen automatisch.'}</span><br>
-      <span style="color:var(--muted);font-size:11px;">Kalorien im Plan werden einheitlich aus Makros berechnet: Protein 4 kcal/g, Kohlenhydrate 4 kcal/g, Fett 9 kcal/g. Roh-/Einkaufsgewicht bei Fleisch/Fisch, Reis, Pasta, Kartoffeln, Couscous, Bulgur, Quinoa und Hülsenfrüchten.</span>
+      ${t('dyn.goal')} <strong>${targets.proteinG}g P</strong> · <strong>${targets.carbsG}g C</strong> · <strong>${targets.fatG}g F</strong> · <strong>${targets.kcal} kcal</strong><br>
+      ${t('dyn.currentsel')} <strong>${Math.round(totals.p)}g P</strong> · <strong>${Math.round(totals.c)}g C</strong> · <strong>${Math.round(totals.fat)}g F</strong> · <strong>${Math.round(totals.cal)} kcal</strong> <span class="${ok?'macro-ok':'macro-warn'}">(${diffTxt})</span><br>
+      <span style="color:var(--muted);font-size:12px;">${isFasten?t('dyn.summary.fasten'):t('dyn.summary.normal')}</span><br>
+      <span style="color:var(--muted);font-size:11px;">${t('dyn.summary.kcalnote')}</span>
     </div>`;
 
     const html = mealList.map((meal, idx)=>{
-      const t=sumFoods(meal.foods);
+      const t2=sumFoods(meal.foods);
       const mt=meal.target||{};
       const border = meal.highlight ? `border-left:3px solid var(--gold);` : `border-left:3px solid var(--border2);`;
-      const altBtns = (templates[idx].alts || []).length > 1 ? (templates[idx].alts || []).map((alt, ai)=>`<button class="alt-btn ${window._mealAltIdx[idx]===ai?'active':''}" onclick="setMealAlt(${idx},${ai})"><span class="meal-option-title">${escapeHtml(alt.label)}</span></button>`).join('') : '';
+      const altBtns = (templates[idx].alts || []).length > 1 ? (templates[idx].alts || []).map((alt, ai)=>`<button class="alt-btn ${window._mealAltIdx[idx]===ai?'active':''}" onclick="setMealAlt(${idx},${ai})"><span class="meal-option-title">${escapeHtml(tTitle(alt.label))}</span></button>`).join('') : '';
       const rows = meal.foods.map(fd=>{
         // einzelne Lebensmittel-Kalorien ebenfalls aus ihren Makros aktualisieren
         fd.cal = kcalFromMacros(fd.p, fd.c, fd.fat);
         return `<div class="meal-food">
-          <span class="food-n">${fd.name} <span style="color:var(--muted);font-size:12px;">${fd.grams}g</span></span>
+          <span class="food-n">${tFood(fd.name)} <span style="color:var(--muted);font-size:12px;">${fd.grams}g</span></span>
           <span class="food-macros">
             <span class="macro-pill p">${round1(fd.p)}g P</span>
             <span class="macro-pill c">${round1(fd.c)}g C</span>
@@ -3538,18 +4515,19 @@ function filterCheat(cat, btn) {
           </span>
         </div>`;
       }).join('');
+      const timeSuffix = t('dyn.uhr') ? ' ' + t('dyn.uhr') : '';
       return `<div class="meal-card" style="${border}">
         <div class="meal-head">
-          <div><div class="meal-name">${meal.tag} ${meal.name}</div><div class="meal-time">⏱ ${meal.time} Uhr</div></div>
-          <div class="meal-stats"><strong>~${Math.round(t.cal)} kcal</strong><span style="font-size:11px;color:var(--muted);">${Math.round(t.p)}g P · ${Math.round(t.c)}g C · ${Math.round(t.fat)}g F</span></div>
+          <div><div class="meal-name">${meal.tag} ${tSlot(meal.name)}</div><div class="meal-time">⏱ ${meal.time}${timeSuffix}</div></div>
+          <div class="meal-stats"><strong>~${Math.round(t2.cal)} kcal</strong><span style="font-size:11px;color:var(--muted);">${Math.round(t2.p)}g P · ${Math.round(t2.c)}g C · ${Math.round(t2.fat)}g F</span></div>
         </div>
         ${altBtns ? `<div style="display:flex;gap:6px;padding:10px 20px;border-bottom:1px solid var(--border2);">${altBtns}</div>` : ''}
         <div style="padding:10px 20px;border-bottom:1px solid var(--border2);">
-          <div class="meal-option-title">${escapeHtml(meal.altLabel || '')}</div>
-          <div class="meal-quality-note">${escapeHtml(meal.altNote || '')} Ziel pro Mahlzeit: ${Math.round(mt.p||0)}g P · ${Math.round(mt.c||0)}g C · ${Math.round(mt.f||0)}g F.</div>
+          <div class="meal-option-title">${escapeHtml(tTitle(meal.altLabel || ''))}</div>
+          <div class="meal-quality-note">${escapeHtml(tNote(meal.altNote || ''))} ${t('dyn.targetpermeal')} ${Math.round(mt.p||0)}g P · ${Math.round(mt.c||0)}g C · ${Math.round(mt.f||0)}g F.</div>
         </div>
         <div class="meal-foods">${rows}</div>
-        <div class="meal-total"><span>Mahlzeit gesamt</span><span><strong>${Math.round(t.p)}g</strong> P · <strong>${Math.round(t.c)}g</strong> C · <strong>${Math.round(t.fat)}g</strong> F · <strong>${Math.round(t.cal)} kcal</strong></span></div>
+        <div class="meal-total"><span>${t('dyn.mealtotal')}</span><span><strong>${Math.round(t2.p)}g</strong> P · <strong>${Math.round(t2.c)}g</strong> C · <strong>${Math.round(t2.fat)}g</strong> F · <strong>${Math.round(t2.cal)} kcal</strong></span></div>
       </div>`;
     }).join('');
 
@@ -3586,7 +4564,7 @@ function filterCheat(cat, btn) {
     const gender=bkGetVal('bk_genderToggle') || 'male';
     const goalDelta=parseFloat(bkGetVal('bk_goalToggle') || 0);
     const protMult=parseFloat(bkGetVal('bk_proteinToggle') || 2.2);
-    if(!age||!weight||!height){ if(typeof showToast==='function') showToast('⚠ Alter, Gewicht und Grösse eingeben'); return null; }
+    if(!age||!weight||!height){ if(typeof showToast==='function') showToast(tt('toast.missingData')); return null; }
 
     let bmr;
     if(!isNaN(bf)&&bf>0&&bf<50){ bmr=370+21.6*weight*(1-bf/100); }
@@ -3682,18 +4660,18 @@ function filterCheat(cat, btn) {
     const remCal = t.kcal - d.cal;
     const over = remCal < -t.kcal*0.05;
     const remTxt = remCal >= 0
-      ? '<span style="color:var(--gold-bright);">noch '+Math.round(remCal)+' kcal frei</span>'
-      : '<span style="color:#e07c7c;">'+Math.abs(Math.round(remCal))+' kcal über dem Ziel</span>';
+      ? '<span style="color:var(--gold-bright);">'+tt('mb.rem.free').replace('{KCAL}',Math.round(remCal))+'</span>'
+      : '<span style="color:#e07c7c;">'+tt('mb.rem.over').replace('{KCAL}',Math.abs(Math.round(remCal)))+'</span>';
     const hasItems = BK.meals.some(m=>m.items.length>0);
     document.getElementById('bkLiveTotals').innerHTML =
         '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">'
       + '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:30px;letter-spacing:2px;color:#fff;">'+Math.round(d.cal)+'<span style="font-size:16px;color:var(--muted);"> / '+t.kcal+' kcal</span></span>'
       + '<span style="font-size:13px;color:'+(over?'#e07c7c':'var(--gold-bright)')+';font-weight:600;">'+kcalPct+'%</span></div>'
       + '<div style="font-size:12px;margin-bottom:12px;">'+remTxt+'</div>'
-      + bar('Protein', d.p, t.proteinG, 'var(--gold)')
-      + bar('Kohlenhydrate', d.c, t.carbsG, '#5b8fc9')
-      + bar('Fett', d.fat, t.fatG, '#c9a84c')
-      + (hasItems ? '<button onclick="bkAutoFit()" style="width:100%;margin-top:12px;padding:11px;background:transparent;border:1px solid var(--gold-dim);color:var(--gold);font-family:\'Bebas Neue\',sans-serif;font-size:15px;letter-spacing:2px;cursor:pointer;border-radius:3px;transition:all .15s;" onmouseover="this.style.background=\'var(--gold)\';this.style.color=\'var(--black)\';" onmouseout="this.style.background=\'transparent\';this.style.color=\'var(--gold)\';">⚖ MENGEN AUTO-ANPASSEN</button>' : '');
+      + bar(tt('macro.protein'), d.p, t.proteinG, 'var(--gold)')
+      + bar(tt('macro.carbs'), d.c, t.carbsG, '#5b8fc9')
+      + bar(tt('macro.fat'), d.fat, t.fatG, '#c9a84c')
+      + (hasItems ? '<button onclick="bkAutoFit()" style="width:100%;margin-top:12px;padding:11px;background:transparent;border:1px solid var(--gold-dim);color:var(--gold);font-family:\'Bebas Neue\',sans-serif;font-size:15px;letter-spacing:2px;cursor:pointer;border-radius:3px;transition:all .15s;" onmouseover="this.style.background=\'var(--gold)\';this.style.color=\'var(--black)\';" onmouseout="this.style.background=\'transparent\';this.style.color=\'var(--gold)\';">'+tt('mb.autofit')+'</button>' : '');
   }
 
   // Auto-Anpassen: skaliert alle Mengen proportional, damit die Gesamtkalorien
@@ -3709,12 +4687,12 @@ function filterCheat(cat, btn) {
       const fixed = tags.includes('sauce')||tags.includes('liquid')||tags.includes('volume')||tags.includes('veg');
       if(!fixed) scalable.push(it);
     }));
-    if(!scalable.length){ if(typeof showToast==='function') showToast('Keine anpassbaren Lebensmittel – füge Protein/KH/Fett hinzu'); return; }
+    if(!scalable.length){ if(typeof showToast==='function') showToast(tt('toast.noScalable')); return; }
     const d=bkDayTotals();
     const fixedCal = d.cal - scalable.reduce((s,it)=>s+it.cal,0);
     const scalableCal = scalable.reduce((s,it)=>s+it.cal,0);
     const targetForScalable = t.kcal - fixedCal;
-    if(scalableCal<=0 || targetForScalable<=0){ if(typeof showToast==='function') showToast('Mengen lassen sich nicht sinnvoll skalieren'); return; }
+    if(scalableCal<=0 || targetForScalable<=0){ if(typeof showToast==='function') showToast(tt('toast.noScale')); return; }
     let factor = targetForScalable / scalableCal;
     factor = Math.max(0.3, Math.min(3, factor)); // realistische Grenzen
     scalable.forEach(it=>{
@@ -3729,11 +4707,11 @@ function filterCheat(cat, btn) {
     const after=bkDayTotals().cal;
     const diff=Math.abs(after-t.kcal);
     if(diff<=t.kcal*0.05){
-      if(typeof showToast==='function') showToast('✓ Mengen ans Kalorienziel angepasst');
+      if(typeof showToast==='function') showToast(tt('toast.scaleOk'));
     } else if(after < t.kcal){
-      if(typeof showToast==='function') showToast('Angepasst – für '+t.kcal+' kcal fehlen noch '+Math.round(t.kcal-after)+'. Füge mehr Lebensmittel hinzu.');
+      if(typeof showToast==='function') showToast(tt('toast.scaleShort').replace('{KCAL}',t.kcal).replace('{MISS}',Math.round(t.kcal-after)));
     } else {
-      if(typeof showToast==='function') showToast('Angepasst – noch '+Math.round(after-t.kcal)+' kcal über Ziel. Entferne etwas oder reduziere von Hand.');
+      if(typeof showToast==='function') showToast(tt('toast.scaleOver').replace('{OVER}',Math.round(after-t.kcal)));
     }
   };
 
@@ -3743,7 +4721,7 @@ function filterCheat(cat, btn) {
       const t=bkMealTotals(meal);
       const rows = meal.items.map((it,ii)=>
           '<div class="meal-food" style="align-items:center;flex-wrap:wrap;gap:8px;">'
-        + '<span class="food-n">'+it.name+'</span>'
+        + '<span class="food-n">'+tFood(it.name)+'</span>'
         + '<span class="food-macros" style="align-items:center;gap:6px;flex-wrap:wrap;">'
         + '<span class="macro-pill p">'+Math.round(it.p)+'g P</span>'
         + '<span class="macro-pill c">'+Math.round(it.c)+'g C</span>'
@@ -3755,11 +4733,11 @@ function filterCheat(cat, btn) {
         + '<button class="bk-step" onclick="bkAdjust('+mi+','+ii+',1)">+</button></span>'
         + '<button class="bk-step bk-del" onclick="bkRemove('+mi+','+ii+')">✕</button>'
         + '</span></div>'
-      ).join('') || '<div style="padding:10px 0;color:var(--muted);font-size:13px;">Noch nichts ausgewählt – füge unten Lebensmittel hinzu.</div>';
+      ).join('') || '<div style="padding:10px 0;color:var(--muted);font-size:13px;">'+tt('mb.empty')+'</div>';
 
       const picker = ['protein','carb','fat','liquid'].map(cat=>{
-        const label = cat==='protein'?'Protein':cat==='carb'?'Kohlenhydrate':cat==='fat'?'Fette':'Saucen & Flüssigkeiten';
-        const opts = bkFoodsByCat(cat).map(f=>'<option value="'+f.k+'">'+f.name+'</option>').join('');
+        const label = cat==='protein'?tt('mb.cat.protein'):cat==='carb'?tt('mb.cat.carb'):cat==='fat'?tt('mb.cat.fat'):tt('mb.cat.liquid');
+        const opts = bkFoodsByCat(cat).map(f=>'<option value="'+f.k+'">'+tFood(f.name)+'</option>').join('');
         return '<div style="flex:1;min-width:150px;">'
           + '<label style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600;display:block;margin-bottom:6px;">'+label+'</label>'
           + '<select id="bkSel_'+mi+'_'+cat+'" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:3px;padding:9px 10px;color:var(--text);font-size:14px;">'
@@ -3767,12 +4745,12 @@ function filterCheat(cat, btn) {
       }).join('');
 
       return '<div class="meal-card" style="border-left:3px solid var(--border2);margin-bottom:18px;">'
-        + '<div class="meal-head"><div><div class="meal-name">'+meal.tag+' '+meal.name+'</div><div class="meal-time">⏱ '+meal.time+' Uhr</div></div>'
+        + '<div class="meal-head"><div><div class="meal-name">'+meal.tag+' '+tSlot(meal.name)+'</div><div class="meal-time">⏱ '+meal.time+(tt('dyn.uhr')?' '+tt('dyn.uhr'):'')+'</div></div>'
         + '<div class="meal-stats"><strong>~'+Math.round(t.cal)+' kcal</strong><span style="font-size:11px;color:var(--muted);">'+Math.round(t.p)+'g P · '+Math.round(t.c)+'g C · '+Math.round(t.fat)+'g F</span></div></div>'
         + '<div class="meal-foods">'+rows+'</div>'
         + '<div style="display:flex;gap:10px;flex-wrap:wrap;padding:14px 20px;border-top:1px solid var(--border2);align-items:flex-end;">'
         + picker
-        + '<button class="btn-outline" style="padding:9px 16px;font-size:13px;white-space:nowrap;" onclick="bkAddFromPickers('+mi+')">+ Hinzufügen</button>'
+        + '<button class="btn-outline" style="padding:9px 16px;font-size:13px;white-space:nowrap;" onclick="bkAddFromPickers('+mi+')">+ '+tt('mb.add')+'</button>'
         + '</div></div>';
     }).join('');
     bkRenderTotals();
@@ -3790,7 +4768,7 @@ function filterCheat(cat, btn) {
         added++;
       }
     });
-    if(!added){ if(typeof showToast==='function') showToast('Bitte zuerst ein Lebensmittel wählen'); return; }
+    if(!added){ if(typeof showToast==='function') showToast(tt('toast.pickFood')); return; }
     bkRenderMeals();
   };
 
@@ -3827,7 +4805,7 @@ function filterCheat(cat, btn) {
     const rows=Object.keys(map).map(k=>{
       const f=FOOD_DB[k]; const weekG=map[k]*7;
       const disp = weekG>=1000 ? (weekG/1000).toFixed(2)+' kg' : Math.round(weekG)+' g';
-      return '<div class="meal-food"><span class="food-n">'+f.name+'</span><span style="color:var(--gold-bright);font-weight:600;">'+disp+'</span></div>';
+      return '<div class="meal-food"><span class="food-n">'+tFood(f.name)+'</span><span style="color:var(--gold-bright);font-weight:600;">'+disp+'</span></div>';
     }).join('');
     document.getElementById('bkShoppingList').innerHTML = '<div class="meal-foods">'+rows+'</div>';
   }
@@ -3835,15 +4813,15 @@ function filterCheat(cat, btn) {
   window.bkPrintShoppingList = function(){
     const map={};
     BK.meals.forEach(m=>m.items.forEach(it=>{ map[it.k]=(map[it.k]||0)+it.grams; }));
-    let html='<h1>Einkaufsliste – 1 Woche (MDG Elite Plan-Baukasten)</h1><table style="width:100%;border-collapse:collapse;">';
+    let html='<h1>'+tt('shop.print.title')+'</h1><table style="width:100%;border-collapse:collapse;">';
     Object.keys(map).forEach(k=>{
       const f=FOOD_DB[k]; const weekG=map[k]*7;
       const disp = weekG>=1000 ? (weekG/1000).toFixed(2)+' kg' : Math.round(weekG)+' g';
-      html+='<tr><td style="padding:6px 0;border-bottom:1px solid #ddd;">'+f.name+'</td><td style="padding:6px 0;border-bottom:1px solid #ddd;text-align:right;font-weight:600;">'+disp+'</td></tr>';
+      html+='<tr><td style="padding:6px 0;border-bottom:1px solid #ddd;">'+tFood(f.name)+'</td><td style="padding:6px 0;border-bottom:1px solid #ddd;text-align:right;font-weight:600;">'+disp+'</td></tr>';
     });
     html+='</table>';
     const w=window.open('','_blank');
-    w.document.write('<html><head><title>Einkaufsliste</title><style>body{font-family:Arial,sans-serif;max-width:600px;margin:40px auto;padding:0 20px;}h1{font-size:20px;}</style></head><body>'+html+'</body></html>');
+    w.document.write('<html><head><title>'+tt('shop.title')+'</title><style>body{font-family:Arial,sans-serif;max-width:600px;margin:40px auto;padding:0 20px;}h1{font-size:20px;}</style></head><body>'+html+'</body></html>');
     w.document.close(); w.focus(); setTimeout(()=>w.print(),250);
   };
 
